@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import SignInSide from './Screens/Home/Signin'
+import Dashboard  from './Screens/Dashboard/Dashboard';
+import _ from "lodash";
+import React, { useEffect } from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import {BrowserRouter as Router, Route, Switch, Redirect,withRouter, useLocation } from "react-router-dom";
+
+
+
+const App = (props) =>  {
+
+
+    return (
+      <Router>  
+      <div className="appContainer">
+        <div className="app-content">
+          <Switch>
+            <Route path="/home" render={(props) => <SignInSide />} />
+            <Route path="/configure" component={Dashboard} />
+            <Route exact path="/" render={() => <Redirect from="/" to="/home" />} />
+          </Switch>
+        </div>
+      </div>
+      </Router>
+    );
 }
 
-export default App;
+export default withRouter(App);
