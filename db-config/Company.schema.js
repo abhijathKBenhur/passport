@@ -7,7 +7,12 @@ const Company = new Schema(
     companyName: { type: String },
     goldConfig: { type: String },
     balance: { type: Number },
-    mailAddress:{ type: String },
+    email:{ type: String },
+    status:{ type: String },
+    tenantId: { type: String },
+    key: { type: String },
+    secret: { type: String }
+
   },
   { timestamps: true }
 );

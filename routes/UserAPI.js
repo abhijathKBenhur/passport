@@ -21,6 +21,12 @@ register = (req, res) => {
   newCompany
   .save()
   .then((user, b) => {
+    var token = jwt.sign({ 
+      clientId:newCompany.clientId,  
+      key:newCompany.key,  
+      secret:newCompany.secret,  
+    }, process.env.TWEETER_KOO);
+
     return res.status(201).json({
       success: true,
       data: user,
@@ -191,12 +197,9 @@ Welcome to the Tribe
     return res.status(200).json({ success: true, data: otp });
   });
 };
-router.post("/registerUser", registerUser);
 router.post("/updateUser", updateUser);
 router.post("/getUserInfo", getUserInfo);
 router.post("/getUsers", getUsers);
-router.post("/getNonceAndRegister", getNonceAndRegister);
-router.post("/renewNonce", renewNonce);
 router.post("/removeUser", removeUser);
 router.post("/sendMail", sendMail);
 

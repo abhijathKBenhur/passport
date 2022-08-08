@@ -1,12 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const mongotConnection = require("./db-config/mongodb");
-const authAPI = require("./routes/authAPIs");
+const authAPI = require("./routes/AuthAPI");
 
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const path = require("path");
-const authorizer = require("./routes/middleware/authorizer");
+// const authorizer = require("./routes/middleware/authorizer");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 4000;
 dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(authorizer)
+// app.use(authorizer)
 
 
 app.use(

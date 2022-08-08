@@ -1,27 +1,18 @@
-const chainID = "";
-const COOKIE_TOKEN_PHRASE = "ideaTribeAuthToken";
-const SIGNATURE_MESSAGE = "Welcome to IdeaTribe! Click 'Sign' to sign in. No password needed! This request will not trigger a blockchain transaction or cost any gas fees. Your authentication status will be reset after 24 hours. I accept the IdeaTribe Terms of Service: https://ideatribe.io. Nonce: ";
 
-const CURRENCY = {
-  name: "Matic",
-  symbol: "MATIC"
+const STATUS ={
+  PENDING: "PENDING",
+  REGISTERED: "REGISTERED",
+  VERIFIED:"VERIFIED",
+  PARTNERED:"PARTNERED"
 }
 
-const FILTERS_TYPES ={
-  SEARCH: "SEARCH",
-  CATEGORY_FILTER:"CATEGORY_FILTER"
+const CATEGORIES ={
+  HEALTH: "HEALTH",
 }
 
-
-const CATEGORIES = [
-    { value: "Creative_art", label: "Creative art" },
-    { value: "Business_idea", label: "Business idea" },
-    { value: "Technical_inventions", label: "Technical inventions" },
-    { value: "Social_Policy", label: "Social policy" },
-];
-
-const PURPOSES = {
-  AUCTION: "AUCTION",
+const SESSION_KEYS = {
+  PASSPORT_TOKEN:"PASSPORT_TOKEN",
+  CLIENTID: "PASSPORT_CLIENTID",
   SELL: "SELL",
   COLLAB: "COLLABORATE",
   KEEP: "KEEP",
@@ -83,19 +74,6 @@ const SCANNER_MAINNET_URL = "https://polygonscan.com"
 
 const CONSTANTS = {
   CATEGORIES,
-  PURPOSES,
-  STORAGE_TYPE,
-  ACTIONS,
-  ACTION_STATUS,
-  COLLAB_TYPE,
-  ACTIONS,
-  ENTITIES,
-  CURRENCY,
-  FILTERS_TYPES,
-  COOKIE_TOKEN_PHRASE,
-  SIGNATURE_MESSAGE,
-  SCANNER_MAINNET_URL,
-  SCANNER_TESTNET_URL
+  STATUS
 };
-
-export default CONSTANTS;
+export default CONSTANTS
