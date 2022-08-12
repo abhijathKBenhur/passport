@@ -12,7 +12,7 @@ const AxiosInstance = axios.create({
 
 
 AxiosInstance.interceptors.request.use(function(config) {
-  config.headers["x-access-token"] =  sessionStorage.getItem(CONSTANTS.COOKIE_TOKEN_PHRASE);
+  config.headers["x-access-token"] =  sessionStorage.getItem("PASSPORT_TOKEN");
   return config;
 });
 

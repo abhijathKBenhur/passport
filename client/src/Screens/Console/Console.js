@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import { Avatar, Box, Card, CardContent, Divider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -26,6 +26,7 @@ import Customers from "../Customers/Customers";
 import Wallet from "../Wallet/Wallet";
 import Account from "../Account/Account";
 import Configure from "../Configure/Configure";
+import AuthInterface from "../../Interfaces/AuthInterface";
 
 const drawerWidth = 260;
 
@@ -81,6 +82,16 @@ const mdTheme = createTheme();
 export default function Console() {
   const [open, setOpen] = React.useState(true);
   const [activeMenu, setActiveMenu] = React.useState("Dashboard");
+
+  useEffect(() => {
+    let liveToken = sessionStorage.getItem("PASSPORT_TOKEN")
+    AuthInterface.validate({token:liveToken}).then(success =>{
+
+    }).catch(err =>{
+
+    })
+  },[]);
+
   const sideBar = [
     {
       name: "Dashboard",

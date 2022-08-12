@@ -37,7 +37,7 @@ export default function Login() {
           (success) => {
             console.log(success);
             sessionStorage.setItem("PASSPORT_TOKEN", success?.data?.token);
-            history.push("/dashboard");
+            history.push("/console");
           }
         );
       } else {
@@ -64,7 +64,8 @@ export default function Login() {
       }
     } else {
       AuthInterface.signIn(submitData).then((success) => {
-        console.log("Login succesfully");
+        console.log("Login succesful");
+        sessionStorage.setItem("PASSPORT_TOKEN", success?.data?.token);
       });
     }
   };

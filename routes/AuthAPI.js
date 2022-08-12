@@ -99,11 +99,13 @@ register = async (req, res) => {
   CompanySchema.findOneAndUpdate({tenantId:newCompany.tenantId, email:newCompany.email}, updates, { upsert: true })
     .then((user, b) => {
       console.log("company registered", user, b);
-      var token = jwt.sign({ 
+      let data = { 
         clientId:newCompany.clientId,  
         key:newCompany.key,  
         secret:newCompany.secret,  
-      }, process.env.TWEETER_KOO);
+      }
+      console.log("encrypting",data)
+      var token = jwt.sign(data, process.env.TWEETER_KOO);
       console.log("token", token)
       return res.status(201).json({
         success: true,
@@ -121,34 +123,57 @@ register = async (req, res) => {
     });
 };
 
-getUserInfo = async (req, res) => {
+signIn = async (req, res) => {
   let findCriteria = {};
   if (req.body.email) {
     findCriteria.email = req.body.email;
   }
-  if (req.body.userName) {
-    findCriteria.userName = req.body.userName;
+  if (req.body.password) {
+    findCriteria.password = AES.encrypt(req.body.password, process.env.TWEETER_KOO).toString();
   }
   // findCriteria.userName = "$regex: " + req.body.userName +" , $options: 'i'";
 
-  if (req.body.metamaskId) {
-    findCriteria.metamaskId = req.body.metamaskId;
-  }
-
-  if (req.body.myReferralCode) {
-    console.log("myReferralCode," + req.body.myReferralCode);
-    findCriteria.myReferralCode = req.body.myReferralCode;
-  }
-  // await Company.findOne(findCriteria,{email:0}, (err, user) => {
-  await Company.findOne(findCriteria, (err, user) => {
-    console.log(user);
+  await Company.findOne(findCriteria, (err, company) => {
+    console.log(company);
     if (err) {
       return res.status(400).json({ success: false, error: err });
     }
-    if (!user || !user.userName) {
+    if (!company || !company.userName) {
       return res.status(404).json({ success: true, data: [] });
     }
-    return res.status(200).json({ success: true, data: user });
+    var token = jwt.sign({ 
+      clientId:company.clientId,  
+      key:company.key,  
+      secret:company.secret,  
+    }, process.env.TWEETER_KOO);
+    console.log("token", token)
+    return res.status(200).json({ success: true, data: user, token });
+  }).catch((err) => {
+    return res.status(400).json({ success: false, data: err });
+  });
+};
+
+validate = async (req, res) => {
+  if (req.body.token) {
+    let token = req.body.token;
+    let decrypted = jwt.verify(token, process.env.TWEETER_KOO);
+
+    findCriteria = {
+      email: decrypted.email,
+      key: decrypted.key,
+
+    }
+  }
+  await CompanySchema.findOne(findCriteria, (err, company) => {
+    console.log(company);
+    if (err) {
+      return res.status(400).json({ success: false, error: err });
+    }
+    if (!company || !company.userName) {
+      return res.status(404).json({ success: true, data: [] });
+    }
+   
+    return res.status(200).json({ success: true,  token: req.body.token });
   }).catch((err) => {
     return res.status(400).json({ success: false, data: err });
   });
@@ -237,37 +262,6 @@ getUserInfo = async (req, res) => {
   }).catch((err) => {
     return res.status(400).json({ success: false, data: err });
   });
-};
-
-updateUser = async (req, res) => {
-  const newUser = req.body;
-  let updates = {
-    firstName: newUser.firstName,
-    lastName: newUser.lastName,
-    email: newUser.email,
-    facebookUrl: newUser.facebookUrl,
-    linkedInUrl: newUser.linkedInUrl,
-    twitterUrl: newUser.twitterUrl,
-    instaUrl: newUser.instaUrl,
-    bio: newUser.bio,
-    imageUrl: newUser.imageUrl
-  };
-  console.log("testing");
-  Company.findByIdAndUpdate(req.body.id, updates, { upsert: true })
-    .then((user, b) => {
-      console.log("user updated", user, b);
-      return res.status(201).json({
-        success: true,
-        data: user,
-        message: "user updated!",
-      });
-    })
-    .catch((error) => {
-      return res.status(400).json({
-        error,
-        message: "user update failed!",
-      });
-    });
 };
 
 getUsers = async (req, res) => {
@@ -521,4 +515,6 @@ Welcome to the Tribe
 };
 router.post("/register", register);
 router.post("/verify", verify);
+router.post("/validate", validate);
+
 module.exports = router;

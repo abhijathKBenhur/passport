@@ -11,7 +11,6 @@ export const getNewConnection = metamaskID => {
     catch(err){
         console.log("SOCKET INIT FAILURE", err)
     }
-        
 
     return liveInstance
 }

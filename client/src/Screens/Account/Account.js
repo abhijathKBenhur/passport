@@ -11,30 +11,11 @@ import {
   Toolbar,
   Container
 } from '@mui/material';
+import CompanyInterface from '../../Interfaces/CompanyInterface';
 
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  }
-];
 
 const Configure = (props) => {
   const [values, setValues] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    state: '',
-    country: ''
   });
 
   const handleChange = (event) => {
@@ -42,7 +23,17 @@ const Configure = (props) => {
       ...values,
       [event.target.name]: event.target.value
     });
+    console.log(values)
   };
+
+  const saveDetails = () =>{
+    let detailsString = JSON.stringify(values)
+    CompanyInterface.updateDetails({details:detailsString}).then(success =>{
+
+    }).catch(error =>{
+
+    })
+  }
 
   return (
     <Box
@@ -207,6 +198,9 @@ const Configure = (props) => {
           <Button
             color="primary"
             variant="contained"
+            onClick={() =>{
+              saveDetails()
+            }}
           >
             Save details
           </Button>

@@ -10,9 +10,15 @@ export const configureDistribution = (request) =>  {
     return AxiosInstance.post("/configureDistribution",request) 
 }
 
-const ConfigInterface = {
-    getbalance,
-    configureDistribution
+export const updateDetails = (request) =>  { 
+    return AxiosInstance.post("/updateDetails",request) 
 }
 
-export default ConfigInterface
+
+const CompanyInterface = {
+    getbalance,
+    configureDistribution,
+    updateDetails
+}
+
+export default CompanyInterface

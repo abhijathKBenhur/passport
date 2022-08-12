@@ -11,8 +11,8 @@ const Company = new Schema(
     status:{ type: String },
     tenantId: { type: String },
     key: { type: String },
-    secret: { type: String }
-
+    secret: { type: String },
+    details: { type: String },
   },
   { timestamps: true }
 );

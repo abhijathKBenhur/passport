@@ -12,11 +12,16 @@ export const register = (request) =>  {
 export const verify = (request) =>  { 
     return AxiosInstance.post("/auth/verify",request) 
 }
+export const validate = (request) =>  { 
+    return AxiosInstance.post("/auth/validate",request) 
+}
+
 
 const AuthInterface = {
     signIn,
     register,
-    verify
+    verify,
+    validate
 }
 
 export default AuthInterface
