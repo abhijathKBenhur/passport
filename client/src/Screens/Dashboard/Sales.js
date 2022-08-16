@@ -92,7 +92,7 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
             Last 7 days
           </Button>
         )}
-        title="Latest Sales"
+        title="Latest incentives"
       />
       <Divider />
       <CardContent>

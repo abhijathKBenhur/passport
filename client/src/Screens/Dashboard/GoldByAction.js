@@ -4,7 +4,7 @@ import LaptopMacIcon from '@mui/icons-material/LaptopMac';
 import PhoneIcon from '@mui/icons-material/Phone';
 import TabletIcon from '@mui/icons-material/Tablet';
 
- const TrafficByDevice = (props) => {
+ const GoldByAction = (props) => {
   const theme = useTheme();
 
   const data = {
@@ -17,7 +17,7 @@ import TabletIcon from '@mui/icons-material/Tablet';
         hoverBorderColor: '#FFFFFF'
       }
     ],
-    labels: ['Desktop', 'Tablet', 'Mobile']
+    labels: ['Sign up', 'Milestone', 'Referal']
   };
 
   const options = {
@@ -44,19 +44,19 @@ import TabletIcon from '@mui/icons-material/Tablet';
 
   const devices = [
     {
-      title: 'Desktop',
+      title: 'Milestone',
       value: 63,
       icon: LaptopMacIcon,
       color: '#3F51B5'
     },
     {
-      title: 'Tablet',
+      title: 'Refferal',
       value: 15,
       icon: TabletIcon,
       color: '#E53935'
     },
     {
-      title: 'Mobile',
+      title: 'Sign up',
       value: 23,
       icon: PhoneIcon,
       color: '#FB8C00'
@@ -65,7 +65,7 @@ import TabletIcon from '@mui/icons-material/Tablet';
 
   return (
     <Card {...props}>
-      <CardHeader title="Traffic by Device" />
+      <CardHeader title="TRBG by actions" />
       <Divider />
       <CardContent>
         <Box
@@ -88,7 +88,6 @@ import TabletIcon from '@mui/icons-material/Tablet';
         >
           {devices.map(({
             color,
-            icon: Icon,
             title,
             value
           }) => (
@@ -99,7 +98,7 @@ import TabletIcon from '@mui/icons-material/Tablet';
                 textAlign: 'center'
               }}
             >
-              <Icon color="action" />
+              {/* <Icon color="action" /> */}
               <Typography
                 color="textPrimary"
                 variant="body1"
@@ -121,4 +120,4 @@ import TabletIcon from '@mui/icons-material/Tablet';
   );
 };
 
-export default TrafficByDevice
+export default GoldByAction

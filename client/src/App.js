@@ -28,7 +28,7 @@ const App = (props) => {
                 <Route
                   exact
                   path="/"
-                  render={() => <Redirect from="/" to="/home" />}
+                  render={() => <Redirect from="/" to="/console" />}
                 />
               </Switch>
             </SnackbarProvider>

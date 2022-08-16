@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import { Avatar, Box, Card, CardContent, Divider } from "@mui/material";
+import { Avatar, Box, Grid, CardContent, Divider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -8,7 +8,7 @@ import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-
+import { useHistory } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -27,6 +27,7 @@ import Wallet from "../Wallet/Wallet";
 import Account from "../Account/Account";
 import Configure from "../Configure/Configure";
 import AuthInterface from "../../Interfaces/AuthInterface";
+import WalletCard from "../Wallet/WalletCard";
 
 const drawerWidth = 260;
 
@@ -82,15 +83,18 @@ const mdTheme = createTheme();
 export default function Console() {
   const [open, setOpen] = React.useState(true);
   const [activeMenu, setActiveMenu] = React.useState("Dashboard");
+  const history = useHistory();
+  // useEffect(() => {
+  //   let liveToken = sessionStorage.getItem("PASSPORT_TOKEN")
+  //   if(!liveToken){
+  //     history.push("/login");
+  //   }
+  //   AuthInterface.validate({token:liveToken}).then(success =>{
 
-  useEffect(() => {
-    let liveToken = sessionStorage.getItem("PASSPORT_TOKEN")
-    AuthInterface.validate({token:liveToken}).then(success =>{
+  //   }).catch(err =>{
 
-    }).catch(err =>{
-
-    })
-  },[]);
+  //   })
+  // },[]);
 
   const sideBar = [
     {
@@ -221,7 +225,9 @@ export default function Console() {
             </React.Fragment>
           </List>
         </Drawer>
+        <Box sx={{ display: "flex" }}>
         {getConsoleContent()}
+        </Box>
       </Box>
     </ThemeProvider>
   );

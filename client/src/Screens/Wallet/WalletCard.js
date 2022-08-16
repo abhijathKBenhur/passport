@@ -4,7 +4,6 @@ import MoneyIcon from '@mui/icons-material/Money';
 
 const WalletCard = (props) => (
   <Card
-    sx={{ height: '100%' }}
     {...props}
   >
     <CardContent>
@@ -19,13 +18,13 @@ const WalletCard = (props) => (
             gutterBottom
             variant="overline"
           >
-            BUDGET
+            Wallet
           </Typography>
           <Typography
             color="textPrimary"
             variant="h4"
           >
-            $24k
+            2400 TRBG
           </Typography>
         </Grid>
         <Grid item>
@@ -47,7 +46,7 @@ const WalletCard = (props) => (
           alignItems: 'center'
         }}
       >
-        <ArrowDownwardIcon color="error" />
+        {/* <ArrowDownwardIcon color="error" /> */}
         <Typography
           color="error"
           sx={{
@@ -55,13 +54,13 @@ const WalletCard = (props) => (
           }}
           variant="body2"
         >
-          12%
+          {/* 12% */}
         </Typography>
         <Typography
           color="textSecondary"
           variant="caption"
         >
-          Since last month
+          Lasts for 32 more transactions
         </Typography>
       </Box>
     </CardContent>

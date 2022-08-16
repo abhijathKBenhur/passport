@@ -63,7 +63,7 @@ export default function Login() {
         });
       }
     } else {
-      AuthInterface.signIn(submitData).then((success) => {
+      AuthInterface.login(submitData).then((success) => {
         console.log("Login succesful");
         sessionStorage.setItem("PASSPORT_TOKEN", success?.data?.token);
       });

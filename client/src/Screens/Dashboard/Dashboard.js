@@ -1,7 +1,7 @@
 import { Box, Container, Grid ,Toolbar} from '@mui/material';
 import LatestOrders  from './LatestOrders';
 import  Sales from './Sales';
-import  TrafficByDevice from './TrafficByDevice';
+import  GoldByAction from './GoldByAction';
 
 const Dashboard = () => (
   <>
@@ -37,7 +37,7 @@ const Dashboard = () => (
             xl={3}
             xs={12}
           >
-            <TrafficByDevice sx={{ height: '100%' }} />
+            <GoldByAction sx={{ height: '100%' }} />
           </Grid>
           <Grid
             item

@@ -7,6 +7,7 @@ const nodeMailer = require("nodemailer");
 const uuid = require("uuid");
 const jwt = require("jsonwebtoken");
 var AES = require("crypto-js/aes");
+const { find } = require("../db-config/Company.schema");
 
 
 
@@ -123,7 +124,7 @@ register = async (req, res) => {
     });
 };
 
-signIn = async (req, res) => {
+login = async (req, res) => {
   let findCriteria = {};
   if (req.body.email) {
     findCriteria.email = req.body.email;
@@ -131,9 +132,10 @@ signIn = async (req, res) => {
   if (req.body.password) {
     findCriteria.password = AES.encrypt(req.body.password, process.env.TWEETER_KOO).toString();
   }
+  console.log("criterua" , findCriteria)
   // findCriteria.userName = "$regex: " + req.body.userName +" , $options: 'i'";
 
-  await Company.findOne(findCriteria, (err, company) => {
+  await CompanySchema.findOne(findCriteria, (err, company) => {
     console.log(company);
     if (err) {
       return res.status(400).json({ success: false, error: err });
@@ -154,16 +156,17 @@ signIn = async (req, res) => {
 };
 
 validate = async (req, res) => {
-  if (req.body.token) {
+  console.log("decrypted", decrypted)
+
     let token = req.body.token;
     let decrypted = jwt.verify(token, process.env.TWEETER_KOO);
+    console.log("decrypted", decrypted)
 
-    findCriteria = {
+    let findCriteria = {
       email: decrypted.email,
       key: decrypted.key,
 
     }
-  }
   await CompanySchema.findOne(findCriteria, (err, company) => {
     console.log(company);
     if (err) {
@@ -516,5 +519,7 @@ Welcome to the Tribe
 router.post("/register", register);
 router.post("/verify", verify);
 router.post("/validate", validate);
+router.post("/login", login);
+
 
 module.exports = router;

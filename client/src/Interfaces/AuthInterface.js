@@ -2,8 +2,8 @@ import _ from "lodash";
 
 import AxiosInstance from "../wrapper/apiWrapper"
 
-export const signIn = (request) => {
-    return AxiosInstance.post("/auth/signIn",request)
+export const login = (request) => {
+    return AxiosInstance.post("/auth/login",request)
 }
 
 export const register = (request) =>  { 
@@ -18,7 +18,7 @@ export const validate = (request) =>  {
 
 
 const AuthInterface = {
-    signIn,
+    login,
     register,
     verify,
     validate
