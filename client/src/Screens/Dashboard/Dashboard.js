@@ -15,7 +15,6 @@ const Dashboard = () => (
         overflow: "auto",
       }}
     >
-      <Toolbar />
       <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
         <Grid
           container

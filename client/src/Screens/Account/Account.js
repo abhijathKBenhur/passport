@@ -46,7 +46,6 @@ const Configure = (props) => {
         overflow: "auto",
       }}
     >
-      <Toolbar />
       <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
       <form
       autoComplete="off"

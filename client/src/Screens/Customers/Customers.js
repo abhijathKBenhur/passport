@@ -133,7 +133,6 @@ export const Customers = ({ ...rest }) => {
         overflow: "auto",
       }}
     >
-      <Toolbar />
       <Container maxWidth="" sx={{ mt: 4, mb: 2 }}>
         <Box
           sx={{

@@ -117,8 +117,7 @@ const Configure = (props) => {
         overflow: "auto",
       }}
     >
-      <Toolbar />
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
         <form autoComplete="off" noValidate {...props}>
           <Card>
             <CardHeader
@@ -126,9 +125,10 @@ const Configure = (props) => {
               title="Configure"
             />
             <Divider />
+            <CardContent>
+
             {incentiveConfig.map((item, index) => {
               return (
-                <CardContent>
                   <Grid container spacing={3}>
                     <Grid item md={6} xs={12}>
                       <TextField
@@ -196,9 +196,10 @@ const Configure = (props) => {
                     }
                     </Grid>
                   </Grid>
-                </CardContent>
               );
             })}
+                </CardContent>
+
 
             <Divider />
             <Box

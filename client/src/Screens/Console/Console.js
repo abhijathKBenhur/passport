@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import { Avatar, Box, Grid, CardContent, Divider } from "@mui/material";
+import { Avatar, Box, Grid, CardContent, Divider, Card } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -167,12 +167,9 @@ export default function Console() {
             >
               <MenuIcon />
             </IconButton>
-          
-            <IconButton color="inherit" sx={{
-              
 
-            }}>
-              <NotificationsIcon color="info"/>
+            <IconButton color="inherit" sx={{}}>
+              <NotificationsIcon color="info" />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -225,8 +222,24 @@ export default function Console() {
             </React.Fragment>
           </List>
         </Drawer>
-        <Box sx={{ display: "flex" }}>
-        {getConsoleContent()}
+
+        <Box
+          component="main"
+          sx={{
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? "#F9FAFC"
+                : theme.palette.grey[900],
+            flexGrow: 1,
+            height: "100vh",
+            overflow: "auto",
+          }}
+        >
+          <Toolbar />
+          {/*  */}
+            <Grid item xs={12} md={12} lg={12}>
+              {getConsoleContent()}
+            </Grid>
         </Box>
       </Box>
     </ThemeProvider>
