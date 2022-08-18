@@ -20,6 +20,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import LogoutIcon from "@mui/icons-material/Logout";
 import LayersIcon from "@mui/icons-material/Layers";
 import Dashboard from "../Dashboard/Dashboard";
 import Customers from "../Customers/Customers";
@@ -28,6 +29,8 @@ import Account from "../Account/Account";
 import Configure from "../Configure/Configure";
 import AuthInterface from "../../Interfaces/AuthInterface";
 import WalletCard from "../Wallet/WalletCard";
+import { useSnackbar } from "react-simple-snackbar";
+
 
 const drawerWidth = 260;
 
@@ -84,17 +87,18 @@ export default function Console() {
   const [open, setOpen] = React.useState(true);
   const [activeMenu, setActiveMenu] = React.useState("Dashboard");
   const history = useHistory();
-  // useEffect(() => {
-  //   let liveToken = sessionStorage.getItem("PASSPORT_TOKEN")
-  //   if(!liveToken){
-  //     history.push("/login");
-  //   }
-  //   AuthInterface.validate({token:liveToken}).then(success =>{
+  const [openSnackbar, closeSnackbar] = useSnackbar();
+  useEffect(() => {
+    let liveToken = sessionStorage.getItem("PASSPORT_TOKEN")
+    if(!liveToken){
+      history.push("/login");
+    }
+    AuthInterface.validate({token:liveToken}).then(success =>{
+      
+    }).catch(err =>{
 
-  //   }).catch(err =>{
-
-  //   })
-  // },[]);
+    })
+  },[]);
 
   const sideBar = [
     {
@@ -199,6 +203,7 @@ export default function Console() {
               {sideBar.map((item) => {
                 return (
                   <ListItemButton
+                  style={{cursor:"pointer"}}
                     onClick={() => {
                       setActiveMenu(item.name);
                     }}
@@ -219,8 +224,33 @@ export default function Console() {
                   </ListItemButton>
                 );
               })}
+             
             </React.Fragment>
           </List>
+          <ListItemButton
+              style={{
+                position:"absolute",
+                bottom:"0",
+                cursor:"pointer"
+              }}
+                onClick={() => {
+                  history.push("/login");
+                }}
+              >
+                <ListItemIcon
+                  style={{
+                    color: "#9CA3AF",
+                  }}
+                >
+                  <LogoutIcon></LogoutIcon>
+                </ListItemIcon>
+                <ListItemText
+                  primary="Logout"
+                  style={{
+                    color: "#9CA3AF",
+                  }}
+                />
+              </ListItemButton>
         </Drawer>
 
         <Box
@@ -237,9 +267,9 @@ export default function Console() {
         >
           <Toolbar />
           {/*  */}
-            <Grid item xs={12} md={12} lg={12}>
-              {getConsoleContent()}
-            </Grid>
+          <Grid item xs={12} md={12} lg={12}>
+            {getConsoleContent()}
+          </Grid>
         </Box>
       </Box>
     </ThemeProvider>

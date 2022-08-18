@@ -7,18 +7,23 @@ export const getbalance = (request) => {
 }
 
 export const configureDistribution = (request) =>  { 
-    return AxiosInstance.post("/configureDistribution",request) 
+    return AxiosInstance.post("/company/configureDistribution",request) 
 }
 
 export const updateDetails = (request) =>  { 
-    return AxiosInstance.post("/updateDetails",request) 
+    return AxiosInstance.post("/company/updateDetails",request) 
+}
+
+export const getDetails = (request) =>  { 
+    return AxiosInstance.get("/company/getDetails",request) 
 }
 
 
 const CompanyInterface = {
     getbalance,
     configureDistribution,
-    updateDetails
+    updateDetails,
+    getDetails
 }
 
 export default CompanyInterface

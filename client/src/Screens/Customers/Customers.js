@@ -18,7 +18,8 @@ import {
   TextField,
   InputAdornment,
   SvgIcon,
-  Button,
+  Divider,
+  CardHeader
 } from "@mui/material";
 import getInitials from "../../utils/get-initials";
 import { v4 as uuid } from "uuid";
@@ -143,9 +144,6 @@ export const Customers = ({ ...rest }) => {
             m: -1,
           }}
         >
-          <Typography sx={{ m: 1 }} variant="h4">
-            Customers
-          </Typography>
           {/* <Box sx={{ m: 1 }}>
             <Button startIcon={<Upload fontSize="small" />} sx={{ mr: 1 }}>
               Import
@@ -153,13 +151,18 @@ export const Customers = ({ ...rest }) => {
             <Button startIcon={<Download fontSize="small" />} sx={{ mr: 1 }}>
               Export
             </Button>
-            <Button color="primary" variant="contained">
+            <Button color="secondary" variant="contained">
               Add Customers
             </Button>
           </Box> */}
         </Box>
         <Box sx={{ mt: 1 }}>
           <Card>
+            <CardHeader
+              subheader="List of customers"
+              title="Customers"
+            />
+            <Divider />
             <CardContent>
               <Box sx={{ maxWidth: 500 }}>
                 <TextField

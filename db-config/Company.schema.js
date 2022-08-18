@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const Company = new Schema(
   {
     password: { type: String },
-    companyName: { type: String },
     goldConfig: { type: String },
     balance: { type: Number },
     email:{ type: String },

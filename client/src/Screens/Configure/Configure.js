@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import {
   Box,
   Button,
@@ -12,6 +12,8 @@ import {
   Container,
   Typography,
 } from "@mui/material";
+import { useSnackbar } from "react-simple-snackbar";
+import CompanyInterface from "../../Interfaces/CompanyInterface";
 
 const states = [
   {
@@ -77,13 +79,28 @@ const Configure = (props) => {
     action: "sign-up",
     value: "",
   };
+  const [openSnackbar, closeSnackbar] = useSnackbar();
+  const [incentiveConfig, setIncentiveConfig] = useState([])
+  const [editMode, setEditMode] = useState(false)
 
-  const [incentiveConfig, setIncentiveConfig] = useState([
-    {
-      action: "sign-up",
-      value: "",
-    }
-  ])
+  useEffect(() => {
+    CompanyInterface.getDetails().then(success =>{
+      let details = success?.data?.data?.goldConfig
+      try{
+        setIncentiveConfig(JSON.parse(details) ||
+        [{
+          action: "sign-up",
+          value: "",
+        }]
+        )
+      }
+      catch(err){
+        console.log("Could not fetch company details")
+      }
+    }).catch(err =>{
+
+    })
+  },[]);
 
   const handleChange = (event, index) => {
     let incentiveConfigCopy = [...incentiveConfig]
@@ -106,6 +123,25 @@ const Configure = (props) => {
     setIncentiveConfig(incentiveConfigCopy)
   }
 
+  const submit = () =>{
+    if(editMode){
+      CompanyInterface.configureDistribution({
+        goldConfig:JSON.stringify(incentiveConfig)
+      }).then(success =>{
+        // NotificationService.openNotification(
+        //   "Configuration has been updated successfuly",
+        //   2000
+        // );
+        setEditMode(false)
+      }).catch(err =>{
+        console.log("error", err)
+      })
+    }else{
+      setEditMode(true)
+    }
+    
+  }
+
   return (
     <Box
       component="main"
@@ -115,8 +151,7 @@ const Configure = (props) => {
         flexGrow: 1,
         height: "100vh",
         overflow: "auto",
-      }}
-    >
+      }}>
       <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
         <form autoComplete="off" noValidate {...props}>
           <Card>
@@ -129,9 +164,10 @@ const Configure = (props) => {
 
             {incentiveConfig.map((item, index) => {
               return (
-                  <Grid container spacing={3}>
+                  <Grid container spacing={3} key={index} style={{marginTop:"10px"}}>
                     <Grid item md={6} xs={12}>
                       <TextField
+                      disabled={!editMode}
                         fullWidth
                         label="Select action"
                         name="action"
@@ -151,6 +187,7 @@ const Configure = (props) => {
                     </Grid>
                     <Grid item md={2} xs={2}>
                       <TextField
+                      disabled={!editMode}
                         fullWidth
                         label="value"
                         name="value"
@@ -162,6 +199,7 @@ const Configure = (props) => {
                     </Grid>
                     <Grid item md={2} xs={2}>
                       <TextField
+                      disabled={!editMode}
                         fullWidth
                         disabled
                         label="value"
@@ -183,14 +221,14 @@ const Configure = (props) => {
                       xs={2}
                     >
                       {" "}
-                      { index == incentiveConfig.length -1 ? <Button color="primary" variant="outlined" sx={{width:"100%"}} onClick={()=> {
+                      { index == incentiveConfig.length -1 ? <Button color="secondary" variant="outlined" sx={{width:"100%"}} onClick={()=> {
                         addBlank()
-                      }}>
+                      }} disabled={!editMode}>
                         Add
                       </Button>
-                    : <Button color="primary" variant="outlined" sx={{width:"100%"}} onClick={()=> {
+                    : <Button color="secondary" variant="outlined" sx={{width:"100%"}} onClick={()=> {
                       removeAt(index)
-                    }}>
+                    }} disabled={!editMode}>
                     Remove
                   </Button>
                     }
@@ -201,16 +239,23 @@ const Configure = (props) => {
                 </CardContent>
 
 
-            <Divider />
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "flex-end",
                 p: 2,
+                gap:1
               }}
             >
-              <Button color="primary" variant="contained">
-                Save details
+              {editMode && <Button color="secondary" variant="contained" onClick={() =>{
+                setEditMode(false)
+              }}>
+                Cancel
+              </Button>}
+              <Button color="secondary" variant="contained" onClick={() =>{
+                submit()
+              }}>
+                {editMode ? "Update details" : "Edit"}
               </Button>
             </Box>
           </Card>
