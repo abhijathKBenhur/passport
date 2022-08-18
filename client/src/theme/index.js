@@ -157,15 +157,15 @@ const theme = createTheme({
     },
     divider: '#E6E8F0',
     primary: {
-      main: '#5048E5',
-      light: '#828DF8',
-      dark: '#3832A0',
+      main: '#30B981',
+      light: '#3FC79A',
+      dark: '#0B815A',
       contrastText: '#FFFFFF'
     },
     secondary: {
-      main: '#10B981',
-      light: '#3FC79A',
-      dark: '#0B815A',
+      main: '#121828',
+      light: '#121828',
+      dark: '#121828',
       contrastText: '#FFFFFF'
     },
     success: {

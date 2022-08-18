@@ -5,13 +5,16 @@ const Company = new Schema(
   {
     password: { type: String },
     goldConfig: { type: String },
-    balance: { type: Number },
+    distributed: { type: Number },
     email:{ type: String },
     status:{ type: String },
     tenantId: { type: String },
     key: { type: String },
     secret: { type: String },
     details: { type: String },
+    ownerWallet: { type: String },
+    contractAddress: { type: String },
+    pKey: { type: String },
   },
   { timestamps: true }
 );

@@ -143,16 +143,7 @@ const Configure = (props) => {
   }
 
   return (
-    <Box
-      component="main"
-      sx={{
-        backgroundColor: (theme) =>
-          theme.palette.mode === "light" ? "#F9FAFC" : theme.palette.grey[900],
-        flexGrow: 1,
-        height: "100vh",
-        overflow: "auto",
-      }}>
-      <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
+  
         <form autoComplete="off" noValidate {...props}>
           <Card>
             <CardHeader
@@ -260,8 +251,6 @@ const Configure = (props) => {
             </Box>
           </Card>
         </form>
-      </Container>
-    </Box>
   );
 };
 

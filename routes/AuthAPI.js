@@ -103,7 +103,7 @@ register = async (req, res) => {
   };
   console.log("testing register");
   CompanySchema.findOneAndUpdate(
-    { tenantId: newCompany.tenantId, email: newCompany.email },
+    { tenantId: newCompany.tenantId, email: newCompany.email,distributed:0 },
     updates,
     { upsert: true }
   )

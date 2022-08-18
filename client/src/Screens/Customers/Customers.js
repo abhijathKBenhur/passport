@@ -18,7 +18,7 @@ import {
   TextField,
   InputAdornment,
   SvgIcon,
-  Divider,
+  Grid,
   CardHeader
 } from "@mui/material";
 import getInitials from "../../utils/get-initials";
@@ -124,65 +124,7 @@ export const Customers = ({ ...rest }) => {
   };
 
   return (
-    <Box
-      component="main"
-      sx={{
-        backgroundColor: (theme) =>
-          theme.palette.mode === "light" ? "#F9FAFC" : theme.palette.grey[900],
-        flexGrow: 1,
-        height: "100vh",
-        overflow: "auto",
-      }}
-    >
-      <Container maxWidth="" sx={{ mt: 4, mb: 2 }}>
-        <Box
-          sx={{
-            alignItems: "center",
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            m: -1,
-          }}
-        >
-          {/* <Box sx={{ m: 1 }}>
-            <Button startIcon={<Upload fontSize="small" />} sx={{ mr: 1 }}>
-              Import
-            </Button>
-            <Button startIcon={<Download fontSize="small" />} sx={{ mr: 1 }}>
-              Export
-            </Button>
-            <Button color="secondary" variant="contained">
-              Add Customers
-            </Button>
-          </Box> */}
-        </Box>
-        <Box sx={{ mt: 1 }}>
-          <Card>
-            <CardHeader
-              subheader="List of customers"
-              title="Customers"
-            />
-            <Divider />
-            <CardContent>
-              <Box sx={{ maxWidth: 500 }}>
-                <TextField
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SvgIcon color="action" fontSize="small">
-                          <Search />
-                        </SvgIcon>
-                      </InputAdornment>
-                    ),
-                  }}
-                  placeholder="Search customer"
-                  variant="outlined"
-                />
-              </Box>
-            </CardContent>
-          </Card>
-        </Box>
+    <Grid>
         <Box
           component="main"
           sx={{
@@ -192,12 +134,13 @@ export const Customers = ({ ...rest }) => {
                 : theme.palette.grey[900],
             flexGrow: 1,
             height: "100vh",
-            overflow: "auto",
           }}
         >
-          <Toolbar />
-          <Container maxWidth="" sx={{ mt: 0, mb: 2 }}>
             <Card {...rest}>
+            <CardHeader
+              subheader="List of customers"
+              title="Customers"
+            />
               <PerfectScrollbar>
                 <Box sx={{ minWidth: 1050 }}>
                   <Table>
@@ -249,10 +192,8 @@ export const Customers = ({ ...rest }) => {
                 rowsPerPageOptions={[5, 10, 25]}
               />
             </Card>
-          </Container>
         </Box>
-      </Container>
-    </Box>
+        </Grid>
   );
 };
 

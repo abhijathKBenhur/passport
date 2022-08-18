@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import { Avatar, Box, Grid, CardContent, Divider, Card } from "@mui/material";
+import { Button, Box, Grid, Container, Divider, Card } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -12,6 +12,7 @@ import { useHistory } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -30,15 +31,24 @@ import Configure from "../Configure/Configure";
 import AuthInterface from "../../Interfaces/AuthInterface";
 import WalletCard from "../Wallet/WalletCard";
 import { useSnackbar } from "react-simple-snackbar";
-
+import ReceiptIcon from '@mui/icons-material/Receipt';
 
 const drawerWidth = 260;
+const drawerWidthCollapsed = 71;
+const dark = "#111827"
+const lightDark = "#1A2130"
+const highlightGreen = "#30B981"
+const greyText = "#9CA3AF"
+const greyBackground = "#F9FAFC"
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: "#FFFFFF",
+  "@media all": {
+    minHeight: 128,
+  },
+  width: `calc(100% - ${drawerWidthCollapsed}px)`,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -59,8 +69,8 @@ const Drawer = styled(MuiDrawer, {
   "& .MuiDrawer-paper": {
     position: "relative",
     whiteSpace: "nowrap",
-    color: "#9CA3AF",
-    backgroundColor: "#111827",
+    color: greyText,
+    backgroundColor: dark,
     width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
@@ -85,20 +95,23 @@ const mdTheme = createTheme();
 
 export default function Console() {
   const [open, setOpen] = React.useState(true);
+  const [company, setCompany] = React.useState({});
   const [activeMenu, setActiveMenu] = React.useState("Dashboard");
   const history = useHistory();
   const [openSnackbar, closeSnackbar] = useSnackbar();
   useEffect(() => {
-    let liveToken = sessionStorage.getItem("PASSPORT_TOKEN")
-    if(!liveToken){
+    let liveToken = sessionStorage.getItem("PASSPORT_TOKEN");
+    if (!liveToken) {
       history.push("/login");
     }
-    AuthInterface.validate({token:liveToken}).then(success =>{
-      
-    }).catch(err =>{
-
-    })
-  },[]);
+    AuthInterface.validate({ token: liveToken })
+      .then((success) => {
+        let companyData = success?.data?.company
+        let companyDetails = companyData ? JSON.parse(companyData?.details) : {}
+        setCompany({...companyData,details:companyDetails})
+      })
+      .catch((err) => {});
+  }, []);
 
   const sideBar = [
     {
@@ -109,10 +122,7 @@ export default function Console() {
       name: "Customers",
       icon: <PeopleIcon />,
     },
-    {
-      name: "Wallet",
-      icon: <ShoppingCartIcon />,
-    },
+   
     {
       name: "Configure",
       icon: <BarChartIcon />,
@@ -120,6 +130,10 @@ export default function Console() {
     {
       name: "Account",
       icon: <LayersIcon />,
+    },
+     {
+      name: "Transactions",
+      icon: <ReceiptIcon />,
     },
   ];
   const toggleDrawer = () => {
@@ -156,46 +170,92 @@ export default function Console() {
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: "24px", // keep right padding when drawer closed
+              backgroundColor: "#F1F1F1",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              alignContent: "center",
             }}
           >
-            <IconButton
-              edge="start"
-              color="info"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
+            <Box className="left-actions">
+            <Button
+              color="error"
+              size="small"
+              variant="contained"
+            >
+              Buy TRBG
+            </Button>
+            </Box>
+            <Box className="right-actions">
+             <Typography style={{color:"red"}}>{company?.details?.companyName}</Typography>
+            </Box>
+          </Toolbar>
+          <Toolbar
+            sx={{
+              p: "0 !important", // keep right padding when drawer closed
+            }}
+          >
+            <Box
+              component="main"
               sx={{
-                marginRight: "36px",
-                ...(open && { display: "none" }),
+                backgroundColor: (theme) =>
+                greyBackground,
+                flexGrow: 1,
+                overflow: "auto",
               }}
             >
-              <MenuIcon />
-            </IconButton>
-
-            <IconButton color="inherit" sx={{}}>
-              <NotificationsIcon color="info" />
-            </IconButton>
+              <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
+                <Grid container xs={12} md={12} lg={12} spacing={3}>
+                  <Grid item xs={12} md={4} lg={3}>
+                    <WalletCard type="balance" />
+                  </Grid>
+                  <Grid item xs={12} md={4} lg={3}>
+                    <WalletCard type="given" />
+                  </Grid>
+                  <Grid item xs={12} md={4} lg={3}>
+                    <WalletCard type="taken" />
+                  </Grid>
+                  <Grid item xs={12} md={4} lg={3}>
+                    <WalletCard type="as" />
+                  </Grid>
+                </Grid>
+              </Container>
+            </Box>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open} sx={{}}>
           <Toolbar
             sx={{
               backgroundColor: (theme) =>
-                theme.palette.mode === "dark"
-                  ? theme.palette.grey[100]
-                  : "#1A2130",
-              color: "#9CA3AF",
+              
+                   dark,
+              color: greyText,
               display: "flex",
               alignItems: "center",
               justifyContent: "flex-center",
               px: [],
             }}
           >
-            {" "}
-            IDEATRIBE | PASSPORT
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
+            {open ? (
+              <Box>
+                IDEATRIBE | PASSPORT
+                <IconButton onClick={toggleDrawer} color="info">
+                  <ChevronLeftIcon />
+                </IconButton>
+              </Box>
+            ) : (
+              <IconButton
+                edge="start"
+                color="info"
+                aria-label="open drawer"
+                onClick={toggleDrawer}
+                sx={{
+                  ...(open && { display: "none" }),
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
           </Toolbar>
           <Divider />
           <List component="nav">
@@ -203,14 +263,14 @@ export default function Console() {
               {sideBar.map((item) => {
                 return (
                   <ListItemButton
-                  style={{cursor:"pointer"}}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       setActiveMenu(item.name);
                     }}
                   >
                     <ListItemIcon
                       style={{
-                        color: item.name == activeMenu ? "#30B981" : "#9CA3AF",
+                        color: item.name == activeMenu ? highlightGreen : greyText,
                       }}
                     >
                       {item.icon}
@@ -218,57 +278,69 @@ export default function Console() {
                     <ListItemText
                       primary={item.name}
                       style={{
-                        color: item.name == activeMenu ? "#30B981" : "#9CA3AF",
+                        color: item.name == activeMenu ? highlightGreen : greyText,
                       }}
                     />
                   </ListItemButton>
                 );
               })}
-             
             </React.Fragment>
           </List>
           <ListItemButton
+            style={{
+              position: "absolute",
+              bottom: "0",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              history.push("/login");
+            }}
+          >
+            <ListItemIcon
               style={{
-                position:"absolute",
-                bottom:"0",
-                cursor:"pointer"
+                color: greyText,
               }}
-                onClick={() => {
-                  history.push("/login");
-                }}
-              >
-                <ListItemIcon
-                  style={{
-                    color: "#9CA3AF",
-                  }}
-                >
-                  <LogoutIcon></LogoutIcon>
-                </ListItemIcon>
-                <ListItemText
-                  primary="Logout"
-                  style={{
-                    color: "#9CA3AF",
-                  }}
-                />
-              </ListItemButton>
+            >
+              <LogoutIcon></LogoutIcon>
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              style={{
+                color: greyText,
+              }}
+            />
+          </ListItemButton>
         </Drawer>
 
         <Box
           component="main"
           sx={{
             backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? "#F9FAFC"
-                : theme.palette.grey[900],
+            greyBackground,
             flexGrow: 1,
             height: "100vh",
             overflow: "auto",
           }}
         >
           <Toolbar />
+          <Toolbar />
           {/*  */}
           <Grid item xs={12} md={12} lg={12}>
-            {getConsoleContent()}
+            <Box
+              component="main"
+              sx={{
+                backgroundColor: (theme) =>
+                greyBackground,
+                flexGrow: 1,
+                height: "100vh",
+                overflow: "auto",
+                marginTop: "128px",
+              }}
+            >
+              <Container maxWidth="" sx={{ mt: 8 }}>
+                {getConsoleContent()}
+              </Container>
+            </Box>
           </Grid>
         </Box>
       </Box>

@@ -1,6 +1,89 @@
 import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import MoneyIcon from '@mui/icons-material/Money';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import SellIcon from '@mui/icons-material/Sell';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+
+const getMainTitle = (props) =>{
+  switch(props?.type){
+    case "balance":
+      return "2400 TRBG"
+      break;
+    case "given":
+      return "322 TRBG"
+      break;
+      default:
+        return "DEFAULT"
+  }
+}
+
+
+const getTopText = (props) =>{
+  switch(props?.type){
+    case "balance":
+      return "BALANCE"
+      break;
+    case "given":
+      return "SHARED"
+      break;
+      default:
+        return "DEFAULT" 
+  }
+}
+
+
+const getIcon = (props) =>{
+  switch(props?.type){
+    case "balance":
+      return <Avatar
+      sx={{
+        backgroundColor: 'error.main',
+        height: 56,
+        width: 56
+      }}
+    >
+      <AccountBalanceWalletIcon />
+    </Avatar>
+      break;
+    case "given":
+      return <Avatar
+      sx={{
+        backgroundColor: 'error.main',
+        height: 56,
+        width: 56
+      }}
+    >
+      <SellIcon />
+    </Avatar>
+      
+      break;
+      default:
+        return <Avatar
+      sx={{
+        backgroundColor: 'error.main',
+        height: 56,
+        width: 56
+      }}
+    >
+      <AttachMoneyIcon />
+    </Avatar>
+        return "DEFAULT"
+  }
+}
+
+
+const getFooterText = (props) =>{
+  switch(props?.type){
+    case "balance":
+      return "Lasts for 20 transactions"
+      break;
+    case "given":
+      break;
+      default:
+        return "DEFAULT"
+  }
+}
+
 
 const WalletCard = (props) => (
   <Card
@@ -18,25 +101,18 @@ const WalletCard = (props) => (
             gutterBottom
             variant="overline"
           >
-            Wallet
+            {getTopText(props)}
           </Typography>
           <Typography
             color="textPrimary"
             variant="h4"
           >
-            2400 TRBG
+            {getMainTitle(props)}
           </Typography>
         </Grid>
         <Grid item>
-          <Avatar
-            sx={{
-              backgroundColor: 'error.main',
-              height: 56,
-              width: 56
-            }}
-          >
-            <MoneyIcon />
-          </Avatar>
+        {getIcon(props)}
+         
         </Grid>
       </Grid>
       <Box
@@ -60,7 +136,7 @@ const WalletCard = (props) => (
           color="textSecondary"
           variant="caption"
         >
-          Lasts for 32 more transactions
+          {getFooterText()}
         </Typography>
       </Box>
     </CardContent>
