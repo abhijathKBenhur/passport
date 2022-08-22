@@ -3,6 +3,8 @@ const cors = require("cors");
 const mongotConnection = require("./db-config/mongodb");
 const authAPI = require("./routes/AuthAPI");
 const CompanyAPI = require("./routes/CompanyAPI");
+const CustomerAPI = require("./routes/CustomerAPI");
+
 
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
@@ -42,7 +44,8 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authAPI);
 app.use("/api/company", CompanyAPI);
-CompanyAPI
+app.use("/api/customer", CustomerAPI);
+
 
 console.log("Deploying full application")
 console.log("Checking node environment ::" + process.env.NODE_ENV);

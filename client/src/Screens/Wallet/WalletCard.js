@@ -7,10 +7,10 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 const getMainTitle = (props) =>{
   switch(props?.type){
     case "balance":
-      return "2400 TRBG"
+      return "240"
       break;
     case "given":
-      return "322 TRBG"
+      return "322"
       break;
       default:
         return "DEFAULT"
@@ -21,13 +21,13 @@ const getMainTitle = (props) =>{
 const getTopText = (props) =>{
   switch(props?.type){
     case "balance":
-      return "BALANCE"
+      return "TRBG"
       break;
     case "given":
-      return "SHARED"
+      return "TRBG"
       break;
       default:
-        return "DEFAULT" 
+        return "TRBG" 
   }
 }
 

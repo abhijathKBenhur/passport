@@ -32,6 +32,7 @@ verify = (req, res) => {
     tenantId: tenantId,
     status: "PENDING",
     password: AES.encrypt(body.password, process.env.TWEETER_KOO).toString(),
+    distributed:0
   });
 
   newCompany
