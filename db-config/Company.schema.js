@@ -6,6 +6,7 @@ const Company = new Schema(
     password: { type: String },
     goldConfig: { type: String },
     distributed: { type: Number },
+    companyName: { type: String },
     email:{ type: String },
     status:{ type: String },
     tenantId: { type: String },

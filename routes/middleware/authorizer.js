@@ -16,13 +16,13 @@ const authorizer = (req, res, next) => {
       }
       try {
         const decoded = jwt.verify(token, process.env.TWEETER_KOO);
+        console.log("Decoded Token", decoded)
         let key = decoded.key;
         let secret = decoded.secret;
         let tenantId = decoded.tenantId;
         req.key = key;
         req.secret = secret;
         req.tenantId = tenantId;
-        console.log("Decoded Token")
         return next();
       } catch (err) {
         console.log(err);

@@ -87,12 +87,11 @@ const Configure = (props) => {
     CompanyInterface.getDetails().then(success =>{
       let details = success?.data?.data?.goldConfig
       try{
-        setIncentiveConfig(JSON.parse(details) ||
-        [{
-          action: "sign-up",
-          value: "",
-        }]
-        )
+        if(details){
+          setIncentiveConfig(JSON.parse(details))
+        }else{
+          setIncentiveConfig([blankIncentive])
+        }
       }
       catch(err){
         console.log("Could not fetch company details")

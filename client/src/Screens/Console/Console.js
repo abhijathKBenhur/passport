@@ -107,7 +107,8 @@ export default function Console() {
     AuthInterface.validate({ token: liveToken })
       .then((success) => {
         let companyData = success?.data?.company
-        let companyDetails = companyData ? JSON.parse(companyData?.details) : {}
+        let companyDetails = companyData?.details ? JSON.parse(companyData?.details) : {}
+        console.log({...companyData,companyDetails})
         setCompany({...companyData,details:companyDetails})
       })
       .catch((err) => {});
@@ -187,7 +188,7 @@ export default function Console() {
             </Button>
             </Box>
             <Box className="right-actions">
-             <Typography style={{color:"red"}}>{company?.details?.companyName}</Typography>
+             <Typography style={{color:"red"}}>{company?.companyName}</Typography>
             </Box>
           </Toolbar>
           <Toolbar

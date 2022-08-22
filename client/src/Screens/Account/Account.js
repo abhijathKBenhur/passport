@@ -16,6 +16,7 @@ import CompanyInterface from "../../Interfaces/CompanyInterface";
 
 const Configure = (props) => {
   const [values, setValues] = useState({});
+  const [company, setCompany] = useState({});
   const [editMode, setEditMode] = useState(false);
   const [openSnackbar, closeSnackbar] = useSnackbar();
   const handleChange = (event) => {
@@ -29,9 +30,16 @@ const Configure = (props) => {
   const saveDetails = () => {
     if(editMode){
       let detailsString = JSON.stringify(values);
-      CompanyInterface.updateDetails({ details: detailsString })
+      CompanyInterface.updateDetails({ details: detailsString, status:"VERIFIED" })
         .then((success) => {
-          debugger;
+          let details = success?.data?.data?.details
+          try{
+            setCompany(success?.data?.data)
+            setValues(JSON.parse(details))
+          }
+          catch(err){
+            console.log("Could not fetch company details")
+          }
         })
         .catch((error) => {});
     }else{
@@ -43,6 +51,7 @@ const Configure = (props) => {
     CompanyInterface.getDetails().then(success =>{
       let details = success?.data?.data?.details
       try{
+        setCompany(success?.data?.data)
         setValues(JSON.parse(details))
       }
       catch(err){
@@ -66,14 +75,13 @@ const Configure = (props) => {
               <Grid container spacing={3}>
                 <Grid item md={6} xs={12}>
                   <TextField
-                    disabled={!editMode}
+                    disabled
                     fullWidth
                     helperText="Please specify the first name"
                     label="Company name"
                     name="companyName"
-                    onChange={handleChange}
                     required
-                    value={values.companyName || ''}
+                    value={company.companyName || ''}
                     variant="outlined"
                   />
                 </Grid>
@@ -164,7 +172,7 @@ const Configure = (props) => {
               </Grid>
             </CardContent>
             <Divider />
-            <Box
+            {company.status == "REGISTERED" &&<Box
                 sx={{
                   display: "flex",
                   justifyContent: "flex-end",
@@ -182,7 +190,7 @@ const Configure = (props) => {
                 }}>
                   {editMode ? "Update details" : "Edit"}
                 </Button>
-            </Box>
+            </Box>}
           </Card>
         </form>
   );

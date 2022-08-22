@@ -9,6 +9,7 @@ updateDetails = async (req, res) => {
   const newUser = req.body;
   let updates = {
     details: req.body.details,
+    status:req.body.status
   };
   console.log(`updating with key ${req.key} and value ${req.secret}`);
 

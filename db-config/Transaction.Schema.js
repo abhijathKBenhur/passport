@@ -5,6 +5,7 @@ const Transaction = new Schema(
   {
     amount: { type: Number },
     action:{ type: String },
+    message:{ type: String }
   },
   { timestamps: true }
 );

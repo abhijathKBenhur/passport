@@ -6,7 +6,7 @@ const Customer = new Schema(
     wallet: { type: String },
     email: { type: String },
     balance:{ type: Number },
-    incentiveCount:{ type: String },
+    incentiveCount:{ type: Number },
     incentivisedActions:{ type: Array },
     tenantId:{ type: String },
   },

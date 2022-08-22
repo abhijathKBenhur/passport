@@ -12,144 +12,188 @@ incentivise = async (req, res) => {
   let requestAction = req.body.action;
   let incentiveUser = req.body.email;
 
-  let companyDetails = await getCompanyDetails(req, res);
-  let goldConfig = JSON.parse(companyDetails.goldConfig);
+  try{
+    let companyDetails = await getCompanyDetails(req, res);
+    let goldConfig = JSON.parse(companyDetails.goldConfig);
 
-  console.log("companyDetails", companyDetails);
-  console.log("companyDetails.distributed", companyDetails.distributed);
-  let goldToGive = _.find(goldConfig, { action: requestAction }).value;
-  console.log(
-    "requesting ",
-    goldToGive,
-    " number of gold for action - ",
-    requestAction + "to send to : " + incentiveUser
-  );
+    console.log("companyDetails", companyDetails);
+    if(companyDetails.status != "VERIFIED"){
+      throw new ("Company is not yet elligible to participate in incentives programme")
+    }
+    let goldToGive = _.find(goldConfig, { action: requestAction }).value;
+    console.log(
+      "requesting ",
+      goldToGive,
+      " number of gold for action - ",
+      requestAction + "to send to : " + incentiveUser
+    );
+    let updatedDistribution = parseFloat(companyDetails.distributed) + parseFloat(goldToGive);
+    console.log(updatedDistribution)
 
-  let updatedUser = await addOrUpdateUser(req, goldToGive);
-  let updatedDistribution = +companyDetails.distributed + goldToGive;
-  let updatedCompany = await updateCompanyDetails(req, {
-    distributed: updatedDistribution,
-  });
-  let addedTransaction = await addTransaction({
-    amount: goldToGive,
-    action: requestAction,
-    email: incentiveUser,
-  });
+    let updatedUser = await addOrUpdateUser(req, goldToGive);
+    let updatedCompany = await updateCompanyDetails(req, {
+      distributed: updatedDistribution,
+    });
+    let addedTransaction = await addTransaction({
+      amount: goldToGive,
+      action: requestAction,
+      email: incentiveUser,
+    });
+    return res
+    .status(200)
+    .json({ success: true, data: "User has been incentivised successfully", mailAddress: incentiveUser });
+  }catch(errorMessage){
+    console.log("ERROR-- " + errorMessage)
+    return res
+      .status(400)
+      .json({ success: false, error: errorMessage });
+  }
+
 };
 
 const addTransaction = async (info) => {
   console.log("Adding transaction ");
-  const newTransaction = TransactionSchema(info);
-  newTransaction
-    .save()
-    .then((success) => {
-      console.log("Add transaction success");
-      resolve(success);
-    })
-    .catch((error) => {
-      console.log("Add transaction error");
-      reject(undefined);
-    });
+  return new Promise((resolve, reject) => {
+    const newTransaction = TransactionSchema(info);
+    newTransaction
+      .save()
+      .then((success) => {
+        console.log("Add transaction success");
+        resolve(success);
+      })
+      .catch((error) => {
+        reject("Add transaction error"+ error);
+      });
+  });
 };
 
 const updateCompanyDetails = async (req, updates) => {
   console.log("updating company ");
-  CompanySchema.findOneAndUpdate(
-    { key: req.key, secret: req.secret },
-    updates,
-    { upsert: true }
-  )
-    .then((user, b) => {
-      console.log("Update company success");
-      resolve(user);
-    })
-    .catch((error) => {
-      console.log("Update company error", error);
-      reject(undefined);
-    });
+  return new Promise((resolve, reject) => {
+    CompanySchema.findOneAndUpdate(
+      { key: req.key, secret: req.secret },
+      updates,
+      { upsert: true }
+    )
+      .then((user, b) => {
+        console.log("Update company success");
+        resolve(user);
+      })
+      .catch((error) => {
+        reject("Update company error"+ error);
+      });
+  });
 };
 
 const getCompanyDetails = async (req, res) => {
   const myPromise = new Promise((resolve, reject) => {
+    console.log("geting company");
     CompanySchema.findOne({ key: req.key, secret: req.secret }, (err, user) => {
       if (err) {
-        console.log("get company success");
-        reject(undefined);
+        reject("Get company error" + err);
       }
       if (!user) {
-        reject(undefined);
+        reject("Could not get company details");
+      }else{
+        console.log("Get company success");
+        console.log(user);
+        resolve(user);
       }
-      console.log("Get company success");
-      resolve(user);
     }).catch((err) => {
-      console.log("Get company error");
-      reject(undefined);
+      reject("Get company error"+ err);
     });
   });
   return myPromise;
 };
 
 const addOrUpdateUser = async (req, goldToGive) => {
-  console.log("updating User ");
-  let newAction = req.body.action;
-  const newUser = UserSchema({
-    email: req.body.email,
-    balance: goldToGive,
-    incentiveCount: 1,
-    incentivisedActions: [newAction],
-    tenantId: req.tenantId,
-  });
-  console.log("FInding with " + req.tenantId + "adn " + req.body.email);
-  UserSchema.findOne(
-    { key: newUser.tenantId, email: newUser.email },
-    (err, user) => {
-      if (err) {
-        console.log("Add user err", err);
-        reject(undefined);
-      }
-      if (!user || user == null) {
-        newUser
-          .save()
-          .then((success) => {
-            console.log("Add user success");
-            resolve(success);
-          })
-          .catch((error) => {
-            console.log("Add user error");
-            reject(undefined);
-          });
-      } else {
-        console.log("Found user", user);
-        let userBalance = user.balance;
-        let existingIncentivesCount = user.incentiveCount;
-        let existingIncentivisedActions = user.incentivisedActions;
-        let newGoldBalance = userBalance + goldToGive;
-        let updates = {
-          balance:newGoldBalance,
-          incentiveCount: (existingIncentivesCount += 1),
-          incentivisedActions: existingIncentivisedActions.push(newAction),
-        };
+  return new Promise((resolve, reject) => {
+    console.log("updating User ");
+    let newAction = req.body.action;
+    const newUser = UserSchema({
+      email: req.body.email,
+      balance: parseFloat(goldToGive),
+      incentiveCount: 1,
+      incentivisedActions: [newAction],
+      tenantId: req.tenantId,
+    });
+    console.log("FInding with " + req.tenantId + " and " + req.body.email);
+    UserSchema.findOne(
+      { tenantId: newUser.tenantId, email: newUser.email },
+      (err, user) => {
+        if (err) {
+          reject("Add user err", err);
+        }
+        if (!user || user == null) {
+          console.log("user reeived" , user)
+          newUser
+            .save()
+            .then((success) => {
+              console.log("Add user success");
+              resolve(success);
+            })
+            .catch((error) => {
+              reject("Add user error"+ error);
+            });
+        } else {
+          console.log("Found user", user);
+          let userBalance = user.balance;
+          let existingIncentivesCount = user.incentiveCount;
+          let existingIncentivisedActions = user.incentivisedActions;
+          console.log("existingIncentivisedActions", console.log(existingIncentivisedActions))
+          // if(existingIncentivesCount.indexOf(newAction) > -1){
+          //   throw new ("User was already incentivised for this action")
+          // }
 
-        UserSchema.findOneAndUpdate(
-          { key: req.tenantId, email: req.body.email },
-          updates,
-          { upsert: true }
-        )
-          .then((user, b) => {
-            console.log("details updated", user, b);
-            resolve(user);
-          })
-          .catch((error) => {
-            console.log("Update user error");
-            reject(undefined);
-          })
-          .catch((err) => {
-            reject(undefined);
-          });
+          console.log(existingIncentivisedActions.push(newAction),)
+          console.log("new array", console.log(existingIncentivisedActions))
+          
+
+          let newGoldBalance = parseFloat(userBalance) + parseFloat(goldToGive);
+          let updates = {
+            balance:newGoldBalance,
+            incentiveCount: (parseInt(existingIncentivesCount) + 1),
+            incentivisedActions: existingIncentivisedActions
+          };
+
+          UserSchema.findOneAndUpdate(
+            { tenantId: req.tenantId, email: req.body.email },
+            updates,
+            { upsert: true }
+          )
+            .then((user, b) => {
+              console.log("details updated", user, b);
+              resolve(user);
+            })
+            .catch((error) => {
+              reject("Update user error"+ error);
+            });
+        }
       }
-    }
-  );
+    );
+  });
 };
+
+getAllUsers = async (req, res) => {
+  await UserSchema.find(
+    { tenantId: req.tenantId },
+    (err, users) => {
+      console.log("userss details fetched" , users);
+      if (err) {
+        return res.status(400).json({ success: false, error: err });
+      }
+      if (!users) {
+        return res.status(404).json({ success: true, data: [] });
+      }
+      console.log("returning");
+      return res.status(200).json({ success: true, data: users });
+    }
+  ).catch((err) => {
+    return res.status(400).json({ success: false, data: err });
+  });
+};
+
+router.get("/getAllUsers", getAllUsers);
 router.post("/incentivise", incentivise);
 
 module.exports = router;

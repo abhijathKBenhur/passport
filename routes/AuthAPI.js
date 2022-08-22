@@ -25,7 +25,7 @@ verify = (req, res) => {
     });
   }
 
-  const newCompany = new CompanySchema({
+  let newCompanyObject = {
     ...body,
     key: uuid.v4(),
     secret: uuid.v4(),
@@ -33,11 +33,15 @@ verify = (req, res) => {
     status: "PENDING",
     password: AES.encrypt(body.password, process.env.TWEETER_KOO).toString(),
     distributed:0
-  });
+  }
+  console.log("Registering company with details ",newCompanyObject )
 
+  const newCompany = new CompanySchema(newCompanyObject);
+  console.log("Saving new company to DB")
   newCompany
     .save()
     .then((user, b) => {
+      console.log("Added company to DB")
       try {
         sendOTP(body.email, tenantId, res);
       } catch (error) {
@@ -108,19 +112,19 @@ register = async (req, res) => {
     updates,
     { upsert: true }
   )
-    .then((user, b) => {
-      console.log("company registered", user, b);
+    .then((registeredCompany, b) => {
+      console.log("company registered", registeredCompany, b);
       let data = {
-        tenantId: newCompany.tenantId,
-        key: newCompany.key,
-        secret: newCompany.secret,
+        tenantId: registeredCompany.tenantId,
+        key: registeredCompany.key,
+        secret: registeredCompany.secret,
       };
-      console.log("encrypting", data);
+      console.log("Encrypting" , data)
       var token = jwt.sign(data, process.env.TWEETER_KOO);
       console.log("token", token);
       return res.status(201).json({
         success: true,
-        data: user,
+        data: registeredCompany,
         token,
         message: "company registered!",
       });

@@ -93,7 +93,7 @@ export default function Login() {
       message =
         "Password should have atleast one numner and one special charecter";
     }
-    if (!submitData.Company || submitData.Company.length == 0) {
+    if (!submitData.companyName || submitData.companyName.length == 0) {
       valid = false;
       message = "Please provide the company name";
     }
@@ -154,9 +154,9 @@ export default function Login() {
                 margin="normal"
                 required
                 fullWidth
-                name="Company"
-                label="Company"
-                id="Company"
+                name="companyName"
+                label="companyName"
+                id="companyName"
                 autoComplete="Company name"
                 disabled={mailSent}
               />
