@@ -38,6 +38,7 @@ incentivise = async (req, res) => {
       amount: goldToGive,
       action: requestAction,
       email: incentiveUser,
+      tenantId: req.tenantId,
     });
     return res
     .status(200)

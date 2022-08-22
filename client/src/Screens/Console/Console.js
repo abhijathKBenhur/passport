@@ -27,6 +27,7 @@ import Dashboard from "../Dashboard/Dashboard";
 import Customers from "../Customers/Customers";
 import Wallet from "../Wallet/Wallet";
 import Account from "../Account/Account";
+import Transaction from "../Transactions/Transactions"
 import Configure from "../Configure/Configure";
 import AuthInterface from "../../Interfaces/AuthInterface";
 import WalletCard from "../Wallet/WalletCard";
@@ -160,6 +161,9 @@ export default function Console() {
         break;
       case "Account":
         return <Account></Account>;
+        break;
+      case "Transactions":
+        return <Transaction></Transaction>;
         break;
     }
   };

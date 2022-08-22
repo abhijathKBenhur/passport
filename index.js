@@ -4,6 +4,7 @@ const mongotConnection = require("./db-config/mongodb");
 const authAPI = require("./routes/AuthAPI");
 const CompanyAPI = require("./routes/CompanyAPI");
 const CustomerAPI = require("./routes/CustomerAPI");
+const TransactionAPI = require("./routes/TransactionAPI");
 
 
 const cookieParser = require("cookie-parser");
@@ -45,6 +46,7 @@ app.use((req, res, next) => {
 app.use("/api/auth", authAPI);
 app.use("/api/company", CompanyAPI);
 app.use("/api/customer", CustomerAPI);
+app.use("/api/transaction", TransactionAPI);
 
 
 console.log("Deploying full application")
