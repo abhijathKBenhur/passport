@@ -67,7 +67,6 @@ export const Customers = ({ ...rest }) => {
                 ? "#F9FAFC"
                 : theme.palette.grey[900],
             flexGrow: 1,
-            height: "100vh",
           }}
         >
             <Card {...rest}>

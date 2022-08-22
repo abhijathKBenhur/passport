@@ -1,4 +1,5 @@
 import { Box, Container, Grid ,Toolbar} from '@mui/material';
+import {Chart, ArcElement} from 'chart.js'
 import LatestOrders  from '../Transactions/LatestOrders';
 import  Sales from './Sales';
 import  GoldByAction from './GoldByAction';

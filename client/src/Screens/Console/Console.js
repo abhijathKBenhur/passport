@@ -25,7 +25,6 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LayersIcon from "@mui/icons-material/Layers";
 import Dashboard from "../Dashboard/Dashboard";
 import Customers from "../Customers/Customers";
-import Wallet from "../Wallet/Wallet";
 import Account from "../Account/Account";
 import Transaction from "../Transactions/Transactions"
 import Configure from "../Configure/Configure";
@@ -146,9 +145,6 @@ export default function Console() {
     switch (activeMenu) {
       case "Dashboard":
         return <Dashboard></Dashboard>;
-        break;
-      case "Wallet":
-        return <Wallet></Wallet>;
         break;
       case "Customers":
         return <Customers></Customers>;
@@ -323,12 +319,10 @@ export default function Console() {
             backgroundColor: (theme) =>
             greyBackground,
             flexGrow: 1,
-            height: "100vh",
             overflow: "auto",
+            marginTop: "300px"
           }}
         >
-          <Toolbar />
-          <Toolbar />
           {/*  */}
           <Grid item xs={12} md={12} lg={12}>
             <Box
@@ -339,10 +333,9 @@ export default function Console() {
                 flexGrow: 1,
                 height: "100vh",
                 overflow: "auto",
-                marginTop: "128px",
               }}
             >
-              <Container maxWidth="" sx={{ mt: 8 }}>
+              <Container maxWidth="">
                 {getConsoleContent()}
               </Container>
             </Box>

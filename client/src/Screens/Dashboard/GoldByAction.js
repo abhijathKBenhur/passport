@@ -1,8 +1,10 @@
-// import { Doughnut } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
+import {Chart, ArcElement} from 'chart.js'
 import { Box, Card, CardContent, CardHeader, Divider, Typography, useTheme } from '@mui/material';
 import LaptopMacIcon from '@mui/icons-material/LaptopMac';
 import PhoneIcon from '@mui/icons-material/Phone';
 import TabletIcon from '@mui/icons-material/Tablet';
+Chart.register(ArcElement);
 
  const GoldByAction = (props) => {
   const theme = useTheme();
@@ -74,10 +76,10 @@ import TabletIcon from '@mui/icons-material/Tablet';
             position: 'relative'
           }}
         >
-          {/* <Doughnut
+          <Doughnut
             data={data}
             options={options}
-          /> */}
+          />
         </Box>
         <Box
           sx={{

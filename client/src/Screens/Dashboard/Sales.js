@@ -1,7 +1,11 @@
-// import { Bar } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
+import Chart from 'chart.js/auto';
+
+import {CategoryScale} from 'chart.js'; 
 import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+Chart.register(CategoryScale);
 
  const Sales = (props) => {
   const theme = useTheme();
@@ -102,10 +106,10 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
             position: 'relative'
           }}
         >
-          {/* <Bar
+          <Bar
             data={data}
             options={options}
-          /> */}
+          />
         </Box>
       </CardContent>
       <Divider />
