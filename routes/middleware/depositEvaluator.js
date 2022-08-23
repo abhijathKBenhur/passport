@@ -3,7 +3,7 @@ const MaticAPIs = require("../BlockchainAPIs/MaticAPIs");
 const TribeGoldAPIs = require("../BlockchainAPIs/TribeGoldAPIs");
 const StatsAPI = require("../statsAPI");
 
-const UserSchema = require("../../db-config/user.schema");
+const CustomerSchema = require("../../db-config/Customer.Schema");
 const SignatureSchema = require("../../db-config/Signature.schema");
 const TransactionSchema = require("../../db-config/transaction.schema");
 
@@ -55,7 +55,7 @@ const MATIC_DEPOSIT_VALUES = {
 const depostToNewUser = (receiverUserObject) => {
   console.log("INITIATING DEPOSITS FOR :: ", receiverUserObject)
   if(receiverUserObject.referredBy){
-    UserSchema.findOne({myReferralCode:receiverUserObject.referredBy}).then(result =>{
+    CustomerSchema.findOne({myReferralCode:receiverUserObject.referredBy}).then(result =>{
       console.log("Referer", result.data)
       TribeGoldAPIs.depositGold(result.data, GOLD_DEPOSIT_VALUES.REFERAL,"GOLD_INCENTIVICED_REFERAL")
     })

@@ -1,4 +1,4 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import PropTypes from "prop-types";
 import { format } from "date-fns";
@@ -19,12 +19,12 @@ import {
   InputAdornment,
   SvgIcon,
   Grid,
-  CardHeader
+  CardHeader,
 } from "@mui/material";
 import getInitials from "../../utils/get-initials";
 import { v4 as uuid } from "uuid";
 import { Container } from "@mui/system";
-
+import { SeverityPill } from "../../commons/severity-pills";
 import Search from "@mui/icons-material/Search";
 import Upload from "@mui/icons-material/Upload";
 import Download from "@mui/icons-material/Download";
@@ -34,20 +34,19 @@ export const Customers = ({ ...rest }) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [customerList, setCustomerList] = useState([]);
-  
-  useEffect(() => {
-    CustomerInterface.getAllUsers().then(success =>{
-      let customers = success?.data?.data || []
-      try{
-        setCustomerList(customers)
-      }
-      catch(err){
-        console.log("Could not fetch company details")
-      }
-    }).catch(err =>{
 
-    })
-  },[]);
+  useEffect(() => {
+    CustomerInterface.getAllUsers()
+      .then((success) => {
+        let customers = success?.data?.data || [];
+        try {
+          setCustomerList(customers);
+        } catch (err) {
+          console.log("Could not fetch company details");
+        }
+      })
+      .catch((err) => {});
+  }, []);
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
@@ -59,62 +58,63 @@ export const Customers = ({ ...rest }) => {
 
   return (
     <Grid>
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? "#F9FAFC"
-                : theme.palette.grey[900],
-            flexGrow: 1,
-          }}
-        >
-            <Card {...rest}>
-            <CardHeader
-              subheader="List of customers"
-              title="Customers"
-            />
-              <PerfectScrollbar>
-                <Box sx={{ minWidth: 1050 }}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Email</TableCell>
-                        <TableCell>Balance</TableCell>
-                        <TableCell>Count</TableCell>
-                        <TableCell>Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {customerList.slice(0, limit).map((customer) => (
-                        <TableRow hover key={customer.id}>
-                          {/* <TableCell>
-                            <Box
-                              sx={{
-                                alignItems: "center",
-                                display: "flex",
-                              }}
-                            >
-                              <Avatar src={customer.avatarUrl} sx={{ mr: 2 }}>
-                                {getInitials(customer.name)}
-                              </Avatar>
-                              <Typography color="textPrimary" variant="body1">
-                                {customer.name}
-                              </Typography>
-                            </(Box>
-                          <.join(",")/)TableCell> */}
-                          <TableCell>{customer.email}</TableCell>
-                          <TableCell>{customer.balance}</TableCell>
-                          <TableCell>{customer.incentiveCount}</TableCell>
-                          <TableCell>{(customer.incentivisedActions).join(",")}</TableCell>
-                         
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Box>
-              </PerfectScrollbar>
-              {/* <TablePagination
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === "light"
+              ? "#F9FAFC"
+              : theme.palette.grey[900],
+          flexGrow: 1,
+        }}
+      >
+        <Card {...rest}>
+          <CardHeader subheader="List of customers" title="Customers" />
+          <PerfectScrollbar>
+            <Box sx={{ minWidth: 1050 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Balance (TRBG)</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {customerList.slice(0, limit).map((customer) => (
+                    <TableRow hover key={customer.id}>
+                      <TableCell
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
+                        {" "}
+                        <Avatar src={customer.avatarUrl} sx={{ mr: 2 }}>
+                          {getInitials(customer.email)}
+                        </Avatar>
+                        <Typography color="textPrimary" variant="body1">
+                          {customer.name}
+                        </Typography>
+                        {customer.email}
+                      </TableCell>
+                      <TableCell>{customer.balance}</TableCell>
+                      <TableCell>
+                        {customer.incentivisedActions &&
+                          customer.incentivisedActions.map((item) => {
+                            return (
+                              <SeverityPill color={"success"} sx={{ml:1}}>
+                                {item}
+                              </SeverityPill>
+                            );
+                          })}
+
+                        {/* {customer.incentivisedActions.join(",")} */}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          </PerfectScrollbar>
+          {/* <TablePagination
                 component="div"
                 count={customerList.length}
                 onPageChange={handlePageChange}
@@ -123,9 +123,9 @@ export const Customers = ({ ...rest }) => {
                 rowsPerPage={limit}
                 rowsPerPageOptions={[5, 10, 25]}
               /> */}
-            </Card>
-        </Box>
-        </Grid>
+        </Card>
+      </Box>
+    </Grid>
   );
 };
 

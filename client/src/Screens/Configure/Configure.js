@@ -1,4 +1,4 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -80,176 +80,208 @@ const Configure = (props) => {
     value: "",
   };
   const [openSnackbar, closeSnackbar] = useSnackbar();
-  const [incentiveConfig, setIncentiveConfig] = useState([])
-  const [editMode, setEditMode] = useState(false)
+  const [incentiveConfig, setIncentiveConfig] = useState([]);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
-    CompanyInterface.getDetails().then(success =>{
-      let details = success?.data?.data?.goldConfig
-      try{
-        if(details){
-          setIncentiveConfig(JSON.parse(details))
-        }else{
-          setIncentiveConfig([blankIncentive])
+    CompanyInterface.getDetails()
+      .then((success) => {
+        let details = success?.data?.data?.goldConfig;
+        try {
+          if (details) {
+            setIncentiveConfig(JSON.parse(details));
+          } else {
+            setIncentiveConfig([blankIncentive]);
+          }
+        } catch (err) {
+          console.log("Could not fetch company details");
         }
-      }
-      catch(err){
-        console.log("Could not fetch company details")
-      }
-    }).catch(err =>{
-
-    })
-  },[]);
+      })
+      .catch((err) => {});
+  }, []);
 
   const handleChange = (event, index) => {
-    let incentiveConfigCopy = [...incentiveConfig]
-    if(event.target.name == "action"){
-      incentiveConfigCopy[index].action = event.target.value
+    let incentiveConfigCopy = [...incentiveConfig];
+    if (event.target.name == "action") {
+      incentiveConfigCopy[index].action = event.target.value;
     }
-    if(event.target.name == "value"){
-      incentiveConfigCopy[index].value = event.target.value
+    if (event.target.name == "value") {
+      incentiveConfigCopy[index].value = event.target.value;
     }
-    setIncentiveConfig(incentiveConfigCopy)
+    setIncentiveConfig(incentiveConfigCopy);
   };
 
-  const addBlank = () =>{
-    setIncentiveConfig([...incentiveConfig,blankIncentive])
-  }
+  const addBlank = () => {
+    setIncentiveConfig([...incentiveConfig, blankIncentive]);
+  };
 
-  const removeAt = (index) =>{
-    let incentiveConfigCopy = [...incentiveConfig]
+  const removeAt = (index) => {
+    let incentiveConfigCopy = [...incentiveConfig];
     incentiveConfigCopy.splice(index, 1);
-    setIncentiveConfig(incentiveConfigCopy)
-  }
+    setIncentiveConfig(incentiveConfigCopy);
+  };
 
-  const submit = () =>{
-    if(editMode){
+  const submit = () => {
+    if (editMode) {
       CompanyInterface.configureDistribution({
-        goldConfig:JSON.stringify(incentiveConfig)
-      }).then(success =>{
-        // NotificationService.openNotification(
-        //   "Configuration has been updated successfuly",
-        //   2000
-        // );
-        setEditMode(false)
-      }).catch(err =>{
-        console.log("error", err)
+        goldConfig: JSON.stringify(incentiveConfig),
       })
-    }else{
-      setEditMode(true)
+        .then((success) => {
+          // NotificationService.openNotification(
+          //   "Configuration has been updated successfuly",
+          //   2000
+          // );
+          setEditMode(false);
+        })
+        .catch((err) => {
+          console.log("error", err);
+        });
+    } else {
+      setEditMode(true);
     }
-    
-  }
+  };
 
   return (
-  
-        <form autoComplete="off" noValidate {...props}>
-          <Card>
-            <CardHeader
-              subheader="Configure the distribution of TRBG"
-              title="Configure"
-            />
-            <Divider />
-            <CardContent>
+    <form autoComplete="off" noValidate {...props}>
+      <Card>
+        <CardHeader
+          subheader="Configure the distribution of TRBG"
+          title="Configure"
+          action={
+            <Button color="secondary" variant="outlined" onClick={() => {}}>
+              Deposit
+            </Button>
+          }
+        ></CardHeader>
 
-            {incentiveConfig.map((item, index) => {
-              return (
-                  <Grid container spacing={3} key={index} style={{marginTop:"10px"}}>
-                    <Grid item md={6} xs={12}>
-                      <TextField
-                      disabled={!editMode}
-                        fullWidth
-                        label="Select action"
-                        name="action"
-                        onChange={(e) => handleChange(e, index)}
-                        required
-                        select
-                        SelectProps={{ native: true }}
-                        value={item.action}
-                        variant="outlined"
-                      >
-                        {states.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </TextField>
-                    </Grid>
-                    <Grid item md={2} xs={2}>
-                      <TextField
-                      disabled={!editMode}
-                        fullWidth
-                        label="value"
-                        name="value"
-                        onChange={(e) => handleChange(e, index)}
-                        required
-                        value={item.value}
-                        variant="outlined"
-                      />
-                    </Grid>
-                    <Grid item md={2} xs={2}>
-                      <TextField
-                      disabled={!editMode}
-                        fullWidth
-                        disabled
-                        label="value"
-                        name="value"
-                        onChange={(e) => handleChange(e, index)}
-                        required
-                        value={item.goldValue}
-                        variant="outlined"
-                      ></TextField>
-                    </Grid>
-                    <Grid
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-center",
-                        padding: "auto",
+        <Divider />
+        <CardContent>
+          {incentiveConfig.map((item, index) => {
+            return (
+              <Grid
+                container
+                spacing={3}
+                key={index}
+                style={{ marginTop: "10px" }}
+              >
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    disabled={!editMode}
+                    fullWidth
+                    label="Select action"
+                    name="action"
+                    onChange={(e) => handleChange(e, index)}
+                    required
+                    select
+                    SelectProps={{ native: true }}
+                    value={item.action}
+                    variant="outlined"
+                  >
+                    {states.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item md={2} xs={2}>
+                  <TextField
+                    disabled={!editMode}
+                    fullWidth
+                    label="value"
+                    name="value"
+                    onChange={(e) => handleChange(e, index)}
+                    required
+                    value={item.value}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={2} xs={2}>
+                  <TextField
+                    disabled={!editMode}
+                    fullWidth
+                    disabled
+                    label="value"
+                    name="value"
+                    onChange={(e) => handleChange(e, index)}
+                    required
+                    value={item.goldValue}
+                    variant="outlined"
+                  ></TextField>
+                </Grid>
+                <Grid
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-center",
+                    padding: "auto",
+                  }}
+                  item
+                  md={2}
+                  xs={2}
+                >
+                  {" "}
+                  {index == incentiveConfig.length - 1 ? (
+                    <Button
+                      color="secondary"
+                      variant="outlined"
+                      sx={{ width: "100%" }}
+                      onClick={() => {
+                        addBlank();
                       }}
-                      item
-                      md={2}
-                      xs={2}
+                      disabled={!editMode}
                     >
-                      {" "}
-                      { index == incentiveConfig.length -1 ? <Button color="secondary" variant="outlined" sx={{width:"100%"}} onClick={()=> {
-                        addBlank()
-                      }} disabled={!editMode}>
-                        Add
-                      </Button>
-                    : <Button color="secondary" variant="outlined" sx={{width:"100%"}} onClick={()=> {
-                      removeAt(index)
-                    }} disabled={!editMode}>
-                    Remove
-                  </Button>
-                    }
-                    </Grid>
-                  </Grid>
-              );
-            })}
-                </CardContent>
+                      Add
+                    </Button>
+                  ) : (
+                    <Button
+                      color="secondary"
+                      variant="outlined"
+                      sx={{ width: "100%" }}
+                      onClick={() => {
+                        removeAt(index);
+                      }}
+                      disabled={!editMode}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </Grid>
+              </Grid>
+            );
+          })}
+        </CardContent>
 
-
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                p: 2,
-                gap:1
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            p: 2,
+            gap: 1,
+          }}
+        >
+          {editMode && (
+            <Button
+              color="secondary"
+              variant="contained"
+              onClick={() => {
+                setEditMode(false);
               }}
             >
-              {editMode && <Button color="secondary" variant="contained" onClick={() =>{
-                setEditMode(false)
-              }}>
-                Cancel
-              </Button>}
-              <Button color="secondary" variant="contained" onClick={() =>{
-                submit()
-              }}>
-                {editMode ? "Update details" : "Edit"}
-              </Button>
-            </Box>
-          </Card>
-        </form>
+              Cancel
+            </Button>
+          )}
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={() => {
+              submit();
+            }}
+          >
+            {editMode ? "Update details" : "Edit"}
+          </Button>
+        </Box>
+      </Card>
+    </form>
   );
 };
 

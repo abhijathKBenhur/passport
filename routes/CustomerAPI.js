@@ -1,6 +1,6 @@
 const CompanySchema = require("../db-config/Company.schema");
-const UserSchema = require("../db-config/User.schema");
-const TransactionSchema = require("../db-config/Transaction.schema");
+const CustomerSchema = require("../db-config/Customer.Schema");
+const IncentiveSchema = require("../db-config/Incentive.Schema");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
@@ -55,8 +55,8 @@ incentivise = async (req, res) => {
 const addTransaction = async (info) => {
   console.log("Adding transaction ");
   return new Promise((resolve, reject) => {
-    const newTransaction = TransactionSchema(info);
-    newTransaction
+    const newIncentive = IncentiveSchema(info);
+    newIncentive
       .save()
       .then((success) => {
         console.log("Add transaction success");
@@ -111,7 +111,7 @@ const addOrUpdateUser = async (req, goldToGive) => {
   return new Promise((resolve, reject) => {
     console.log("updating User ");
     let newAction = req.body.action;
-    const newUser = UserSchema({
+    const newUser = CustomerSchema({
       email: req.body.email,
       balance: parseFloat(goldToGive),
       incentiveCount: 1,
@@ -119,7 +119,7 @@ const addOrUpdateUser = async (req, goldToGive) => {
       tenantId: req.tenantId,
     });
     console.log("FInding with " + req.tenantId + " and " + req.body.email);
-    UserSchema.findOne(
+    CustomerSchema.findOne(
       { tenantId: newUser.tenantId, email: newUser.email },
       (err, user) => {
         if (err) {
@@ -157,7 +157,7 @@ const addOrUpdateUser = async (req, goldToGive) => {
             incentivisedActions: existingIncentivisedActions
           };
 
-          UserSchema.findOneAndUpdate(
+          CustomerSchema.findOneAndUpdate(
             { tenantId: req.tenantId, email: req.body.email },
             updates,
             { upsert: true }
@@ -176,7 +176,7 @@ const addOrUpdateUser = async (req, goldToGive) => {
 };
 
 getAllUsers = async (req, res) => {
-  await UserSchema.find(
+  await CustomerSchema.find(
     { tenantId: req.tenantId },
     (err, users) => {
       console.log("userss details fetched" , users);

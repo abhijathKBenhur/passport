@@ -1,10 +1,10 @@
-const TransactionSchema = require("../db-config/Transaction.schema");
+const IncentiveSchema = require("../db-config/Incentive.Schema");
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
 
 getAllTransactions = async (req, res) => {
-    await TransactionSchema.find(
+    await IncentiveSchema.find(
         {  },
         // { tenantId: req.tenantId },
         (err, transactions) => {

@@ -20,7 +20,7 @@ import { v4 as uuid } from "uuid";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import TransactionInterface from "../../Interfaces/TransactionInterface"
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import { SeverityPill } from "../../commons/severity-pills";
+
 
 const orders = [
   {
@@ -119,8 +119,8 @@ const Transactions = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {transactions.map((order) => (
-              <TableRow hover>
+            {transactions.map((order, index) => (
+              <TableRow hover key={index} >
                 <TableCell>{order.action}</TableCell>
                 <TableCell>{order.amount}</TableCell>
                 <TableCell>{order.email}</TableCell>
