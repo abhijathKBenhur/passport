@@ -15,6 +15,7 @@ const authorizer = (req, res, next) => {
         // });
       }else{
         try {
+          console.log("Decodeding Token", token)
           const decoded = jwt.verify(token, process.env.TWEETER_KOO);
           console.log("Decoded Token", decoded)
           let key = decoded.key;
