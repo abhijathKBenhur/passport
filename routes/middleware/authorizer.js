@@ -35,8 +35,8 @@ const authorizer = (req, res, next) => {
         }
       }
     // } else {
-    //   console.log("Skipped token validation")
-    //   next();
+      console.log("Skipped token validation")
+      next();
     // }
 };
 
