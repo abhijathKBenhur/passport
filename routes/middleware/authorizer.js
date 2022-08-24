@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const authorizer = (req, res, next) => {
   let skipInjection = ["/api/auth/login"];
   console.log("in authorizer",req.path);
-  if (skipInjection.indexOf(req.path) == -1 && req.method != "OPTIONS") {
+  // if (skipInjection.indexOf(req.path) == -1 && req.method != "OPTIONS") {
       const token = req.headers["x-access-token"];
       if (!token) {
         console.log("Token not found!")
@@ -33,10 +33,10 @@ const authorizer = (req, res, next) => {
           },
         });
       }
-    } else {
-      console.log("Skipped token validation")
-      next();
-    }
+    // } else {
+    //   console.log("Skipped token validation")
+    //   next();
+    // }
 };
 
 module.exports = authorizer;
