@@ -5,15 +5,7 @@ const authorizer = (req, res, next) => {
   console.log("in authorizer",req.path);
   // if (skipInjection.indexOf(req.path) == -1 && req.method != "OPTIONS") {
       const token = req.headers["x-access-token"];
-      if (!token) {
-        console.log("Token not found! All subsequent apis will fail!")
-        // return res.status(403).json({
-        //   success: true,
-        //   data: {
-        //     error: "Authorization failed",
-        //   },
-        // });
-      }else{
+      if (token) {
         try {
           console.log("Decodeding Token", token)
           const decoded = jwt.verify(token, process.env.TWEETER_KOO);
@@ -34,6 +26,14 @@ const authorizer = (req, res, next) => {
             },
           });
         }
+      }else{
+        console.log("Token not found! All subsequent apis will fail!")
+        // return res.status(403).json({
+        //   success: true,
+        //   data: {
+        //     error: "Authorization failed",
+        //   },
+        // });
       }
     // } else {
       console.log("Skipped token validation")
