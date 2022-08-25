@@ -5,7 +5,7 @@ const authorizer = (req, res, next) => {
   console.log("in authorizer",req.path);
   // if (skipInjection.indexOf(req.path) == -1 && req.method != "OPTIONS") {
       const token = req.headers["x-access-token"];
-      if (token && token != null) {
+      if (token && token != null && token != "null") {
         try {
           console.log("Decodeding Token", token)
           const decoded = jwt.verify(token, process.env.TWEETER_KOO);
