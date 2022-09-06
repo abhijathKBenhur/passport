@@ -8,8 +8,8 @@ import {
   Divider,
   Grid,
   TextField,
-  Toolbar,
-  Container,
+  Select,
+  MenuItem,
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "react-simple-snackbar";
@@ -78,6 +78,7 @@ const Configure = (props) => {
   const blankIncentive = {
     action: "sign-up",
     value: "",
+    frequency: "once"
   };
   const [openSnackbar, closeSnackbar] = useSnackbar();
   const [incentiveConfig, setIncentiveConfig] = useState([]);
@@ -107,6 +108,12 @@ const Configure = (props) => {
     }
     if (event.target.name == "value") {
       incentiveConfigCopy[index].value = event.target.value;
+    }
+    if (event.target.name == "frequency") {
+      incentiveConfigCopy[index].frequency = event.target.value;
+    }
+    if (event.target.name == "NValue") {
+      incentiveConfigCopy[index].NValue = event.target.value;
     }
     setIncentiveConfig(incentiveConfigCopy);
   };
@@ -164,7 +171,7 @@ const Configure = (props) => {
                 key={index}
                 style={{ marginTop: "10px" }}
               >
-                <Grid item md={6} xs={12}>
+                <Grid item md={4} xs={12}>
                   <TextField
                     disabled={!editMode}
                     fullWidth
@@ -184,7 +191,7 @@ const Configure = (props) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item md={2} xs={2}>
+                <Grid item md={3} xs={3}>
                   <TextField
                     disabled={!editMode}
                     fullWidth
@@ -196,28 +203,45 @@ const Configure = (props) => {
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item md={2} xs={2}>
-                  <TextField
+                <Grid item md={3} xs={3} sx={{
+                    display: "flex",
+                    justifyContent: "flex-center",
+                    gap:"10px"
+                  }}>
+                  <Select
+                    value={item.frequency}
+                    label="Nth time"
+                    fullWidth
+                    disabled={!editMode}
+                    name="frequency"
+                    onChange={(e) => handleChange(e, index)}
+                  >
+                    <MenuItem value={"once"}>Once</MenuItem>
+                    <MenuItem value={"always"}>Always</MenuItem>
+                    <MenuItem value={"n"}>Nth time</MenuItem>
+                  </Select>
+                  {item.frequency == "n" && 
+                    <TextField
                     disabled={!editMode}
                     fullWidth
-                    disabled
-                    label="value"
-                    name="value"
+                    label="N value"
+                    name="NValue"
                     onChange={(e) => handleChange(e, index)}
                     required
-                    value={item.goldValue}
+                    value={item.NValue}
                     variant="outlined"
-                  ></TextField>
+                  />
+
+                  }
                 </Grid>
-                <Grid
+                <Grid md={2} xs={2}
                   sx={{
                     display: "flex",
                     justifyContent: "flex-center",
                     padding: "auto",
                   }}
                   item
-                  md={2}
-                  xs={2}
+                  
                 >
                   {" "}
                   {index == incentiveConfig.length - 1 ? (

@@ -7,7 +7,7 @@ const Customer = new Schema(
     email: { type: String },
     balance:{ type: Number },
     incentiveCount:{ type: Number },
-    incentivisedActions:{ type: Array },
+    incentivisedActions:{ type: Map },
     tenantId:{ type: String },
   },
   { timestamps: true }

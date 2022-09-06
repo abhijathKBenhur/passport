@@ -40,6 +40,7 @@
     "react-chartjs-2": "^4.3.1",
     "react-perfect-scrollbar": "^1.5.8",
     "react-simple-snackbar": "^1.1.11",
+    "react-toastify": "^9.0.8",
     "recharts": "^2.1.13",
     "universal-cookie": "^4.0.4",
     "url": "^0.11.0",

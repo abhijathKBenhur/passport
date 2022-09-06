@@ -101,7 +101,7 @@ export const Customers = ({ ...rest }) => {
                           customer.incentivisedActions.map((item) => {
                             return (
                               <SeverityPill color={"success"} sx={{ml:1}}>
-                                {item}
+                                {item.action} - {item.count}
                               </SeverityPill>
                             );
                           })}

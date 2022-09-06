@@ -66,7 +66,7 @@ export default function Login() {
       AuthInterface.login(submitData).then((success) => {
         console.log("Login succesful");
         sessionStorage.setItem("PASSPORT_TOKEN", success?.data?.token);
-        history.push("/console")
+        history.push("/console");
       });
     }
   };
@@ -105,115 +105,165 @@ export default function Login() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="sm" >
+      <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
+        <Grid
+          item
+          xs={12}
+          sm={8}
+          md={5}
+          square
+          style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            justifyContent: "center",
+            alignContent: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            {signUp ? "Register" : "Login"}
-          </Typography>
           <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
+            sx={{
+              my: 8,
+              mx: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              disabled={mailSent}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              disabled={mailSent}
-            />
-            {signUp && (
+            <Typography component="h1" variant="h5">
+              {signUp ? "Register" : "Login"}
+            </Typography>
+            <Box
+              component="form"
+              noValidate
+              onSubmit={handleSubmit}
+              sx={{ mt: 1 }}
+            >
               <TextField
                 margin="normal"
                 required
                 fullWidth
-                name="companyName"
-                label="companyName"
-                id="companyName"
-                autoComplete="Company name"
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
                 disabled={mailSent}
               />
-            )}
-            {mailSent && (
               <TextField
                 margin="normal"
                 required
                 fullWidth
-                name="tenantId"
-                label="Verification Code"
-                id="tenantId"
-                autoComplete="Verification Code"
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                disabled={mailSent}
               />
-            )}
+              {signUp && (
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="companyName"
+                  label="companyName"
+                  id="companyName"
+                  autoComplete="Company name"
+                  disabled={mailSent}
+                />
+              )}
+              {mailSent && (
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="tenantId"
+                  label="Verification Code"
+                  id="tenantId"
+                  autoComplete="Verification Code"
+                />
+              )}
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              onClick={() => {}}
-            >
-              {signUp ? (mailSent ? "Register" : "Verify") : "Login"}
-            </Button>
-           
-            <Grid container>
-              <Grid item>
-                {signUp ? (
-                  <Link
-                    onClick={() => {
-                      setSignUp(false);
-                    }}
-                    variant="body2"
-                  >
-                    {"Already have an account? Login"}
-                  </Link>
-                ) : (
-                  <Link
-                    onClick={() => {
-                      setSignUp(true);
-                    }}
-                    variant="body2"
-                  >
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                )}
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{
+                  mt: 3, mb: 2,
+                  backgroundColor: (t) =>
+                    t.palette.mode === "lidarkght"
+                      ? t.palette.grey[50]
+                      : t.palette.grey[900],
+                }}
+                onClick={() => {}}
+              >
+                {signUp ? (mailSent ? "Register" : "Verify") : "Login"}
+              </Button>
+              <Grid container>
+                <Grid item>
+                  {signUp ? (
+                    <Link
+                      onClick={() => {
+                        setSignUp(false);
+                      }}
+                      variant="body2"
+                    >
+                      {"Already have an account? Login"}
+                    </Link>
+                  ) : (
+                    <Link
+                      onClick={() => {
+                        setSignUp(true);
+                      }}
+                      variant="body2"
+                    >
+                      {"Don't have an account? Sign Up"}
+                    </Link>
+                  )}
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs>
-                <span style={{ color: "red" }}>{errorMessage}</span>
+              <Grid container>
+                <Grid item xs>
+                  <span style={{ color: "red" }}>{errorMessage}</span>
+                </Grid>
               </Grid>
-            </Grid>
+            </Box>
           </Box>
-        </Box>
-      </Container>
+        </Grid>
+        <Grid
+          square
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignContent:"center",
+            alignItems:"center"
+          }}
+          component={Paper}
+          elevation={6}
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          sx={{
+            height: "100vh",
+            paddingLeft:"30px",
+            backgroundColor: (t) =>
+              t.palette.mode === "lidarkght"
+                ? t.palette.grey[50]
+                : t.palette.grey[900],
+          }}
+        >
+          <div>
+            <Typography variant="h2"> TRIBEGOLD </Typography>
+            <Typography variant="h5" component="h2">
+            A revolutionary, NEW way to drive user adoption
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+              h6 gutter bottom
+            </Typography>
+          </div>
+        </Grid>
+      </Grid>
     </ThemeProvider>
   );
 }

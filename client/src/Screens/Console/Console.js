@@ -19,6 +19,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import {showToaster} from "../../commons/common.utils";
 import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -96,6 +97,7 @@ const mdTheme = createTheme();
 export default function Console() {
   const [open, setOpen] = React.useState(true);
   const [company, setCompany] = React.useState({});
+  const [companyStatus, setCompanyStatus] = React.useState();
   const [activeMenu, setActiveMenu] = React.useState("Dashboard");
   const history = useHistory();
   const [openSnackbar, closeSnackbar] = useSnackbar();
@@ -109,6 +111,10 @@ export default function Console() {
         let companyData = success?.data?.company
         let companyDetails = companyData?.details ? JSON.parse(companyData?.details) : {}
         console.log({...companyData,companyDetails})
+        setCompanyStatus(companyData.status)
+        if (companyData.status != "VERIFIED") {
+          setActiveMenu(sideBar[3].name);
+        }
         setCompany({...companyData,details:companyDetails})
       })
       .catch((err) => {});
@@ -264,9 +270,13 @@ export default function Console() {
               {sideBar.map((item) => {
                 return (
                   <ListItemButton
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor:companyStatus == "VERIFIED"? "pointer":"no-drop" }}
                     onClick={() => {
-                      setActiveMenu(item.name);
+                      if(companyStatus == "VERIFIED"){
+                        setActiveMenu(item.name);
+                      }else{
+                          showToaster("Not allowed")
+                      }
                     }}
                   >
                     <ListItemIcon

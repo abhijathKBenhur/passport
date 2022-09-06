@@ -115,7 +115,10 @@ const addOrUpdateUser = async (req, goldToGive) => {
       email: req.body.email,
       balance: parseFloat(goldToGive),
       incentiveCount: 1,
-      incentivisedActions: [newAction],
+      incentivisedActions: [{
+        action:newAction,
+        count:1
+      }],
       tenantId: req.tenantId,
     });
     console.log("FInding with " + req.tenantId + " and " + req.body.email);
@@ -146,8 +149,10 @@ const addOrUpdateUser = async (req, goldToGive) => {
           //   throw new ("User was already incentivised for this action")
           // }
 
-          console.log(existingIncentivisedActions.push(newAction),)
-          console.log("new array", console.log(existingIncentivisedActions))
+          let existingActionCount = _.get(existingIncentivisedActions[newAction],'count') || 0
+          existingIncentivisedActions[newAction] = existingActionCount+1
+          
+          console.log("new map", console.log(existingIncentivisedActions))
           
 
           let newGoldBalance = parseFloat(userBalance) + parseFloat(goldToGive);
