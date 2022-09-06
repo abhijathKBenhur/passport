@@ -109,7 +109,7 @@ export default function Console() {
     AuthInterface.validate({ token: liveToken })
       .then((success) => {
         let companyData = success?.data?.company
-        let companyDetails = companyData?.details ? JSON.parse(companyData?.details) : {}
+        let companyDetails = companyData?.details || {}
         console.log({...companyData,companyDetails})
         setCompanyStatus(companyData.status)
         if (companyData.status != "VERIFIED") {
@@ -117,7 +117,9 @@ export default function Console() {
         }
         setCompany({...companyData,details:companyDetails})
       })
-      .catch((err) => {});
+      .catch((err) => {
+        history.push("/login");
+      });
   }, []);
 
   const sideBar = [
@@ -299,7 +301,7 @@ export default function Console() {
           </List>
           <ListItemButton
             style={{
-              position: "absolute",
+              position: "fixed",
               bottom: "0",
               cursor: "pointer",
             }}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import _ from 'lodash';
 import {
   Box,
   Button,
@@ -29,30 +30,31 @@ const Configure = (props) => {
 
   const saveDetails = () => {
     if(editMode){
-      let detailsString = JSON.stringify(values);
-      CompanyInterface.updateDetails({ details: detailsString, status:"VERIFIED" })
+      CompanyInterface.updateDetails({ details: values, status:"VERIFIED" })
         .then((success) => {
-          let details = success?.data?.data?.details
+          let details = success?.data?.data?.details || {}
           try{
             setCompany(success?.data?.data)
-            setValues(JSON.parse(details))
+            setValues(details)
+            setEditMode(false)
           }
           catch(err){
             console.log("Could not fetch company details")
           }
         })
         .catch((error) => {});
-    }else{
-      setEditMode(true)
     }
   };
 
   useEffect(() => {
     CompanyInterface.getDetails().then(success =>{
-      let details = success?.data?.data?.details
+      let details = success?.data?.data?.details || {}
       try{
+        if(_.isEmpty(details)){
+          setEditMode(true)
+        }
         setCompany(success?.data?.data)
-        setValues(JSON.parse(details))
+        setValues(details)
       }
       catch(err){
         console.log("Could not fetch company details")
@@ -180,11 +182,11 @@ const Configure = (props) => {
                   gap:1
                 }}
               >
-                {editMode && <Button color="secondary" variant="contained" onClick={() =>{
+                {/* {editMode && <Button color="secondary" variant="contained" onClick={() =>{
                   setEditMode(false)
                 }}>
                   Cancel
-                </Button>}
+                </Button>} */}
                 <Button color="secondary" variant="contained" onClick={() =>{
                   saveDetails()
                 }}>

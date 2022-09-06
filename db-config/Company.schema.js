@@ -12,7 +12,7 @@ const Company = new Schema(
     tenantId: { type: String },
     key: { type: String },
     secret: { type: String },
-    details: { type: String },
+    details: { type: Map },
     ownerWallet: { type: String },
     contractAddress: { type: String },
     pKey: { type: String },
