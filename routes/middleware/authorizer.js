@@ -16,6 +16,7 @@ const authorizer = (req, res, next) => {
           req.key = key;
           req.secret = secret;
           req.tenantId = tenantId;
+          console.log("Forwarding request")
           return next();
         } catch (err) {
           console.log(err);

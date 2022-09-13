@@ -222,10 +222,10 @@ export default function Console() {
                     <WalletCard type="given" />
                   </Grid>
                   <Grid item xs={12} md={4} lg={3}>
-                    <WalletCard type="taken" />
+                    <WalletCard type="rate" />
                   </Grid>
                   <Grid item xs={12} md={4} lg={3}>
-                    <WalletCard type="as" />
+                    <WalletCard type="users" />
                   </Grid>
                 </Grid>
               </Container>

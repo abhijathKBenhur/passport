@@ -69,7 +69,7 @@ const Configure = (props) => {
         <form autoComplete="off" noValidate {...props}>
           <Card>
             <CardHeader
-              subheader="The information can be edited"
+              subheader="The information cannot be edited"
               title="Account"
             />
             <Divider />

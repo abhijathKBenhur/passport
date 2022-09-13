@@ -21,7 +21,7 @@ const states = [
     label: "Sign up",
   },
   {
-    value: "Sign-in",
+    value: "sign-in",
     label: "Sign in",
   },
   {

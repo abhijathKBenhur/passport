@@ -7,13 +7,19 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 const getMainTitle = (props) =>{
   switch(props?.type){
     case "balance":
-      return "240"
+      return "3000 TRBG"
       break;
     case "given":
+      return "59 TRBG"
+      break;
+    case "rate":
+      return "0.2$"
+      break;
+    case "users":
       return "322"
       break;
-      default:
-        return "DEFAULT"
+    default:
+      return "DEFAULT"
   }
 }
 
@@ -21,13 +27,38 @@ const getMainTitle = (props) =>{
 const getTopText = (props) =>{
   switch(props?.type){
     case "balance":
-      return "TRBG"
+      return "Balance"
       break;
     case "given":
-      return "TRBG"
+      return "59 TRBG"
       break;
-      default:
-        return "TRBG" 
+    case "rate":
+      return "Current conversion"
+      break;
+    case "users":
+      return "Total users"
+      break;
+    default:
+      return "DEFAULT"
+  }
+}
+
+const getFooterText = (props) =>{
+  switch(props?.type){
+    case "balance":
+      return "Lasts for 206 transactions"
+      break;
+    case "given":
+      return "In last one month"
+      break;
+    case "users":
+      return "2% increase from yesterday"
+      break;
+    case "rate":
+      return "As of today"
+      break;
+    default:
+      return "DEFAULT"
   }
 }
 
@@ -72,17 +103,7 @@ const getIcon = (props) =>{
 }
 
 
-const getFooterText = (props) =>{
-  switch(props?.type){
-    case "balance":
-      return "Lasts for 20 transactions"
-      break;
-    case "given":
-      break;
-      default:
-        return "DEFAULT"
-  }
-}
+
 
 
 const WalletCard = (props) => (
@@ -136,7 +157,7 @@ const WalletCard = (props) => (
           color="textSecondary"
           variant="caption"
         >
-          {getFooterText()}
+          {getFooterText(props)}
         </Typography>
       </Box>
     </CardContent>
