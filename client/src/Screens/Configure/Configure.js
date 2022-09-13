@@ -225,6 +225,7 @@ const Configure = (props) => {
                     disabled={!editMode}
                     fullWidth
                     label="N value"
+                    type="number"
                     name="NValue"
                     onChange={(e) => handleChange(e, index)}
                     required
