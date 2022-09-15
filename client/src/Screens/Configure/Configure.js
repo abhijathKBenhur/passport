@@ -25,7 +25,7 @@ const states = [
     label: "Sign in",
   },
   {
-    value: "Download-app",
+    value: "download-app",
     label: "App download",
   },
   {
@@ -33,20 +33,8 @@ const states = [
     label: "Fill profile",
   },
   {
-    value: "Share-Phone-number",
+    value: "share-Phone-number",
     label: "Share phone number",
-  },
-  {
-    value: "share-content",
-    label: "Share Content",
-  },
-  {
-    value: "like-content",
-    label: "Like content",
-  },
-  {
-    value: "upload-content",
-    label: "Upload contacts",
   },
   {
     value: "refer-contact",
@@ -69,7 +57,7 @@ const states = [
     label: "Review product",
   },
   {
-    value: "but-above-value",
+    value: "buy-above-value",
     label: "Buy above value",
   },
 ];

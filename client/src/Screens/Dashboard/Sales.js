@@ -1,39 +1,43 @@
-import { Bar } from 'react-chartjs-2';
-import Chart from 'chart.js/auto';
-
-import {CategoryScale} from 'chart.js'; 
-import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { Bar } from "react-chartjs-2";
+import Chart from "chart.js/auto";
+import { useState, useEffect } from "react";
+import { CategoryScale } from "chart.js";
+import _ from"lodash";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+  useTheme,
+} from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 Chart.register(CategoryScale);
 
- const Sales = (props) => {
+const Sales = (props) => {
   const theme = useTheme();
+  const [actionMailWithGold, setActionMailWithGold] = useState({});
+
+  useEffect(() => {
+   console.log(props.transactions)
+  }, []);
 
   const data = {
     datasets: [
       {
-        backgroundColor: '#3F51B5',
+        backgroundColor: "#3F51B5",
         barPercentage: 0.5,
         barThickness: 12,
         borderRadius: 4,
         categoryPercentage: 0.5,
-        data: [18, 5, 19, 27, 29, 19, 20],
-        label: 'This year',
-        maxBarThickness: 10
+        data: _.map(props.transactions,'emails'),
+        label: "Users",
+        maxBarThickness: 10,
       },
-      {
-        backgroundColor: '#EEEEEE',
-        barPercentage: 0.5,
-        barThickness: 12,
-        borderRadius: 4,
-        categoryPercentage: 0.5,
-        data: [11, 20, 12, 29, 30, 25, 13],
-        label: 'Last year',
-        maxBarThickness: 10
-      }
     ],
-    labels: ['1 Aug', '2 Aug', '3 Aug', '4 Aug', '5 Aug', '6 Aug', '7 aug']
+    labels: _.map(props.transactions,'action'),
   };
 
   const options = {
@@ -46,20 +50,20 @@ Chart.register(CategoryScale);
     xAxes: [
       {
         ticks: {
-          fontColor: theme.palette.text.secondary
+          fontColor: theme.palette.text.secondary,
         },
         gridLines: {
           display: false,
-          drawBorder: false
-        }
-      }
+          drawBorder: false,
+        },
+      },
     ],
     yAxes: [
       {
         ticks: {
           fontColor: theme.palette.text.secondary,
           beginAtZero: true,
-          min: 0
+          min: 0,
         },
         gridLines: {
           borderDash: [2],
@@ -68,9 +72,9 @@ Chart.register(CategoryScale);
           drawBorder: false,
           zeroLineBorderDash: [2],
           zeroLineBorderDashOffset: [2],
-          zeroLineColor: theme.palette.divider
-        }
-      }
+          zeroLineColor: theme.palette.divider,
+        },
+      },
     ],
     tooltips: {
       backgroundColor: theme.palette.background.paper,
@@ -80,54 +84,48 @@ Chart.register(CategoryScale);
       enabled: true,
       footerFontColor: theme.palette.text.secondary,
       intersect: false,
-      mode: 'index',
-      titleFontColor: theme.palette.text.primary
-    }
+      mode: "index",
+      titleFontColor: theme.palette.text.primary,
+    },
   };
 
   return (
     <Card {...props}>
       <CardHeader
-        action={(
-          <Button
-            endIcon={<ArrowDropDownIcon fontSize="small" />}
-            size="small"
-          >
-            Last 7 days
-          </Button>
-        )}
-        title="Latest incentives"
+        // action={
+        //   <Button endIcon={<ArrowDropDownIcon fontSize="small" />} size="small">
+        //     Last 7 days
+        //   </Button>
+        // }
+        title="Users"
       />
       <Divider />
       <CardContent>
         <Box
           sx={{
             height: 400,
-            position: 'relative'
+            position: "relative",
           }}
         >
-          <Bar
-            data={data}
-            options={options}
-          />
+          <Bar data={data} options={options} />
         </Box>
       </CardContent>
       <Divider />
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          p: 2
+          display: "flex",
+          justifyContent: "flex-end",
+          p: 2,
         }}
       >
         <Button
           color="primary"
           endIcon={<ArrowRightIcon fontSize="small" />}
-          size="small"
-        >
+          size="small">
           Overview
         </Button>
       </Box>
     </Card>
   );
-}; export default Sales
+};
+export default Sales;

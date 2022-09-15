@@ -10,9 +10,14 @@ export const getUser = (request) =>  {
     return AxiosInstance.post("/customer/getUser",request) 
 }
 
+export const getTotalUserCount = (request) =>  { 
+    return AxiosInstance.post("/customer/getTotalUserCount",request) 
+}
+
 const CustomerInterface = {
     getAllUsers,
     getUser,
+    getTotalUserCount,
 }
 
 export default CustomerInterface

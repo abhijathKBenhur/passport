@@ -106,33 +106,33 @@ const getCompanyDetails = async (req, res) => {
 };
 
 const getGoldToBeGiven = (action, n, config) => {
-  console.log(
-    "Finding gold for " + n + "th Occurence of " + action + " from config :::",
-    config
-  );
+  n = n.toString()
+
   let matchingListing =
     _.find(config, { action: action, frequency: "always" }) ||
     _.find(config, { action: action, frequency: "n", NValue: n }) ||
     (n == 1 && _.find(config, { action: action, frequency: "once" }));
+  
+    console.log("matchingListing", matchingListing)
   return _.get(matchingListing, "value") || 0;
 };
 
 const addOrUpdateUser = async (req, goldConfig) => {
   return new Promise((resolve, reject) => {
-    console.log("updating User ");
+    console.log("add or update User ");
     let newAction = req.body.action;
     console.log("Getting gold to give");
     let goldToGive = parseFloat(getGoldToBeGiven(newAction, 1, goldConfig));
+    let incentivisedActionsMap = {}
+    incentivisedActionsMap[newAction] = 1
     const newUser = CustomerSchema({
       email: req.body.email,
       balance: goldToGive,
       incentiveCount: 1,
-      incentivisedActions: {
-        action: newAction,
-        count: 1,
-      },
+      incentivisedActions:incentivisedActionsMap,
       tenantId: req.tenantId,
     });
+    console.log("New user object", newUser)
     console.log("FInding with " + req.tenantId + " and " + req.body.email);
     CustomerSchema.findOne(
       { tenantId: newUser.tenantId, email: newUser.email },
@@ -141,8 +141,9 @@ const addOrUpdateUser = async (req, goldConfig) => {
           reject("Add user err", err);
         }
         if (!user || user == null) {
+          console.log("creating customer", newUser);
           if (goldToGive == 0) {
-            reject("No gold incentivised");
+            console.log("No gold incentivised, skipping user creation");
           }
           console.log("creating customer", newUser);
           newUser
@@ -155,37 +156,36 @@ const addOrUpdateUser = async (req, goldConfig) => {
               reject("Add user error" + error);
             });
         } else {
-          console.log("Found user", user);
-          console.log("updating User ");
+          console.log("Found user, updating", user);
           let userBalance = user.balance;
           let existingIncentivesCount = user.incentiveCount;
-          let existingIncentivisedActions = user.incentivisedActions;
-          console.log(
-            "existingIncentivisedActions",
-            console.log(existingIncentivisedActions)
-          );
-          // if(existingIncentivesCount.indexOf(newAction) > -1){
-          //   throw new ("User was already incentivised for this action")
-          // }
+          console.log("total existingIncentivesCount", existingIncentivesCount);
 
-          let existingActionCount =
-            _.get(existingIncentivisedActions[newAction], "count") || 0;
-          existingIncentivisedActions[newAction] = existingActionCount + 1;
-          console.log("new map", console.log(existingIncentivisedActions));
+          let existingIncentivisedActions = user.incentivisedActions;
+          console.log("total existingIncentivisedActions", existingIncentivisedActions);
+
+          let incetiveCountForAction = existingIncentivisedActions.get(newAction) || 0
+          console.log("total incetiveCountForAction", incetiveCountForAction);
+
+
+          let newMap = Object.fromEntries(existingIncentivisedActions);
+          newMap[newAction] = incetiveCountForAction + 1
+          console.log("new map",newMap );
           goldToGive = getGoldToBeGiven(
             newAction,
-            existingIncentivesCount + 1,
+            newMap[newAction],
             goldConfig
           );
+          console.log("gold to give ", goldToGive)
           if (goldToGive == 0) {
-            reject("No gold incentivised");
-          } else {
+            console.log("No gold incentivised for existing user");
+          } 
             let newGoldBalance =
               parseFloat(userBalance) + parseFloat(goldToGive);
             let updates = {
               balance: newGoldBalance,
               incentiveCount: parseInt(existingIncentivesCount) + 1,
-              incentivisedActions: existingIncentivisedActions,
+              incentivisedActions: newMap,
             };
 
             CustomerSchema.findOneAndUpdate(
@@ -194,13 +194,11 @@ const addOrUpdateUser = async (req, goldConfig) => {
               { upsert: true }
             )
               .then((user, b) => {
-                console.log("details updated", user, b);
                 resolve(goldToGive);
               })
               .catch((error) => {
                 reject("Update user error" + error);
               });
-          }
         }
       }
     );
@@ -209,7 +207,6 @@ const addOrUpdateUser = async (req, goldConfig) => {
 
 getAllUsers = async (req, res) => {
   await CustomerSchema.find({ tenantId: req.tenantId }, (err, users) => {
-    console.log("userss details fetched", users);
     if (err) {
       return res.status(400).json({ success: false, error: err });
     }
@@ -223,7 +220,15 @@ getAllUsers = async (req, res) => {
   });
 };
 
+getTotalUserCount = async (req, res) => {
+  let userCount = await CustomerSchema.countDocuments();
+  console.log("userCount",userCount)
+  return res.status(200).json({ success: true, data: userCount });
+};
+
 router.get("/getAllUsers", getAllUsers);
 router.post("/incentivise", incentivise);
+router.post("/getTotalUserCount", getTotalUserCount);
+
 
 module.exports = router;

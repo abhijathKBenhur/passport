@@ -128,7 +128,7 @@ export default function Console() {
       icon: <DashboardIcon />,
     },
     {
-      name: "Customers",
+      name: "Users",
       icon: <PeopleIcon />,
     },
    
@@ -154,7 +154,7 @@ export default function Console() {
       case "Dashboard":
         return <Dashboard></Dashboard>;
         break;
-      case "Customers":
+      case "Users":
         return <Customers></Customers>;
         break;
       case "Dashboard":
@@ -219,7 +219,7 @@ export default function Console() {
                     <WalletCard type="balance" />
                   </Grid>
                   <Grid item xs={12} md={4} lg={3}>
-                    <WalletCard type="given" />
+                    <WalletCard type="given"  distributed={company.distributed}/>
                   </Grid>
                   <Grid item xs={12} md={4} lg={3}>
                     <WalletCard type="rate" />

@@ -115,28 +115,17 @@ const Transactions = (props) => {
               <TableCell>
                 Customer
               </TableCell>
-              <TableCell>Message</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {transactions.map((order, index) => (
-              <TableRow hover key={index} >
+               order.amount > 0 && 
+              
+              (<TableRow hover key={index} >
                 <TableCell>{order.action}</TableCell>
                 <TableCell>{order.amount}</TableCell>
                 <TableCell>{order.email}</TableCell>
-                <TableCell>
-                {order.message}
-                  {/* <SeverityPill
-                    color={
-                      (order.status === "delivered" && "success") ||
-                      (order.status === "refunded" && "error") ||
-                      "warning"
-                    }
-                  >
-                
-                  </SeverityPill> */}
-                </TableCell>
-              </TableRow>
+              </TableRow>)
             ))}
           </TableBody>
         </Table>

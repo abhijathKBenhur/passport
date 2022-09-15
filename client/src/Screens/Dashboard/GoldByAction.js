@@ -4,6 +4,8 @@ import { Box, Card, CardContent, CardHeader, Divider, Typography, useTheme } fro
 import LaptopMacIcon from '@mui/icons-material/LaptopMac';
 import PhoneIcon from '@mui/icons-material/Phone';
 import TabletIcon from '@mui/icons-material/Tablet';
+import _ from"lodash";
+
 Chart.register(ArcElement);
 
  const GoldByAction = (props) => {
@@ -12,14 +14,14 @@ Chart.register(ArcElement);
   const data = {
     datasets: [
       {
-        data: [63, 15, 22],
+        data: _.map(props.transactions,'amount'),
         backgroundColor: ['#3F51B5', '#e53935', '#FB8C00'],
         borderWidth: 8,
         borderColor: '#FFFFFF',
         hoverBorderColor: '#FFFFFF'
       }
     ],
-    labels: ['Sign up', 'Milestone', 'Referal']
+    labels: _.map(props.transactions,'action')
   };
 
   const options = {
@@ -44,24 +46,31 @@ Chart.register(ArcElement);
     }
   };
 
-  const devices = [
+  const devices = _.map(props.transactions,
+    function(item) {
+      return {
+        title : item.action,
+        value:item.amount,
+      }
+    })
+
+
+
+    const devicesMap = [
     {
       title: 'Milestone',
       value: 63,
       icon: LaptopMacIcon,
-      color: '#3F51B5'
     },
     {
       title: 'Refferal',
       value: 15,
       icon: TabletIcon,
-      color: '#E53935'
     },
     {
       title: 'Sign up',
       value: 23,
       icon: PhoneIcon,
-      color: '#FB8C00'
     }
   ];
 
@@ -112,7 +121,6 @@ Chart.register(ArcElement);
                 variant="h4"
               >
                 {value}
-                %
               </Typography>
             </Box>
           ))}

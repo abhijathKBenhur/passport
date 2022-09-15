@@ -69,7 +69,7 @@ export const Customers = ({ ...rest }) => {
         }}
       >
         <Card {...rest}>
-          <CardHeader subheader="List of customers" title="Customers" />
+          <CardHeader subheader="List of users" title="Users" />
           <PerfectScrollbar>
             <Box sx={{ minWidth: 1050 }}>
               <Table>
@@ -98,10 +98,10 @@ export const Customers = ({ ...rest }) => {
                       <TableCell>{customer.balance}</TableCell>
                       <TableCell>
                         {customer.incentivisedActions &&
-                          customer.incentivisedActions.map((item) => {
+                          Object.keys(customer.incentivisedActions).map((key) => {
                             return (
                               <SeverityPill color={"success"} sx={{ml:1}}>
-                                {item.action} - {item.count}
+                                {key} : {customer.incentivisedActions[key]}
                               </SeverityPill>
                             );
                           })}
