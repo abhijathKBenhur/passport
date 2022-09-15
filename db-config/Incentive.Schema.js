@@ -5,12 +5,11 @@ const Incentive = new Schema(
   {
     amount: { type: Number },
     action:{ type: String },
-    frequency:{ type: String },
-    NValue:{ type: Number },
-    message:{ type: String },
+    status:{ type: String },
     tenantId:{ type: String },
     email:{ type: String },
-    type:{ type: String }
+    type:{ type: String },
+    hash:{ type: String }
   },
   { timestamps: true }
 );

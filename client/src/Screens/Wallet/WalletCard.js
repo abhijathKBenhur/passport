@@ -53,7 +53,7 @@ const WalletCard = (props) => {
   const getMainTitle = (props) => {
     switch (props?.type) {
       case "balance":
-        return "3000 TRBG";
+        return props.balance+ " TRBG";
         break;
       case "given":
         return props.distributed+ " TRBG";

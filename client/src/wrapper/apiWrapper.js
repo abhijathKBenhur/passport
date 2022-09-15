@@ -4,7 +4,7 @@ import ENDPOINTS from "../commons/Endpoints";
 
 const AxiosInstance = axios.create({
   baseURL:
-    process.env.NODE_ENV == "production"
+    process.env.NODE_ENV == "production" || process.env.NODE_ENV == "test"
       ? ENDPOINTS.REMOTE_ENDPOINTS
       : ENDPOINTS.LOCAL_ENDPOINTS,
 });

@@ -14,7 +14,7 @@ incentivise = async (req, res) => {
 
   try {
     let companyDetails = await getCompanyDetails(req, res);
-    let goldConfig = JSON.parse(companyDetails.goldConfig);
+    let goldConfig = JSON.parse(companyDetails.goldaConfig);
 
     console.log("goldConfig", goldConfig);
     if (companyDetails.status != "VERIFIED") {
@@ -27,12 +27,15 @@ incentivise = async (req, res) => {
 
     let updatedCompany = await updateCompanyDetails(req, {
       distributed: updatedDistribution,
+      $inc : {'balance' : -goldDistributed}
     });
     let addedTransaction = await addTransaction({
       amount: goldDistributed,
       action: requestAction,
       email: incentiveUser,
       tenantId: req.tenantId,
+      type:"USER_INCENTIVE",
+      status:"COMPLETED"
     });
     return res
       .status(200)
@@ -113,7 +116,7 @@ const getGoldToBeGiven = (action, n, config) => {
     _.find(config, { action: action, frequency: "n", NValue: n }) ||
     (n == 1 && _.find(config, { action: action, frequency: "once" }));
   
-    console.log("matchingListing", matchingListing)
+  console.log("matchingListing", matchingListing)
   return _.get(matchingListing, "value") || 0;
 };
 
@@ -123,6 +126,9 @@ const addOrUpdateUser = async (req, goldConfig) => {
     let newAction = req.body.action;
     console.log("Getting gold to give");
     let goldToGive = parseFloat(getGoldToBeGiven(newAction, 1, goldConfig));
+    if(goldToGive == 0){
+      console.log("No gold to be deposited")
+    }
     let incentivisedActionsMap = {}
     incentivisedActionsMap[newAction] = 1
     const newUser = CustomerSchema({

@@ -7,7 +7,6 @@ const nodeMailer = require("nodemailer");
 const uuid = require("uuid");
 const jwt = require("jsonwebtoken");
 var AES = require("crypto-js/aes");
-const { find } = require("../db-config/Company.schema");
 
 verify = (req, res) => {
   const body = req.body;
@@ -32,7 +31,8 @@ verify = (req, res) => {
     tenantId: tenantId,
     status: "PENDING",
     password: AES.encrypt(body.password, process.env.TWEETER_KOO).toString(),
-    distributed:0
+    distributed:0,
+    balance:0
   }
   console.log("Registering company with details ",newCompanyObject )
 

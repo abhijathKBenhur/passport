@@ -19,7 +19,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import {showToaster} from "../../commons/common.utils";
+import { showToaster } from "../../commons/common.utils";
 import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -27,20 +27,21 @@ import LayersIcon from "@mui/icons-material/Layers";
 import Dashboard from "../Dashboard/Dashboard";
 import Customers from "../Customers/Customers";
 import Account from "../Account/Account";
-import Transaction from "../Transactions/Transactions"
+import Transaction from "../Transactions/Transactions";
 import Configure from "../Configure/Configure";
 import AuthInterface from "../../Interfaces/AuthInterface";
 import WalletCard from "../Wallet/WalletCard";
 import { useSnackbar } from "react-simple-snackbar";
-import ReceiptIcon from '@mui/icons-material/Receipt';
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import Payment from "../../components/stripe/Payment";
 
 const drawerWidth = 260;
 const drawerWidthCollapsed = 71;
-const dark = "#111827"
-const lightDark = "#1A2130"
-const highlightGreen = "#30B981"
-const greyText = "#9CA3AF"
-const greyBackground = "#F9FAFC"
+const dark = "#111827";
+const lightDark = "#1A2130";
+const highlightGreen = "#30B981";
+const greyText = "#9CA3AF";
+const greyBackground = "#F9FAFC";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -98,6 +99,7 @@ export default function Console() {
   const [open, setOpen] = React.useState(true);
   const [company, setCompany] = React.useState({});
   const [companyStatus, setCompanyStatus] = React.useState();
+  const [showPayment, setShowPayment] = React.useState(false);
   const [activeMenu, setActiveMenu] = React.useState("Dashboard");
   const history = useHistory();
   const [openSnackbar, closeSnackbar] = useSnackbar();
@@ -108,14 +110,14 @@ export default function Console() {
     }
     AuthInterface.validate({ token: liveToken })
       .then((success) => {
-        let companyData = success?.data?.company
-        let companyDetails = companyData?.details || {}
-        console.log({...companyData,companyDetails})
-        setCompanyStatus(companyData.status)
+        let companyData = success?.data?.company;
+        let companyDetails = companyData?.details || {};
+        console.log({ ...companyData, companyDetails });
+        setCompanyStatus(companyData.status);
         if (companyData.status != "VERIFIED") {
           setActiveMenu(sideBar[3].name);
         }
-        setCompany({...companyData,details:companyDetails})
+        setCompany({ ...companyData, details: companyDetails });
       })
       .catch((err) => {
         history.push("/login");
@@ -131,7 +133,7 @@ export default function Console() {
       name: "Users",
       icon: <PeopleIcon />,
     },
-   
+
     {
       name: "Configure",
       icon: <BarChartIcon />,
@@ -140,7 +142,7 @@ export default function Console() {
       name: "Account",
       icon: <LayersIcon />,
     },
-     {
+    {
       name: "Transactions",
       icon: <ReceiptIcon />,
     },
@@ -187,16 +189,22 @@ export default function Console() {
             }}
           >
             <Box className="left-actions">
-            <Button
-              color="error"
-              size="small"
-              variant="contained"
-            >
-              Buy TRBG
-            </Button>
+              <Button
+                color="error"
+                size="small"
+                variant="contained"
+                onClick={() => setShowPayment(true)}
+              >
+                Buy TRBG
+              </Button>
+              {
+                showPayment && <Payment></Payment>
+              }
             </Box>
             <Box className="right-actions">
-             <Typography style={{color:"red"}}>{company?.companyName}</Typography>
+              <Typography style={{ color: "red" }}>
+                {company?.companyName}
+              </Typography>
             </Box>
           </Toolbar>
           <Toolbar
@@ -207,8 +215,7 @@ export default function Console() {
             <Box
               component="main"
               sx={{
-                backgroundColor: (theme) =>
-                greyBackground,
+                backgroundColor: (theme) => greyBackground,
                 flexGrow: 1,
                 overflow: "auto",
               }}
@@ -216,10 +223,13 @@ export default function Console() {
               <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
                 <Grid container xs={12} md={12} lg={12} spacing={3}>
                   <Grid item xs={12} md={4} lg={3}>
-                    <WalletCard type="balance" />
+                    <WalletCard type="balance" balance={company.balance} />
                   </Grid>
                   <Grid item xs={12} md={4} lg={3}>
-                    <WalletCard type="given"  distributed={company.distributed}/>
+                    <WalletCard
+                      type="given"
+                      distributed={company.distributed}
+                    />
                   </Grid>
                   <Grid item xs={12} md={4} lg={3}>
                     <WalletCard type="rate" />
@@ -235,9 +245,7 @@ export default function Console() {
         <Drawer variant="permanent" open={open} sx={{}}>
           <Toolbar
             sx={{
-              backgroundColor: (theme) =>
-              
-                   dark,
+              backgroundColor: (theme) => dark,
               color: greyText,
               display: "flex",
               alignItems: "center",
@@ -272,18 +280,22 @@ export default function Console() {
               {sideBar.map((item) => {
                 return (
                   <ListItemButton
-                    style={{ cursor:companyStatus == "VERIFIED"? "pointer":"no-drop" }}
+                    style={{
+                      cursor:
+                        companyStatus == "VERIFIED" ? "pointer" : "no-drop",
+                    }}
                     onClick={() => {
-                      if(companyStatus == "VERIFIED"){
+                      if (companyStatus == "VERIFIED") {
                         setActiveMenu(item.name);
-                      }else{
-                          showToaster("Not allowed")
+                      } else {
+                        showToaster("Not allowed");
                       }
                     }}
                   >
                     <ListItemIcon
                       style={{
-                        color: item.name == activeMenu ? highlightGreen : greyText,
+                        color:
+                          item.name == activeMenu ? highlightGreen : greyText,
                       }}
                     >
                       {item.icon}
@@ -291,7 +303,8 @@ export default function Console() {
                     <ListItemText
                       primary={item.name}
                       style={{
-                        color: item.name == activeMenu ? highlightGreen : greyText,
+                        color:
+                          item.name == activeMenu ? highlightGreen : greyText,
                       }}
                     />
                   </ListItemButton>
@@ -328,11 +341,10 @@ export default function Console() {
         <Box
           component="main"
           sx={{
-            backgroundColor: (theme) =>
-            greyBackground,
+            backgroundColor: (theme) => greyBackground,
             flexGrow: 1,
             overflow: "auto",
-            marginTop: "300px"
+            marginTop: "300px",
           }}
         >
           {/*  */}
@@ -340,16 +352,13 @@ export default function Console() {
             <Box
               component="main"
               sx={{
-                backgroundColor: (theme) =>
-                greyBackground,
+                backgroundColor: (theme) => greyBackground,
                 flexGrow: 1,
                 height: "100vh",
                 overflow: "auto",
               }}
             >
-              <Container maxWidth="">
-                {getConsoleContent()}
-              </Container>
+              <Container maxWidth="">{getConsoleContent()}</Container>
             </Box>
           </Grid>
         </Box>
