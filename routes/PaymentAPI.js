@@ -2,13 +2,13 @@ const IncentiveSchema = require("../db-config/Incentive.Schema");
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
-const stripe = require('stripe')('sk_test_51LiDbWGqGIZBjd9PzwRNwnvgMcHZkfbh9ddmxuOI8FMwoWEo4vtC7F6D1pSOO0FPxckdsOQBqXe5nusYVRBIBPEm00A1f3ipK5');
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
 getClientSecret = async (req, res) => {
-    console.log("calling api getClientSecret")
+    console.log("calling api getClientSecret", req.body.amount)
     try{
         const intent = await stripe.paymentIntents.create({
-            amount: 999,
+            amount: req.body.amount,
             currency: 'usd',
             setup_future_usage: 'off_session',
         });
@@ -18,9 +18,21 @@ getClientSecret = async (req, res) => {
             return res.status(400).json({ success: false, data: err });
         }
     }
+
+
+    getClientKey = async (req, res) => {
+    console.log("calling api getClientKey")
+    try{
+        return res.status(200).json({ success: true, data: process.env.STRIPE_PUBLIC_KEY });
+    }
+        catch(err){
+            return res.status(400).json({ success: false, data: err });
+        }
+    }
    
 
-router.get("/getClientSecret", getClientSecret);
+router.post("/getClientSecret", getClientSecret);
+router.post("/getClientKey", getClientKey);
 
 
 module.exports = router;

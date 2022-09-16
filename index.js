@@ -51,7 +51,7 @@ app.use("/api/company", CompanyAPI);
 app.use("/api/customer", CustomerAPI);
 app.use("/api/transaction", TransactionAPI);
 app.use("/api/payment", PaymentAPI);
-app.use("/api/chain", BlockchainAPI);
+app.use("/api/payment", BlockchainAPI);
 
 
 

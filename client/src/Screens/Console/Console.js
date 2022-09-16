@@ -102,7 +102,8 @@ export default function Console() {
   const [showPayment, setShowPayment] = React.useState(false);
   const [activeMenu, setActiveMenu] = React.useState("Dashboard");
   const history = useHistory();
-  const [openSnackbar, closeSnackbar] = useSnackbar();
+
+
   useEffect(() => {
     let liveToken = sessionStorage.getItem("PASSPORT_TOKEN");
     if (!liveToken) {
@@ -198,7 +199,7 @@ export default function Console() {
                 Buy TRBG
               </Button>
               {
-                showPayment && <Payment></Payment>
+                showPayment && <Payment open={showPayment} company={company}></Payment>
               }
             </Box>
             <Box className="right-actions">

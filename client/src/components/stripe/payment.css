@@ -1,0 +1,9 @@
+.StripeElement + button{
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+    margin-top: 10px;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+}

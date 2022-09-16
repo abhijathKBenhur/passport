@@ -18,10 +18,9 @@ const depositGold = (req, res) => {
   ).then(success =>{
     return res.status(200).json({ success: true, data: success });
   }).catch(err =>{
-        return res.status(404).json({ success: true, data: err });
+    return res.status(404).json({ success: true, data: err });
   })
 };
-
 
 router.post("/getBalance", getBalance);
 router.post("/depositGold", depositGold);

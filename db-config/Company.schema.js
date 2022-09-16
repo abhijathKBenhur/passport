@@ -14,7 +14,6 @@ const Company = new Schema(
     key: { type: String },
     secret: { type: String },
     details: { type: Map },
-    ownerWallet: { type: String },
     contractAddress: { type: String },
     pKey: { type: String },
   },
