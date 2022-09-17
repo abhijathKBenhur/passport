@@ -16,7 +16,7 @@ updateDetails = async (req, res) => {
   CompanySchema.findOneAndUpdate(
     { key: req.key, secret: req.secret },
     updates,
-    { upsert: true }
+    { upsert: true , new: true}
   )
     .then((user, b) => {
       console.log("details updated", user, b);

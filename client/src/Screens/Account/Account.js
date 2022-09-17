@@ -36,7 +36,11 @@ const Configure = (props) => {
 
   const saveDetails = () => {
     if(editMode){
-      CompanyInterface.updateDetails({ details: values, status:"VERIFIED" })
+      let formHasError = _.reduce(Object.values(errorMap), function(hasError, n) {
+        return hasError || n;
+      }, false);
+      if(!formHasError){
+        CompanyInterface.updateDetails({ details: values, status:"VERIFIED" })
         .then((success) => {
           let details = success?.data?.data?.details || {}
           try{
@@ -49,6 +53,7 @@ const Configure = (props) => {
           }
         })
         .catch((error) => {});
+      }
     }
   };
 
