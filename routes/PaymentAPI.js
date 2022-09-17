@@ -5,7 +5,7 @@ const _ = require("lodash");
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
 getClientSecret = async (req, res) => {
-    console.log("calling api getClientSecret", req.body.amount)
+    console.log("calling api getClientSecret", req.query.value)
     try{
         const intent = await stripe.paymentIntents.create({
             amount: req.body.amount,
