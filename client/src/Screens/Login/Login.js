@@ -253,7 +253,7 @@ export default function Login() {
                 : t.palette.grey[900],
           }}
         >
-          <div>
+          <div style={{color:"#F1F1F1"}}>
             <Typography variant="h2"> TRIBEGOLD </Typography>
             <Typography variant="h5" component="h2">
             A revolutionary, NEW way to drive user adoption
