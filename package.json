@@ -47,6 +47,7 @@
     "react-simple-snackbar": "^1.1.11",
     "react-toastify": "^9.0.8",
     "recharts": "^2.1.13",
+    "stripe": "^10.10.0",
     "universal-cookie": "^4.0.4",
     "url": "^0.11.0",
     "uuid": "^8.3.2",
