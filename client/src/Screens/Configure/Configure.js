@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "react-simple-snackbar";
+import _ from "lodash";
 import CompanyInterface from "../../Interfaces/CompanyInterface";
 
 const states = [
@@ -66,11 +67,11 @@ const Configure = (props) => {
   const blankIncentive = {
     action: "sign-up",
     value: "",
-    frequency: "once"
+    frequency: "once",
   };
-  const [openSnackbar, closeSnackbar] = useSnackbar();
   const [incentiveConfig, setIncentiveConfig] = useState([]);
   const [editMode, setEditMode] = useState(false);
+  const [errorMap, setErrorMap] = useState({});
 
   useEffect(() => {
     CompanyInterface.getDetails()
@@ -118,19 +119,29 @@ const Configure = (props) => {
 
   const submit = () => {
     if (editMode) {
-      CompanyInterface.configureDistribution({
-        goldConfig: JSON.stringify(incentiveConfig),
-      })
-        .then((success) => {
-          // NotificationService.openNotification(
-          //   "Configuration has been updated successfuly",
-          //   2000
-          // );
-          setEditMode(false);
+      let validatedMap = _.map(incentiveConfig, (item) => {
+        return {
+          valueError: item.value == 0,
+          NValueError: item.frequency == 'n' && item.NValue < 2,
+        };
+      });
+      let isFormValid = !_.find(validatedMap,{NValueError:true}) && !_.find(validatedMap,{valueError:true});
+      setErrorMap(validatedMap);
+      if (isFormValid) {
+        CompanyInterface.configureDistribution({
+          goldConfig: JSON.stringify(incentiveConfig),
         })
-        .catch((err) => {
-          console.log("error", err);
-        });
+          .then((success) => {
+            // NotificationService.openNotification(
+            //   "Configuration has been updated successfuly",
+            //   2000
+            // );
+            setEditMode(false);
+          })
+          .catch((err) => {
+            console.log("error", err);
+          });
+      }
     } else {
       setEditMode(true);
     }
@@ -181,9 +192,16 @@ const Configure = (props) => {
                 </Grid>
                 <Grid item md={3} xs={3}>
                   <TextField
+                    type="number"
+                    error={_.get(errorMap[index], "valueError")}
+                    helperText={
+                      _.get(errorMap[index], "valueError")
+                        ? "Minimum value should be 1 TRBG"
+                        : ""
+                    }
                     disabled={!editMode}
                     fullWidth
-                    label="value"
+                    label="Gold to share"
                     name="value"
                     onChange={(e) => handleChange(e, index)}
                     required
@@ -191,11 +209,16 @@ const Configure = (props) => {
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item md={3} xs={3} sx={{
+                <Grid
+                  item
+                  md={3}
+                  xs={3}
+                  sx={{
                     display: "flex",
                     justifyContent: "flex-center",
-                    gap:"10px"
-                  }}>
+                    gap: "10px",
+                  }}
+                >
                   <Select
                     value={item.frequency}
                     label="Nth time"
@@ -208,29 +231,35 @@ const Configure = (props) => {
                     <MenuItem value={"always"}>Always</MenuItem>
                     <MenuItem value={"n"}>Nth time</MenuItem>
                   </Select>
-                  {item.frequency == "n" && 
+                  {item.frequency == "n" && (
                     <TextField
-                    disabled={!editMode}
-                    fullWidth
-                    label="N value"
-                    type="number"
-                    name="NValue"
-                    onChange={(e) => handleChange(e, index)}
-                    required
-                    value={item.NValue}
-                    variant="outlined"
-                  />
-
-                  }
+                      disabled={!editMode}
+                      helperText={
+                        _.get(errorMap[index], "NValueError")
+                          ? "Must be above 1"
+                          : ""
+                      }
+                      error={_.get(errorMap[index], "NValueError")}
+                      fullWidth
+                      label="N value"
+                      type="number"
+                      name="NValue"
+                      onChange={(e) => handleChange(e, index)}
+                      required
+                      value={item.NValue}
+                      variant="outlined"
+                    />
+                  )}
                 </Grid>
-                <Grid md={2} xs={2}
+                <Grid
+                  md={2}
+                  xs={2}
                   sx={{
                     display: "flex",
                     justifyContent: "flex-center",
                     padding: "auto",
                   }}
                   item
-                  
                 >
                   {" "}
                   {index == incentiveConfig.length - 1 ? (

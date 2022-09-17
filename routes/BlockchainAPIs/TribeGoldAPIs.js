@@ -10,20 +10,21 @@ const tribeGoldContract = BlockchainUtils.tribeGoldContract;
 const transactionObject = {};
 
 web3Instance.eth.getAccounts().then(result => {
-  transactionObject.from = result[1];
+  transactionObject.from = result[0];
 })
 
 getBalance = (account) =>{
   return tribeGoldContract.getBalance(account)
 }
 
-depositGold = (receiverUserObject, ethValue) => {
-  console.log("INITIATING GOLD DEPOSITS TO " + receiverUserObject.metamaskId);
+transferGold = (requestObject, ethValue) => {
+  console.log("INITIATING GOLD DEPOSITS TO " + requestObject.metamaskId, " ::: " , ethValue);
   const promise = new Promise((resolve, reject) => {
     tribeGoldContract.methods
-      .transfer(receiverUserObject.metamaskId, ethValue)
+      .transfer(requestObject.metamaskId, ethValue)
       .send(transactionObject)
       .on("transactionHash", function (hash) {
+        console.log("Started transaction ")
         new TransactionSchema({
           amount: ethValue,
           action: "PURCHASE",
@@ -31,26 +32,28 @@ depositGold = (receiverUserObject, ethValue) => {
           status:"PENDING",
           hash:hash,
           // through stripe metadata
-          email: "company mail address",
-          tenantId: "req.tenantId",
+          email: requestObject.email,
+          tenantId:requestObject.tenantId,
         }).save();
       })
       .once("receipt", function (receipt) {
+        console.log("Completed transaction ")
         TransactionSchema.findOneAndUpdate(
-          { type: receipt.transactionHash },
+          { hash: receipt.transactionHash },
           { status: "COMPLETED" }
         );
         CompanySchema.findOneAndUpdate(
-          { email: "req.key", tenantId: "req.tenantId" },
-          {$inc : {'balance' : ethValue}},
+          { email: requestObject.email, tenantId: requestObject.tenantId },
+          { $inc : {'balance' : ethValue}},
           { upsert: true }
         )
+        console.log("Completed updations ")
         resolve(receipt.transactionHash);
       })
       .once("error", function (error) {
         let transactionHash = _.get(error, "receipt.transactionHash");
         TransactionSchema.findOneAndUpdate(
-          { type: transactionHash },
+          { hash: transactionHash },
           { status: "FAILED" }
         );
         console.log("Deposit feiled to new user in TBGApi");
@@ -77,6 +80,6 @@ depositGold = (receiverUserObject, ethValue) => {
 };
 
 module.exports = {
-  depositGold,
+  transferGold,
   getBalance,
 };

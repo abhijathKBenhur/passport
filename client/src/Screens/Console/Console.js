@@ -199,7 +199,7 @@ export default function Console() {
                 Buy TRBG
               </Button>
               {
-                showPayment && <Payment open={showPayment} company={company}></Payment>
+                <Payment open={showPayment} company={company}></Payment>
               }
             </Box>
             <Box className="right-actions">

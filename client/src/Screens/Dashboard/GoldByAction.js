@@ -90,41 +90,7 @@ Chart.register(ArcElement);
             options={options}
           />
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            pt: 2
-          }}
-        >
-          {devices.map(({
-            color,
-            title,
-            value
-          }) => (
-            <Box
-              key={title}
-              sx={{
-                p: 1,
-                textAlign: 'center'
-              }}
-            >
-              {/* <Icon color="action" /> */}
-              <Typography
-                color="textPrimary"
-                variant="body1"
-              >
-                {title}
-              </Typography>
-              <Typography
-                style={{ color }}
-                variant="h4"
-              >
-                {value}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
+         
       </CardContent>
     </Card>
   );

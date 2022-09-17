@@ -17,6 +17,7 @@ import CompanyInterface from "../../Interfaces/CompanyInterface";
 
 const Configure = (props) => {
   const [values, setValues] = useState({});
+  const [errorMap, setErrorMap] = useState({});
   const [company, setCompany] = useState({});
   const [editMode, setEditMode] = useState(false);
   const [openSnackbar, closeSnackbar] = useSnackbar();
@@ -25,6 +26,11 @@ const Configure = (props) => {
       ...values,
       [event.target.name]: event.target.value,
     });
+    setErrorMap({
+      ...errorMap,
+      [event.target.name]: _.isEmpty(event.target.value),
+    });
+
     console.log(values);
   };
 
@@ -78,8 +84,9 @@ const Configure = (props) => {
                 <Grid item md={6} xs={12}>
                   <TextField
                     disabled
+                    error={errorMap.companyName}
+                    helperText={ errorMap.companyName ? "This field is mandatory" : "" }
                     fullWidth
-                    helperText="Please specify the first name"
                     label="Company name"
                     name="companyName"
                     required
@@ -90,6 +97,8 @@ const Configure = (props) => {
                 <Grid item md={6} xs={12}>
                   <TextField
                     disabled={!editMode}
+                    error={errorMap.Jurisdiction}
+                    helperText={ errorMap.Jurisdiction ? "This field is mandatory" : "" }
                     fullWidth
                     label="Incorporation Jurisdiction"
                     name="Jurisdiction"
@@ -102,6 +111,8 @@ const Configure = (props) => {
                 <Grid item md={6} xs={12}>
                   <TextField
                     disabled={!editMode}
+                    error={errorMap.registration}
+                    helperText={ errorMap.registration ? "This field is mandatory" : "" }
                     fullWidth
                     label="Company Registration Number"
                     name="registration"
@@ -114,6 +125,8 @@ const Configure = (props) => {
                 <Grid item md={6} xs={12}>
                   <TextField
                     disabled={!editMode}
+                    error={errorMap.phone}
+                    helperText={ errorMap.phone ? "This field is mandatory" : "" }
                     fullWidth
                     label="Phone Number"
                     name="phone"
@@ -126,6 +139,8 @@ const Configure = (props) => {
                 <Grid item md={6} xs={12}>
                   <TextField
                     disabled={!editMode}
+                    error={errorMap.address}
+                    helperText={ errorMap.address ? "This field is mandatory" : "" }
                     fullWidth
                     label="Address"
                     name="address"
@@ -138,6 +153,8 @@ const Configure = (props) => {
                 <Grid item md={6} xs={12}>
                   <TextField
                     disabled={!editMode}
+                    error={errorMap.website}
+                    helperText={ errorMap.website ? "This field is mandatory" : "" }
                     fullWidth
                     label="Website"
                     name="website"
@@ -150,6 +167,8 @@ const Configure = (props) => {
                 <Grid item md={6} xs={12}>
                   <TextField
                     disabled={!editMode}
+                    error={errorMap.linkedIn}
+                    helperText={ errorMap.linkedIn ? "This field is mandatory" : "" }
                     fullWidth
                     label="LinkedIn"
                     name="linkedIn"
@@ -162,6 +181,8 @@ const Configure = (props) => {
                 <Grid item md={6} xs={12}>
                   <TextField
                     disabled={!editMode}
+                    error={errorMap.billethash}
+                    helperText={ errorMap.billethash ? "This field is mandatory" : "" }
                     fullWidth
                     label="Ideatribe Hash"
                     name="billethash"

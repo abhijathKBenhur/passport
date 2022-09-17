@@ -12,6 +12,9 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Typography, TextField } from "@mui/material";
 import PaymentInterface from "../../Interfaces/PaymentInterface";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
+
 import "./payment.css";
 
 const BootstrapDialogTitle = (props) => {
@@ -39,24 +42,38 @@ const BootstrapDialogTitle = (props) => {
 };
 
 function Payment(props) {
-  const [open, setOpen] = React.useState(props.open);
+  const [open, setOpen] = React.useState(false);
   const [secret, setSecret] = useState(undefined);
   const [step, setStep] = useState("INPUT");
   const [numberOfGold, setNumberOfGold] = useState(10000);
   const [centsValue, setCentsValue] = useState(1000);
+  const [inputError, setInputError] = useState(false);
   const [stripeContext, setStripeContext] = useState(undefined);
 
   useEffect(() => {
     PaymentInterface.getClientKey()
       .then((success) => {
-        let stripeKey = success?.data?.data
-        setStripeContext(loadStripe(stripeKey))
+        let stripeKey = success?.data?.data;
+        setStripeContext(loadStripe(stripeKey));
       })
       .catch((err) => {
         console.log("Could not get stripe key", err);
       });
   }, []);
+
+
+  useEffect(() => {
+   setOpen(props.open)
+  }, [props.open]);
+
+
+  
   const handleChange = (event, index) => {
+    if(event.target.value < 10000){
+      setInputError(true)
+    }else{
+      setInputError(false)
+    }
     setNumberOfGold(event.target.value);
     setCentsValue((event.target.value / 10) * 100);
   };
@@ -66,20 +83,27 @@ function Payment(props) {
   };
 
   const gotoStep1 = () => {
-    setStep("CARD");
-    PaymentInterface.getClientSecret({ value: centsValue }).then((success) => {
-      let cSecret = success?.data?.data?.client_secret;
-      setSecret(cSecret);
-    });
+    if(!inputError){
+      setStep("CARD");
+      PaymentInterface.getClientSecret({ value: parseInt(centsValue) }).then(
+        (success) => {
+          let cSecret = success?.data?.data?.client_secret;
+          setSecret(cSecret);
+        }
+      );
+    }
   };
 
   const payResponse = (value) => {
     if (value.success) {
       PaymentInterface.depositGold({
-        account: props.company.contractAddress,
+        email:props.company.email,
+        tenantId:props.company.tenantId,
+        metamaskId: props.company.contractAddress,
         goldToDeposit: numberOfGold,
       })
         .then((success) => {
+          
           setStep("SUCCESS");
         })
         .catch((err) => {
@@ -92,63 +116,129 @@ function Payment(props) {
     console.log(value);
   };
 
-  return (
-    <Dialog
-      onClose={handleClose}
-      aria-labelledby="customized-dialog-title"
-      open={open}
-    >
-      <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-        Buy TRBG
-      </BootstrapDialogTitle>
+  const getDialogTitle = () => {
+    switch (step) {
+      case "INPUT":
+        return "Buy TRBG";
+        break;
+      case "CARD":
+        return "Payment";
+        break;
+      case "SUCCESS":
+        return "Payment Successful";
+        break;
+      case "FAILURE":
+        return "Transaction failure";
+        break;
+    }
+  };
 
-      <DialogContent dividers>
-        <Typography gutterBottom>
-          Please buy TRBG with your credit card. Price of each TRBG token is 10
-          cents (US$ 0.1). You can buy upto 100,000 tokens at this price.
-        </Typography>
-        {step == "CARD" && (
-          <Typography
-            gutterBottom
-            style={{ marginTop: "30px", marginBottom: "30px" }}
-          >
-            You are about to pay ${centsValue / 100} Dollars towards purchage of
-            ${numberOfGold} TRBG
+  const getDialogueTopContent = (specific) => {
+    switch (specific || step) {
+      case "INPUT":
+        return (
+          <Typography gutterBottom>
+            Please buy TRBG with your credit card. Price of each TRBG token is
+            10 cents (US$ 0.1). You can buy upto 100,000 tokens at this price.
           </Typography>
-        )}
-
-        {step == "INPUT" ? (
-          <Typography gutterBottom style={{ marginTop: "30px" }}>
-            <TextField
-              fullWidth
-              min={10000}
-              label="No of TRBG to purchase"
-              name="TRBG"
-              onChange={(e) => handleChange(e)}
-              required
-              value={numberOfGold}
-              variant="outlined"
-            />
-          </Typography>
-        ) : (
-          secret && (
-            <Elements
-              stripe={stripeContext}
-              options={{ clientSecret: secret }}
+        );
+        break;
+      case "CARD":
+        return (
+          <>
+            {getDialogueTopContent("INPUT")}
+            <Typography
+              gutterBottom
+              style={{ marginTop: "30px", marginBottom: "30px" }}
             >
+              You are about to pay ${centsValue / 100} Dollars towards purchase
+              of {numberOfGold} TRBG
+            </Typography>
+          </>
+        );
+      case "SUCCESS":
+        return (
+          <>
+            <div style={{display:"flex", justifyContent:"center"}}>
+              <DoneAllIcon fontSize="large" color="green"/>
+            </div>
+            <Typography
+              gutterBottom
+              style={{ marginTop: "30px", marginBottom: "30px" }}
+            >
+              Congratulations! Your payment of ${centsValue / 100} has been
+              received and your account will be credited with {numberOfGold}{" "} TRBG shortly.
+            </Typography>
+          </>
+        );
+        break;
+      case "FAILURE":
+        return (
+          <>
+           <div style={{display:"flex", justifyContent:"center"}}>
+              <AssignmentLateIcon fontSize="large" color="green"/>
+            </div>
+            <Typography
+              gutterBottom
+              style={{ marginTop: "30px", marginBottom: "30px" }}
+            >
+              Transaction failure! This transaction of ${centsValue / 100} was failed,
+              please check the payment information provided. Please react out to
+              us for any queries!
+            </Typography>
+          </>
+        );
+        break;
+    }
+  };
+
+  const getDialogueCenterContent = () => {
+    switch (step) {
+      case "CARD":
+        return (
+          secret && (
+            <Elements stripe={stripeContext} options={{ clientSecret: secret }}>
               <CheckoutForm payResponse={payResponse} />
             </Elements>
           )
-        )}
-        <Typography
-          gutterBottom
-          style={{ marginTop: "30px", fontStyle: "italic" }}
-        >
-          Minimum purchase is 10,000 TRBG
-        </Typography>
-      </DialogContent>
-      {step == "INPUT" && (
-        <DialogActions>
+        );
+        break;
+      case "INPUT":
+        return (
+          <>
+            <Typography gutterBottom style={{ marginTop: "30px" }}>
+              <TextField
+                error={inputError}
+                helperText={inputError?"Minimum purchase should be 10,000 TRBG" : ""}
+                fullWidth
+                label="No of TRBG to purchase"
+                name="TRBG"
+                type="number"
+                onChange={(e) => handleChange(e)}
+                required
+                value={numberOfGold}
+                variant="outlined"
+              />
+            </Typography>
+            <Typography
+              gutterBottom
+              style={{ marginTop: "30px", fontStyle: "italic" }}
+            >
+              Minimum purchase is 10,000 TRBG
+            </Typography>
+          </>
+        );
+      default:
+      case "SUCCESS":
+        
+        break;
+    }
+  };
+
+  const getDialogueFooter = () => {
+    switch (step) {
+      case "INPUT":
+        return (
           <Button
             autoFocus
             onClick={() => {
@@ -157,8 +247,49 @@ function Payment(props) {
           >
             Next
           </Button>
-        </DialogActions>
-      )}
+        );
+        break;
+      case "SUCCESS":
+      case "FAILURE":
+        return (
+          <Button
+            autoFocus
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            Close
+          </Button>
+        );
+        break;
+    }
+  };
+
+  return (
+    <Dialog
+      onClose={handleClose}
+      keepMounted
+      aria-labelledby="customized-dialog-title"
+      open={open}
+    >
+      <>
+        <BootstrapDialogTitle
+          id="customized-dialog-title"
+          style={{display:"flex",alignItems:"center"}}
+          onClose={handleClose}
+        >
+          {getDialogTitle()}
+          
+
+        </BootstrapDialogTitle>
+
+        <DialogContent dividers>
+          {getDialogueTopContent()}
+          {getDialogueCenterContent()}
+        </DialogContent>
+
+          <DialogActions>{getDialogueFooter()}</DialogActions>
+      </>
     </Dialog>
   );
 }
