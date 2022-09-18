@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongotConnection = require("./db-config/mongodb");
-const authAPI = require("./routes/AuthAPI");
+const AuthAPI = require("./routes/AuthAPI");
 const CompanyAPI = require("./routes/CompanyAPI");
 const CustomerAPI = require("./routes/CustomerAPI");
 const TransactionAPI = require("./routes/TransactionAPI");
@@ -46,7 +46,7 @@ app.use((req, res, next) => {
   }
 });
 
-app.use("/api/auth", authAPI);
+app.use("/api/auth", AuthAPI);
 app.use("/api/company", CompanyAPI);
 app.use("/api/customer", CustomerAPI);
 app.use("/api/transaction", TransactionAPI);
