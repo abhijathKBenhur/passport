@@ -41,12 +41,20 @@ transferGold = (requestObject, ethValue) => {
         TransactionSchema.findOneAndUpdate(
           { hash: receipt.transactionHash },
           { status: "COMPLETED" }
-        );
+        ).then(success =>{
+          console.log("Completed transaction with satus ")
+        }).catch(err =>{
+          console.log("Failed transaction with satus ")
+        })
         CompanySchema.findOneAndUpdate(
           { email: requestObject.email, tenantId: requestObject.tenantId },
           { $inc : {'balance' : ethValue}},
           { upsert: true }
-        )
+        ).then(success =>{
+          console.log("Completed balance ")
+        }).catch(err =>{
+          console.log("Failed balance update ")
+        })
         console.log("Completed updations ")
         resolve(receipt.transactionHash);
       })

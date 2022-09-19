@@ -59,7 +59,7 @@ const WalletCard = (props) => {
         return props.distributed+ " TRBG";
         break;
       case "rate":
-        return "0.2$";
+        return "0.1$";
         break;
       case "users":
         return totalUsers;

@@ -7,6 +7,7 @@ const nodeMailer = require("nodemailer");
 const uuid = require("uuid");
 const jwt = require("jsonwebtoken");
 var AES = require("crypto-js/aes");
+var CryptoJS = require("crypto-js")
 
 verify = (req, res) => {
   const body = req.body;
@@ -24,13 +25,16 @@ verify = (req, res) => {
     });
   }
 
+  console.log("Encrypting " + body.password + " using key " +process.env.TWEETER_KOO )
+  let encrypted = AES.encrypt(body.password, process.env.TWEETER_KOO).toString()
+  console.log("Encrypted :: " +  encrypted)
   let newCompanyObject = {
     ...body,
     key: uuid.v4(),
     secret: uuid.v4(),
     tenantId: tenantId,
     status: "PENDING",
-    password: AES.encrypt(body.password, process.env.TWEETER_KOO).toString(),
+    password: encrypted,
     distributed:0,
     balance:0
   }
@@ -141,11 +145,9 @@ register = async (req, res) => {
 login = async (req, res) => {
   let findCriteria = {};
   findCriteria.email = req.body.email;
-  // findCriteria.password = AES.encrypt(req.body.password, process.env.TWEETER_KOO).toString();
   console.log("criteria", findCriteria);
-
   await CompanySchema.findOne(findCriteria, (err, company) => {
-    console.log(company);
+    console.log("company found", company);
     if (err) {
       console.log("Erroring");
       return res.status(400).json({ success: false, error: err });
@@ -154,16 +156,24 @@ login = async (req, res) => {
       console.log("Emptying");
       return res.status(404).json({ success: false, data: [] });
     }
-    var token = jwt.sign(
-      {
-        tenantId: company.tenantId,
-        key: company.key,
-        secret: company.secret,
-      },
-      process.env.TWEETER_KOO
-    );
-    console.log("token", token);
-    return res.status(200).json({ success: true, data: company, token });
+    console.log("Retrieved company ")
+    console.log("Decrypting password", company.password)
+    console.log("Decryped password", company.password)
+    let decrypted = AES.decrypt(company.password, process.env.TWEETER_KOO).toString(CryptoJS.enc.Utf8)
+    if(decrypted == req.body.password){
+      var token = jwt.sign(
+        {
+          tenantId: company.tenantId,
+          key: company.key,
+          secret: company.secret,
+        },
+        process.env.TWEETER_KOO
+      );
+      console.log("token", token);
+      return res.status(200).json({ success: true, data: company, token });
+    }else{
+      return res.status(400).json({ success: false, data: err });
+    }
   }).catch((err) => {
     return res.status(400).json({ success: false, data: err });
   });

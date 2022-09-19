@@ -67,7 +67,13 @@ export default function Login() {
         console.log("Login succesful");
         sessionStorage.setItem("PASSPORT_TOKEN", success?.data?.token);
         history.push("/console");
-      });
+      }).catch(error =>{
+        openSnackbar(
+          "Sorry! Please use a valid credentials to login",
+          5000
+        );
+      }
+      )
     }
   };
 
@@ -166,7 +172,7 @@ export default function Login() {
                   required
                   fullWidth
                   name="companyName"
-                  label="companyName"
+                  label="company Name"
                   id="companyName"
                   autoComplete="Company name"
                   disabled={mailSent}
@@ -195,7 +201,6 @@ export default function Login() {
                       ? t.palette.grey[50]
                       : t.palette.grey[900],
                 }}
-                onClick={() => {}}
               >
                 {signUp ? (mailSent ? "Register" : "Verify") : "Login"}
               </Button>

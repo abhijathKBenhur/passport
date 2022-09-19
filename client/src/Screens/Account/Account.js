@@ -17,7 +17,8 @@ import CompanyInterface from "../../Interfaces/CompanyInterface";
 
 const Configure = (props) => {
   const [values, setValues] = useState({});
-  const [errorMap, setErrorMap] = useState({});
+  const [errorMap, setErrorMap] = useState({
+  });
   const [company, setCompany] = useState({});
   const [editMode, setEditMode] = useState(false);
   const [openSnackbar, closeSnackbar] = useSnackbar();
@@ -35,8 +36,21 @@ const Configure = (props) => {
   };
 
   const saveDetails = () => {
+    let localErrorMap = {...errorMap}
+    if(_.isEmpty(localErrorMap)){
+      localErrorMap = {
+        Jurisdiction:true,
+        registration:true,
+        address:true,
+        website:true,
+        linkedIn:true,
+        phone:true,
+        billethash:true
+      }
+      setErrorMap(localErrorMap)
+    }
     if(editMode){
-      let formHasError = _.reduce(Object.values(errorMap), function(hasError, n) {
+      let formHasError = _.reduce(Object.values(localErrorMap), function(hasError, n) {
         return hasError || n;
       }, false);
       if(!formHasError){
@@ -47,10 +61,15 @@ const Configure = (props) => {
             setCompany(success?.data?.data)
             setValues(details)
             setEditMode(false)
+            openSnackbar(
+              "Company details has been submitted for verification",
+              5000
+            );
           }
           catch(err){
             console.log("Could not fetch company details")
           }
+
         })
         .catch((error) => {});
       }

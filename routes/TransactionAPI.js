@@ -5,7 +5,9 @@ const _ = require("lodash");
 
 getAllTransactions = async (req, res) => {
     await IncentiveSchema.find(
-        {  },
+        { 
+          action: { $ne: "PURCHASE" } 
+         },
         // { tenantId: req.tenantId },
         (err, transactions) => {
           if (err) {

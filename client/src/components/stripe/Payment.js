@@ -46,7 +46,7 @@ function Payment(props) {
   const [secret, setSecret] = useState(undefined);
   const [step, setStep] = useState("INPUT");
   const [numberOfGold, setNumberOfGold] = useState(10000);
-  const [centsValue, setCentsValue] = useState(1000);
+  const [centsValue, setCentsValue] = useState(100000);
   const [inputError, setInputError] = useState(false);
   const [stripeContext, setStripeContext] = useState(undefined);
 
@@ -250,6 +250,17 @@ function Payment(props) {
         );
         break;
       case "SUCCESS":
+        return (
+          <Button
+            autoFocus
+            onClick={() => {
+              window.location.reload();
+            }}
+          >
+            Reload
+          </Button>
+        );
+        break;
       case "FAILURE":
         return (
           <Button
