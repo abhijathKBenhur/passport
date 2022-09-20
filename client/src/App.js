@@ -14,6 +14,8 @@ import {
   withRouter,
   useLocation,
 } from "react-router-dom";
+import Dummy from "./Screens/Dummy/Dummy";
+
 
 const App = (props) => {
   return (
@@ -25,6 +27,7 @@ const App = (props) => {
               <Switch>
                 <Route path="/login" render={(props) => <Login />} />
                 <Route path="/console" component={Console} />
+                <Route path="/dummy" component={Dummy} />
                 <Route
                   exact
                   path="/"

@@ -14,10 +14,19 @@ export const getTotalUserCount = (request) =>  {
     return AxiosInstance.post("/customer/getTotalUserCount",request) 
 }
 
+export const incentivise = (request) =>  { 
+    let config = {
+        headers: {}
+    }
+    config.headers["x-access-token"] = request.token
+    return AxiosInstance.post("/customer/incentivise",request,config) 
+}
+
 const CustomerInterface = {
     getAllUsers,
     getUser,
     getTotalUserCount,
+    incentivise
 }
 
 export default CustomerInterface

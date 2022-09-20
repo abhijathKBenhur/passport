@@ -18,12 +18,16 @@ export const getDetails = (request) =>  {
     return AxiosInstance.get("/company/getDetails",request) 
 }
 
+export const getTokenForDummy = (request) =>  { 
+    return AxiosInstance.post("/company/getTokenForDummy",request) 
+}
 
 const CompanyInterface = {
     getbalance,
     configureDistribution,
     updateDetails,
-    getDetails
+    getDetails,
+    getTokenForDummy
 }
 
 export default CompanyInterface

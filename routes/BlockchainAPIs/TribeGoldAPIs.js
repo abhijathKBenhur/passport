@@ -18,15 +18,16 @@ getBalance = (account) =>{
 }
 
 transferGold = (requestObject, ethValue) => {
-  console.log("INITIATING GOLD DEPOSITS TO " + requestObject.metamaskId, " ::: " , ethValue);
+  let ethInWeiValue =this.web3.utils.toWei(ethValue.toString(), "ether")
+  console.log("INITIATING GOLD DEPOSITS TO " + requestObject.metamaskId, " ::: " , ethInWeiValue);
   const promise = new Promise((resolve, reject) => {
     tribeGoldContract.methods
-      .transfer(requestObject.metamaskId, ethValue)
+      .transfer(requestObject.metamaskId, ethInWeiValue)
       .send(transactionObject)
       .on("transactionHash", function (hash) {
         console.log("Started transaction ")
         new TransactionSchema({
-          amount: ethValue,
+          amount: ethInWeiValue,
           action: "PURCHASE",
           type:"USER_INCENTIVE",
           status:"PENDING",
@@ -48,7 +49,7 @@ transferGold = (requestObject, ethValue) => {
         })
         CompanySchema.findOneAndUpdate(
           { email: requestObject.email, tenantId: requestObject.tenantId },
-          { $inc : {'balance' : ethValue}},
+          { $inc : {'balance' : ethInWeiValue}},
           { upsert: true }
         ).then(success =>{
           console.log("Completed balance ")

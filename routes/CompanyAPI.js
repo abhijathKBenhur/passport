@@ -86,10 +86,49 @@ getDetails = async (req, res) => {
 };
 
 
+getTokenForDummy = async (req, res) => {
+  console.log("getTokenForDummy details fetching");
+  let findCriteria = {};
+  
+  findCriteria.companyName = req.companyName;
+  console.log("company details fetching", findCriteria);
+  await CompanySchema.findOne(
+    { companyName: req.body.companyName },
+    (err, company) => {
+      console.log("company details fetched" , company);
+      if (err) {
+        return res.status(400).json({ success: false, error: err });
+      }
+      if (!company) {
+        return res.status(404).json({ success: true, data: [] });
+      }
+      console.log("company details fetched", company);
+      var token = jwt.sign(
+        {
+          tenantId: company.tenantId,
+          key: company.key,
+          secret: company.secret,
+        },
+        process.env.TWEETER_KOO
+      );
+      console.log("token generated here now", token);
+      console.log("returning");
+      return res.status(200).json({ success: "true", data: token });
+    }
+  ).catch((err) => {
+    return res.status(400).json({ success: false, data: err });
+  });
+};
+
+
 
 router.post("/updateDetails", updateDetails);
 router.get("/getDetails", getDetails);
 router.post("/configureDistribution", configureDistribution);
+router.post("/getTokenForDummy", getTokenForDummy);
+
+
+
 
 
 

@@ -14,7 +14,9 @@ incentivise = async (req, res) => {
 
   try {
     let companyDetails = await getCompanyDetails(req, res);
-    let goldConfig = JSON.parse(companyDetails.goldaConfig);
+    console.log("JSON parsing", companyDetails.goldConfig);
+
+    let goldConfig = JSON.parse(companyDetails.goldConfig);
 
     console.log("goldConfig", goldConfig);
     if (companyDetails.status != "VERIFIED") {

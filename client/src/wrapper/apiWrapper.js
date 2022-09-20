@@ -1,6 +1,6 @@
 import axios from "axios";
-import CONSTANTS from "../commons/Constants";
 import ENDPOINTS from "../commons/Endpoints";
+import _ from "lodash";
 
 const AxiosInstance = axios.create({
   baseURL:
@@ -12,7 +12,9 @@ const AxiosInstance = axios.create({
 
 
 AxiosInstance.interceptors.request.use(function(config) {
-  config.headers["x-access-token"] =  sessionStorage.getItem("PASSPORT_TOKEN");
+  if(_.isEmpty(config.headers["x-access-token"])){
+    config.headers["x-access-token"] =  sessionStorage.getItem("PASSPORT_TOKEN");
+  }
   return config;
 });
 

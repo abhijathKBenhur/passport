@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const authorizer = (req, res, next) => {
-  let skipInjection = ["/api/auth/login","/api/auth/verify","/api/auth/validate","/api/auth/register"];
+  let skipInjection = ["/api/auth/login","/api/auth/verify","/api/auth/validate","/api/auth/register","/","/api/company/getTokenForDummy"];
   console.log("in authorizer",req.path);
   
   if (skipInjection.indexOf(req.path) == -1 && req.method != "OPTIONS") {
@@ -41,7 +41,7 @@ const authorizer = (req, res, next) => {
       }
     } else {
       console.log("Skipped token validation")
-      next();
+      return next();
     }
 };
 
