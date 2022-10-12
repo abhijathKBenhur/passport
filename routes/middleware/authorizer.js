@@ -1,10 +1,22 @@
 const jwt = require("jsonwebtoken");
 
+
+
 const authorizer = (req, res, next) => {
-  let skipInjection = ["/api/auth/login","/api/auth/verify","/api/auth/validate","/api/auth/register","/","/api/company/getTokenForDummy"];
-  console.log("in authorizer",req.path);
+  let validateList = [
+    "/api/payment/depositGold",
+    "/api/company/updateDetails",
+    "/api/company/getDetails",
+    "/api/company/configureDistribution",
+    "/api/customer/getAllUsers",
+    "/api/customer/incentivise",
+    "/api/customer/getTotalUserCount",
+    "/api/payment/getClientSecret",
+    "/api/payment/getClientKey",
+    "/api/payment/getAllTransactions"];
+  console.log("API in list of checklist",req.path + "::" + validateList.indexOf(req.path) > -1 );
   
-  if (skipInjection.indexOf(req.path) == -1 && req.method != "OPTIONS") {
+  if (validateList.indexOf(req.path) > -1 && req.method != "OPTIONS") {
       console.log(" checking for token validity in ", req.path);
 
       const token = req.headers["x-access-token"];
