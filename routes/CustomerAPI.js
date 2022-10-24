@@ -20,10 +20,17 @@ incentivise = async (req, res) => {
 
     console.log("goldConfig", goldConfig);
     if (companyDetails.status != "VERIFIED") {
-      throw new "Company is not yet elligible to participate in incentives programme"();
+      throw new "Company is not yet elligible to participate in incentives programme as it is not verified by Ideatribe"();
+    }
+    
+    if (companyDetails.balance < _.max(_.map(goldConfig,"value"))) {
+      throw new "Company is not yet elligible to participate in incentives programme as the balance is too low"();
     }
     let goldDistributed = await addOrUpdateUser(req, goldConfig);
     console.log("Gold distributed", goldDistributed);
+    if (companyDetails.status != "VERIFIED") {
+      throw new "Company is not yet elligible to participate in incentives programme"();
+    }
     let updatedDistribution =
       parseFloat(companyDetails.distributed) + parseFloat(goldDistributed);
 
