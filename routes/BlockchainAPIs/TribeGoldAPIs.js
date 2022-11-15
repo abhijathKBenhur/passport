@@ -18,6 +18,7 @@ getBalance = (account) =>{
 }
 
 transferGold = (requestObject, ethValue) => {
+  console.log(requestObject)
   let ethInWeiValue = Web3Utils.toWei(ethValue.toString(), "ether")
   console.log("INITIATING GOLD DEPOSITS TO " + requestObject.metamaskId, " ::: " , ethInWeiValue);
   const promise = new Promise((resolve, reject) => {

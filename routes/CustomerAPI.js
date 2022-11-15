@@ -36,7 +36,7 @@ incentivise = async (req, res) => {
 
     let updatedCompany = await updateCompanyDetails(req, {
       distributed: updatedDistribution,
-      $inc : {'balance' : -goldDistributed}
+      $inc : {'balance' : 0 - (goldDistributed * 1000000000000000000)}
     });
     let addedTransaction = await addTransaction({
       amount: goldDistributed,
@@ -76,7 +76,7 @@ const addTransaction = async (info) => {
 };
 
 const updateCompanyDetails = async (req, updates) => {
-  console.log("updating company ");
+  console.log("updating company with", updates);
   return new Promise((resolve, reject) => {
     CompanySchema.findOneAndUpdate(
       { key: req.key, secret: req.secret },
@@ -126,7 +126,7 @@ const getGoldToBeGiven = (action, n, config) => {
     (n == 1 && _.find(config, { action: action, frequency: "once" }));
   
   console.log("matchingListing", matchingListing)
-  return _.get(matchingListing, "value") || 0;
+  return parseFloat(_.get(matchingListing, "value")) || 0;
 };
 
 const addOrUpdateUser = async (req, goldConfig) => {

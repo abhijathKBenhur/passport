@@ -45,8 +45,8 @@ function Payment(props) {
   const [open, setOpen] = React.useState(false);
   const [secret, setSecret] = useState(undefined);
   const [step, setStep] = useState("INPUT");
-  const [numberOfGold, setNumberOfGold] = useState(10000);
-  const [centsValue, setCentsValue] = useState(100000);
+  const [numberOfGold, setNumberOfGold] = useState(100);
+  const [centsValue, setCentsValue] = useState(1000);
   const [inputError, setInputError] = useState(false);
   const [stripeContext, setStripeContext] = useState(undefined);
 
@@ -69,7 +69,7 @@ function Payment(props) {
 
   
   const handleChange = (event, index) => {
-    if(event.target.value < 10000){
+    if(event.target.value < 100){
       setInputError(true)
     }else{
       setInputError(false)
@@ -96,6 +96,7 @@ function Payment(props) {
 
   const payResponse = (value) => {
     if (value.success) {
+      console.log("Stripe recorded success message, success to ", props)
       PaymentInterface.depositGold({
         email:props.company.email,
         tenantId:props.company.tenantId,
@@ -103,13 +104,14 @@ function Payment(props) {
         goldToDeposit: numberOfGold,
       })
         .then((success) => {
-          
           setStep("SUCCESS");
         })
         .catch((err) => {
+          console.error(err)
           setStep("FAILURE");
         });
     } else {
+      console.log("Stripe recorded failure message")
       setStep("FAILURE");
     }
 

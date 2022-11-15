@@ -40,7 +40,7 @@ const WalletCard = (props) => {
         return "DISTRIBUTED";
         break;
       case "rate":
-        return "Current conversion";
+        return "Conversion";
         break;
       case "users":
         return "Total users";
@@ -53,7 +53,7 @@ const WalletCard = (props) => {
   const getMainTitle = (props) => {
     switch (props?.type) {
       case "balance":
-        return props.balance+ " TRBG";
+        return (props.balance || 0) / 1000000000000000000 + " TRBG";
         break;
       case "given":
         return props.distributed+ " TRBG";
