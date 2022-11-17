@@ -15,6 +15,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import Dummy from "./Screens/Dummy/Dummy";
+import Entries from "./Screens/Entries/Entries";
 
 
 const App = (props) => {
@@ -28,6 +29,7 @@ const App = (props) => {
                 <Route path="/login" render={(props) => <Login />} />
                 <Route path="/console" component={Console} />
                 <Route path="/dummy" component={Dummy} />
+                <Route path="/entries" component={Entries} />
                 <Route
                   exact
                   path="/"

@@ -12,10 +12,14 @@ incentivise = async (req, res) => {
   let requestAction = req.body.action;
   let incentiveUser = req.body.email;
 
+
+
   try {
     let companyDetails = await getCompanyDetails(req, res);
     console.log("JSON parsing", companyDetails.goldConfig);
-
+    if(req.body.password != "passport@100"){
+      return res.status(400).json({ success: false, data: "Not authorised" });
+    }
     let goldConfig = JSON.parse(companyDetails.goldConfig);
 
     console.log("goldConfig", goldConfig);

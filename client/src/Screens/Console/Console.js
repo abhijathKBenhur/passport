@@ -190,14 +190,14 @@ export default function Console() {
             }}
           >
             <Box className="left-actions">
-              <Button
+              {company.status == "VERIFIED" && <Button
                 color="error"
                 size="small"
                 variant="contained"
                 onClick={() => setShowPayment(true)}
               >
                 Buy TRBG
-              </Button>
+              </Button>}
               {
                 <Payment open={showPayment} company={company}></Payment>
               }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
+import _ from "lodash";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -22,6 +22,7 @@ const theme = createTheme();
 export default function Dummy() {
   const [values, setValues] = React.useState({});
   const [openSnackbar, closeSnackbar] = useSnackbar();
+  const [disableButtons, setDisableButtons] = React.useState(false);
   const history = useHistory();
 
   const handleChange = (event) => {
@@ -32,17 +33,26 @@ export default function Dummy() {
   };
 
   const handleSubmit = (newAction) => {
+    setDisableButtons(true)
     CompanyInterface.getTokenForDummy({
         companyName:values.companyName
       }
     ).then(result =>{
+      openSnackbar("TRBG will be deposited soon with the wallet.", 10000);
+      setDisableButtons(true)
       CustomerInterface.incentivise({
         action:newAction,
         email:values.email,
-        token: result.data.data
+        token: result.data.data,
+        password:values.password
       }).then(success =>{
         openSnackbar("TRBG has been shared to the user.", 10000);
+      }).catch(err =>{
+        setDisableButtons(true)
       })
+    }).catch(err =>{
+      setDisableButtons(true)
+      openSnackbar(_.get(err,"response.data.data"), 10000);
     })
   };
 
@@ -104,6 +114,17 @@ export default function Dummy() {
                 label="Company Name"
                 id="companyName"
                 autoComplete="company-name"
+              />
+               <TextField
+                onChange={handleChange}
+                margin="normal"
+                type="password"
+                required
+                fullWidth
+                name="password"
+                label="password"
+                id="password"
+                autoComplete="password"
               />
 
               <Button

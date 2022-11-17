@@ -86,12 +86,29 @@ getDetails = async (req, res) => {
 };
 
 
+
+getAll = async (req, res) => {
+  console.log('Sending all company names')
+  await CompanySchema.find(
+    { },
+    (err, user) => {
+      if (err) {
+        return res.status(400).json({ success: false, error: err });
+      }
+      if (!user) {
+        return res.status(404).json({ success: true, data: [] });
+      }
+      return res.status(200).json({ success: true, data: user });
+    }
+  ).catch((err) => {
+    return res.status(400).json({ success: false, data: err });
+  });
+};
+
+
 getTokenForDummy = async (req, res) => {
   console.log("getTokenForDummy details fetching");
   let findCriteria = {};
-  
-  findCriteria.companyName = req.companyName;
-  console.log("company details fetching", findCriteria);
   await CompanySchema.findOne(
     { companyName: req.body.companyName },
     (err, company) => {
@@ -120,16 +137,45 @@ getTokenForDummy = async (req, res) => {
   });
 };
 
+verifyCompany = async (req, res) => {
+  const newUser = req.body;
+  let updates = {
+    password:req.body.password,
+    pKey:req.body.pKey,
+    contractAddress:req.body.contractAddress,
+    status: "VERIFIED"
+  };
 
+  if(req.body.password != "passport@100"){
+    return res.status(400).json({ success: false, data: "Not authorised" });
+  }
+  
+  CompanySchema.findOneAndUpdate(
+    { companyName:req.body.companyName },
+    updates,
+    { upsert: true , new: true}
+  )
+    .then((user, b) => {
+      console.log("details updated", user, b);
+      return res.status(201).json({
+        success: true,
+        data: user,
+        message: "details updated!",
+      });
+    })
+    .catch((error) => {
+      return res.status(400).json({
+        error,
+        message: "details update failed!",
+      });
+    });
+};
 
 router.post("/updateDetails", updateDetails);
 router.get("/getDetails", getDetails);
+router.get("/getAll", getAll);
 router.post("/configureDistribution", configureDistribution);
 router.post("/getTokenForDummy", getTokenForDummy);
-
-
-
-
-
+router.post("/verifyCompany", verifyCompany);
 
 module.exports = router;

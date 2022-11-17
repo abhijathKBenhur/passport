@@ -45,16 +45,24 @@ function Payment(props) {
   const [open, setOpen] = React.useState(false);
   const [secret, setSecret] = useState(undefined);
   const [step, setStep] = useState("INPUT");
-  const [numberOfGold, setNumberOfGold] = useState(100);
-  const [centsValue, setCentsValue] = useState(1000);
   const [inputError, setInputError] = useState(false);
   const [stripeContext, setStripeContext] = useState(undefined);
+
+  const [numberOfGold, setNumberOfGold] = useState(100);
+  const [centsValue, setCentsValue] = useState(10000);
+  const [minGold, setMinGold] = useState(1000)
+  const [conversion, setConversion] = useState(0.1)
 
   useEffect(() => {
     PaymentInterface.getClientKey()
       .then((success) => {
         let stripeKey = success?.data?.data;
         setStripeContext(loadStripe(stripeKey));
+        
+        setMinGold(success?.data?.min)
+        setNumberOfGold((success?.data?.min) || 1000)
+        setConversion((success?.data?.conversion) || 0.1 )
+        setCentsValue((success?.data?.min * success?.data?.conversion * 100) || 10000)
       })
       .catch((err) => {
         console.log("Could not get stripe key", err);
@@ -65,17 +73,15 @@ function Payment(props) {
   useEffect(() => {
    setOpen(props.open)
   }, [props.open]);
-
-
   
   const handleChange = (event, index) => {
-    if(event.target.value < 100){
+    if(event.target.value < minGold){
       setInputError(true)
     }else{
       setInputError(false)
     }
     setNumberOfGold(event.target.value);
-    setCentsValue((event.target.value / 10) * 100);
+    setCentsValue(event.target.value * conversion * 100);
   };
 
   const handleClose = () => {
@@ -141,7 +147,7 @@ function Payment(props) {
         return (
           <Typography gutterBottom>
             Please buy TRBG with your credit card. Price of each TRBG token is
-            10 cents (US$ 0.1). You can buy upto 100,000 tokens at this price.
+            US ${conversion}. You can buy upto 100,000 tokens at this price.
           </Typography>
         );
         break;
@@ -226,7 +232,7 @@ function Payment(props) {
               gutterBottom
               style={{ marginTop: "30px", fontStyle: "italic" }}
             >
-              Minimum purchase is 10,000 TRBG
+              Minimum purchase is {minGold} TRBG
             </Typography>
           </>
         );

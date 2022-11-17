@@ -54,7 +54,7 @@ const Configure = (props) => {
         return hasError || n;
       }, false);
       if(!formHasError){
-        CompanyInterface.updateDetails({ details: values, status:"VERIFIED" })
+        CompanyInterface.updateDetails({ details: values, status:"SUBMITTED" })
         .then((success) => {
           let details = success?.data?.data?.details || {}
           try{
