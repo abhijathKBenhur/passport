@@ -48,7 +48,8 @@ incentivise = async (req, res) => {
       email: incentiveUser,
       tenantId: req.tenantId,
       type:"USER_INCENTIVE",
-      status:"COMPLETED"
+      status:"COMPLETED",
+      companyName:companyDetails.companyName
     });
     return res
       .status(200)
@@ -154,7 +155,7 @@ const addOrUpdateUser = async (req, goldConfig) => {
     console.log("New user object", newUser)
     console.log("FInding with " + req.tenantId + " and " + req.body.email);
     CustomerSchema.findOne(
-      { tenantId: newUser.tenantId, email: newUser.email },
+      {email: newUser.email },
       (err, user) => {
         if (err) {
           reject("Add user err", err);
@@ -208,7 +209,7 @@ const addOrUpdateUser = async (req, goldConfig) => {
             };
 
             CustomerSchema.findOneAndUpdate(
-              { tenantId: req.tenantId, email: req.body.email },
+              {semail: req.body.email },
               updates,
               { upsert: true }
             )

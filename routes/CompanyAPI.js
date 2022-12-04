@@ -140,7 +140,6 @@ getTokenForDummy = async (req, res) => {
 verifyCompany = async (req, res) => {
   const newUser = req.body;
   let updates = {
-    password:req.body.password,
     pKey:req.body.pKey,
     contractAddress:req.body.contractAddress,
     status: "VERIFIED"

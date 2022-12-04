@@ -9,7 +9,8 @@ const Incentive = new Schema(
     tenantId:{ type: String },
     email:{ type: String },
     type:{ type: String },
-    hash:{ type: String }
+    hash:{ type: String },
+    companyName:{ type: String }
   },
   { timestamps: true }
 );
