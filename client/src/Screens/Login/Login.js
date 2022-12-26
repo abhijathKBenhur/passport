@@ -63,17 +63,15 @@ export default function Login() {
         });
       }
     } else {
-      AuthInterface.login(submitData).then((success) => {
-        console.log("Login succesful");
-        sessionStorage.setItem("PASSPORT_TOKEN", success?.data?.token);
-        history.push("/console");
-      }).catch(error =>{
-        openSnackbar(
-          "Sorry! Please use a valid credentials to login",
-          5000
-        );
-      }
-      )
+      AuthInterface.login(submitData)
+        .then((success) => {
+          console.log("Login succesful");
+          sessionStorage.setItem("PASSPORT_TOKEN", success?.data?.token);
+          history.push("/console");
+        })
+        .catch((error) => {
+          openSnackbar("Sorry! Please use a valid credentials to login", 5000);
+        });
     }
   };
 
@@ -166,7 +164,7 @@ export default function Login() {
                 autoComplete="current-password"
                 disabled={mailSent}
               />
-              {signUp && (
+              {signUp ? (
                 <TextField
                   margin="normal"
                   required
@@ -174,9 +172,10 @@ export default function Login() {
                   name="companyName"
                   label="company Name"
                   id="companyName"
-                  autoComplete="Company name"
                   disabled={mailSent}
                 />
+              ) : (
+                <div></div>
               )}
               {mailSent && (
                 <TextField
@@ -189,13 +188,27 @@ export default function Login() {
                   autoComplete="Verification Code"
                 />
               )}
+              <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
+                <Button onClick={handleClick}>{options[selectedIndex]}</Button>
+                <Button
+                  size="small"
+                  aria-controls={open ? 'split-button-menu' : undefined}
+                  aria-expanded={open ? 'true' : undefined}
+                  aria-label="select merge strategy"
+                  aria-haspopup="menu"
+                  onClick={handleToggle}
+                >
+                  <ArrowDropDownIcon />
+                </Button>
+              </ButtonGroup>
 
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{
-                  mt: 3, mb: 2,
+                  mt: 3,
+                  mb: 2,
                   backgroundColor: (t) =>
                     t.palette.mode === "lidarkght"
                       ? t.palette.grey[50]
@@ -240,8 +253,8 @@ export default function Login() {
           style={{
             display: "flex",
             justifyContent: "flex-start",
-            alignContent:"center",
-            alignItems:"center"
+            alignContent: "center",
+            alignItems: "center",
           }}
           component={Paper}
           elevation={6}
@@ -251,17 +264,17 @@ export default function Login() {
           md={7}
           sx={{
             height: "100vh",
-            paddingLeft:"30px",
+            paddingLeft: "30px",
             backgroundColor: (t) =>
               t.palette.mode === "lidarkght"
                 ? t.palette.grey[50]
                 : t.palette.grey[900],
           }}
         >
-          <div style={{color:"#F1F1F1"}}>
+          <div style={{ color: "#F1F1F1" }}>
             <Typography variant="h2"> TRIBEGOLD </Typography>
             <Typography variant="h5" component="h2">
-            A revolutionary, NEW way to drive user adoption
+              A revolutionary, NEW way to drive user adoption
             </Typography>
             <Typography variant="h6" gutterBottom>
               h6 gutter bottom
