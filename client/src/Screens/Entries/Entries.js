@@ -62,13 +62,14 @@ export default function Entries() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} style={{display: "flex", alignItems:"center"}}>
       <TextField
          onChange={(e) => {
           setPassword(e.target.value)
+          
         }}
         margin="normal"
-        style={{width:"200px"}}
+        style={{width:"100%"}}
         type="password"
         required
         fullWidth
@@ -78,7 +79,6 @@ export default function Entries() {
         autoComplete="password"
       />
       
-      <span>{JSON.stringify(companyEdits)}</span>
       <Grid
         container
         component="main"

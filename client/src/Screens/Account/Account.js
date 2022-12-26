@@ -20,7 +20,7 @@ const Configure = (props) => {
   const [errorMap, setErrorMap] = useState({
   });
   const [company, setCompany] = useState({});
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(true);
   const [openSnackbar, closeSnackbar] = useSnackbar();
   const handleChange = (event) => {
     setValues({
@@ -62,7 +62,7 @@ const Configure = (props) => {
             setValues(details)
             setEditMode(false)
             openSnackbar(
-              "Company details has been submitted for verification",
+              "Company details has been submitted for verification. Please wait while you hear from us on the approval status.",
               5000
             );
           }

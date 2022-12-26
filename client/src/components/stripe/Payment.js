@@ -58,11 +58,10 @@ function Payment(props) {
       .then((success) => {
         let stripeKey = success?.data?.data;
         setStripeContext(loadStripe(stripeKey));
-        
         setMinGold(success?.data?.min)
         setNumberOfGold((success?.data?.min) || 1000)
         setConversion((success?.data?.conversion) || 0.1 )
-        setCentsValue((success?.data?.min * success?.data?.conversion * 100) || 10000)
+        setCentsValue((+(success?.data?.min) * (+(success?.data?.conversion) || 0.1) * 100) || 10000)
       })
       .catch((err) => {
         console.log("Could not get stripe key", err);
