@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   Box,
   Button,
@@ -15,12 +15,12 @@ import {
 import { useSnackbar } from "react-simple-snackbar";
 import CompanyInterface from "../../Interfaces/CompanyInterface";
 import LatestOrders from "./LatestOrders";
-import { format } from "date-fns";
+import _ from "lodash";
 import { v4 as uuid } from "uuid";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import TransactionInterface from "../../Interfaces/TransactionInterface"
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-
+import {UserContext} from "../../contexts/UserContext"
 
 const orders = [
   {
@@ -87,7 +87,7 @@ const orders = [
 
 const Transactions = (props) => {
   const [transactions, setTransactions] = useState([])
-
+  const {company} = useContext(UserContext)
   useEffect(() => {
     
     TransactionInterface.getAllTransactions()
@@ -113,7 +113,7 @@ const Transactions = (props) => {
               <TableCell>Action</TableCell>
               <TableCell>Amount</TableCell>
               <TableCell>
-                Customer
+                {_.get(company,"userType") == "individual" ? "Company": "Customer"}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -124,29 +124,14 @@ const Transactions = (props) => {
               (<TableRow hover key={index} >
                 <TableCell>{order.action}</TableCell>
                 <TableCell>{order.amount}</TableCell>
-                <TableCell>{order.email}</TableCell>
+                <TableCell>{_.get(company,"userType") != "individual" ? order.email: order.companyName}</TableCell>
               </TableRow>)
             ))}
           </TableBody>
         </Table>
       </Box>
     </PerfectScrollbar>
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "flex-end",
-        p: 2,
-      }}
-    >
-      <Button
-        color="primary"
-        endIcon={<ArrowRightIcon fontSize="small" />}
-        size="small"
-        variant="text"
-      >
-        View all
-      </Button>
-    </Box>
+   
   </Card>
   );
 };

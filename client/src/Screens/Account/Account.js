@@ -99,7 +99,6 @@ const Configure = (props) => {
         <form autoComplete="off" noValidate {...props}>
           <Card>
             <CardHeader
-              subheader="The information cannot be edited"
               title="Account"
             />
             <Divider />
@@ -219,7 +218,7 @@ const Configure = (props) => {
               </Grid>
             </CardContent>
             <Divider />
-            {company.status == "REGISTERED" &&<Box
+            {company.status == "PENDING" &&<Box
                 sx={{
                   display: "flex",
                   justifyContent: "flex-end",

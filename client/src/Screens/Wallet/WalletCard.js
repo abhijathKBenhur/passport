@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   Avatar,
   Box,
@@ -7,17 +7,19 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import _ from "lodash";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import SellIcon from "@mui/icons-material/Sell";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CustomerInterface from "../../Interfaces/CustomerInterface";
+import {UserContext} from "../../contexts/UserContext"
 
 const WalletCard = (props) => {
   const [goldBalance, setGoldBalance] = useState(0);
   const [distributed, setDistributed] = useState(0);
   const [conversionRate, setConversionRate] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
+  const {company} = useContext(UserContext)
 
   useEffect(() => {
     if(props?.type == "users"){
@@ -28,13 +30,14 @@ const WalletCard = (props) => {
       })
       .catch((err) => {});
     }
+    console.log("UserContext  ", company)
    
   }, []);
 
   const getTopText = (props) => {
     switch (props?.type) {
       case "balance":
-        return "Balance";
+        return _.get(company,"userType") == "individual" ? "Gold Balance": "Balance";
         break;
       case "given":
         return "DISTRIBUTED";
@@ -56,7 +59,7 @@ const WalletCard = (props) => {
         return (props.balance || 0) / 1000000000000000000 + " TRBG";
         break;
       case "given":
-        return props.distributed+ " TRBG";
+        return props.distributed + " TRBG";
         break;
       case "rate":
         return "0.1$";

@@ -1,4 +1,5 @@
 const CompanySchema = require("../db-config/Company.schema");
+const CustomerSchema = require("../db-config/Customer.Schema");
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
@@ -27,6 +28,7 @@ verify = (req, res) => {
 
   console.log("Encrypting " + body.password + " using key " +process.env.TWEETER_KOO )
   let encrypted = AES.encrypt(body.password, process.env.TWEETER_KOO).toString()
+  
   console.log("Encrypted :: " +  encrypted)
   let newCompanyObject = {
     ...body,
@@ -38,11 +40,20 @@ verify = (req, res) => {
     distributed:0,
     balance:0
   }
+
+  let newCustomerObject = {
+    ...body,
+    incentiveCount: 0,
+    status: "PENDING",
+    password: encrypted,
+  }
   console.log("Registering company with details ",newCompanyObject )
 
   const newCompany = new CompanySchema(newCompanyObject);
-  console.log("Saving new company to DB")
-  newCompany
+  const newCustomer = new CustomerSchema(newCustomerObject);
+  const newEntity = body.userType == "individual" ? newCustomer : newCompany
+  console.log("Saving new entity to DB", newEntity)
+  newEntity
     .save()
     .then((user, b) => {
       console.log("Added company to DB")
@@ -51,14 +62,14 @@ verify = (req, res) => {
       } catch (error) {
         return res.status(400).json({
           error,
-          message: "Company not Registered!",
+          message: "Entity not Registered!",
         });
       }
     })
     .catch((error) => {
       return res.status(400).json({
         error,
-        message: "Company not Registered!",
+        message: "Entity not Registered!",
       });
     });
 };
@@ -106,78 +117,152 @@ const sendOTP = (mailId, OTP, res) => {
 };
 
 register = async (req, res) => {
-  const newCompany = req.body;
+  const newEntity = req.body;
+  console.log("body : ", req.body)
   let updates = {
     status: "REGISTERED",
   };
-  console.log("testing register");
-  CompanySchema.findOneAndUpdate(
-    { tenantId: newCompany.tenantId, email: newCompany.email,distributed:0 },
-    updates,
-    { upsert: true }
-  )
-    .then((registeredCompany, b) => {
-      console.log("company registered", registeredCompany, b);
-      let data = {
-        tenantId: registeredCompany.tenantId,
-        key: registeredCompany.key,
-        secret: registeredCompany.secret,
-      };
-      console.log("Encrypting" , data)
-      var token = jwt.sign(data, process.env.TWEETER_KOO);
-      console.log("token", token);
-      return res.status(201).json({
-        success: true,
-        data: registeredCompany,
-        token,
-        message: "company registered!",
+  console.log("testing register", newEntity);
+  if(req.body == "startup"){
+    CompanySchema.findOneAndUpdate(
+      { tenantId: newEntity.tenantId, email: newEntity.email,distributed:0 },
+      updates,
+      { upsert: true }
+    )
+      .then((registeredCompany, b) => {
+        console.log("company registered", registeredCompany, b);
+        let data = {
+          tenantId: registeredCompany.tenantId,
+          key: registeredCompany.key,
+          secret: registeredCompany.secret,
+          userType: "startup"
+        };
+        console.log("Encrypting" , data)
+        var token = jwt.sign(data, process.env.TWEETER_KOO);
+        console.log("token", token);
+        return res.status(201).json({
+          success: true,
+          data: registeredCompany,
+          token,
+          message: "company registered!",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        return res.status(400).json({
+          error,
+          message: "Invalid credentials!",
+        });
       });
-    })
-    .catch((error) => {
-      console.log(error);
-      return res.status(400).json({
-        error,
-        message: "Invalid credentials!",
+  }else{
+    updates = {
+      status: "VERIFIED",
+    };
+    console.log("newEntity",newEntity)
+    CustomerSchema.findOneAndUpdate(
+      { email: newEntity.email },
+      updates
+    )
+      .then((registeredUser, b) => {
+        console.log("customer registered", registeredUser, b);
+        let data = {
+          email: newEntity.email,
+          password: newEntity.password,
+          userType: "individual"
+        };
+        console.log("Encrypting" , data)
+        var token = jwt.sign(data, process.env.TWEETER_KOO);
+        console.log("token", token);
+        return res.status(201).json({
+          success: true,
+          data: newEntity,
+          token,
+          message: "customer registered!",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        return res.status(400).json({
+          error,
+          message: "Invalid credentials!",
+        });
       });
-    });
+  }
+ 
 };
 
 login = async (req, res) => {
   let findCriteria = {};
   findCriteria.email = req.body.email;
   console.log("criteria", findCriteria);
-  await CompanySchema.findOne(findCriteria, (err, company) => {
-    console.log("company found", company);
-    if (err) {
-      console.log("Erroring");
-      return res.status(400).json({ success: false, error: err });
-    }
-    if (!company) {
-      console.log("Emptying");
-      return res.status(404).json({ success: false, data: [] });
-    }
-    console.log("Retrieved company ")
-    console.log("Decrypting password", company.password)
-    console.log("Decryped password", company.password)
-    let decrypted = AES.decrypt(company.password, process.env.TWEETER_KOO).toString(CryptoJS.enc.Utf8)
-    // if(decrypted == req.body.password){
-      if(true){
-      var token = jwt.sign(
-        {
-          tenantId: company.tenantId,
-          key: company.key,
-          secret: company.secret,
-        },
-        process.env.TWEETER_KOO
-      );
-      console.log("token", token);
-      return res.status(200).json({ success: true, data: company, token });
-    }else{
+  if(req.body.userType == "startup"){
+    await CompanySchema.findOne(findCriteria, (err, company) => {
+      console.log("company found", company);
+      if (err) {
+        console.log("Erroring");
+        return res.status(400).json({ success: false, error: err });
+      }
+      if (!company) {
+        console.log("Emptying");
+        return res.status(404).json({ success: false, data: [] });
+      }
+      console.log("Retrieved company ")
+      console.log("Decrypting password", company.password)
+      console.log("Decryped password", company.password)
+      let decrypted = AES.decrypt(company.password, process.env.TWEETER_KOO).toString(CryptoJS.enc.Utf8)
+      if(decrypted == req.body.password){
+        var token = jwt.sign(
+          {
+            tenantId: company.tenantId,
+            key: company.key,
+            secret: company.secret,
+            userType: "startup"
+          },
+          process.env.TWEETER_KOO
+        );
+        console.log("token", token);
+        return res.status(200).json({ success: true, data: company, token });
+      }else{
+        return res.status(400).json({ success: false, data: err });
+      }
+    }).catch((err) => {
       return res.status(400).json({ success: false, data: err });
-    }
-  }).catch((err) => {
-    return res.status(400).json({ success: false, data: err });
-  });
+    });
+  }else{
+    console.log("Attempting user login", findCriteria)
+    await CustomerSchema.findOne(findCriteria, (err, customer) => {
+      console.log("customer found", customer);
+      if (err) {
+        console.log("Error result");
+        return res.status(400).json({ success: false, error: err });
+      }
+      if (!customer) {
+        console.log("Empty result");
+        return res.status(404).json({ success: false, data: [] });
+      }
+      console.log("Retrieved user ")
+      console.log("Decrypting password", customer.password)
+      console.log("Decryped password", customer.password)
+      let decrypted = AES.decrypt(customer.password, process.env.TWEETER_KOO).toString(CryptoJS.enc.Utf8)
+      if(decrypted == req.body.password){
+        var token = jwt.sign(
+          {
+            email: customer.email,
+            password: customer.password,
+            userType: "individual"
+          },
+          process.env.TWEETER_KOO
+        );
+        console.log("token", token);
+        return res.status(200).json({ success: true, data: customer, token });
+      }else{
+        return res.status(400).json({ success: false, data: err });
+      }
+    }).catch((err) => {
+      return res.status(400).json({ success: false, data: err });
+    });
+  }
+
 };
 
 validate = async (req, res) => {
@@ -189,24 +274,52 @@ validate = async (req, res) => {
     secret: decrypted.secret,
     tenantId: decrypted.tenantId,
   };
+  if(decrypted.userType == "startup"){
+    console.log("STARTUP VALIDATE API CALLING", decrypted)
+    await CompanySchema.findOne(findCriteria, (err, company) => {
+      console.log(company);
+      if (err) {
+        console.log("error company");
+        return res.status(400).json({ success: false, error: err });
+      }
+      if (!company) {
+        console.log("null company");
+        return res.status(404).json({ success: true, data: [] });
+      }
+  
+      return res
+        .status(200)
+        .json({ success: true, token: req.body.token, company });
+    }).catch((err) => {
+      return res.status(400).json({ success: false, data: err });
+    });
+  }else{
+    console.log("INDIVIDUAL VALIDATE API CALLING", decrypted)
+    findCriteria = {
+      email: decrypted.email,
+      password: decrypted.password,
+    };
+    await CustomerSchema.findOne(findCriteria, (err, customer) => {
+      console.log("customer found", customer);
+      if (err) {
+        console.log("Error result");
+        return res.status(400).json({ success: false, error: err });
+      }
+      if (!customer) {
+        console.log("Empty result");
+        return res.status(404).json({ success: false, data: [] });
+      }
+      console.log("Decrypting password", customer.password)
+      let decrypted = AES.decrypt(customer.password, process.env.TWEETER_KOO).toString(CryptoJS.enc.Utf8)
+      console.log("Decryped password", decrypted)
+      return res.status(200).json({ success: true, company: customer, token });
+    }).catch((err) => {
+      console.log("Catching error ",err);
+      return res.status(400).json({ success: false, data: err });
+    });
+  }
 
-  await CompanySchema.findOne(findCriteria, (err, company) => {
-    console.log(company);
-    if (err) {
-      console.log("error company");
-      return res.status(400).json({ success: false, error: err });
-    }
-    if (!company) {
-      console.log("null company");
-      return res.status(404).json({ success: true, data: [] });
-    }
-
-    return res
-      .status(200)
-      .json({ success: true, token: req.body.token, company });
-  }).catch((err) => {
-    return res.status(400).json({ success: false, data: err });
-  });
+  
 };
 
 getUsers = async (req, res) => {

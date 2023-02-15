@@ -9,6 +9,9 @@ const Customer = new Schema(
     incentiveCount:{ type: Number },
     incentivisedActions:{ type: Map },
     tenantId:{ type: String },
+    status:{ type: String },
+    password:{ type: String },
+    userType:{ type: String, default:"individual" }
   },
   { timestamps: true }
 );

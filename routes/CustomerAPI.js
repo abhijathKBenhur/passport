@@ -26,7 +26,7 @@ incentivise = async (req, res) => {
     if (companyDetails.status != "VERIFIED") {
       throw new "Company is not yet elligible to participate in incentives programme as it is not verified by Ideatribe"();
     }
-    
+  
     if (companyDetails.balance < _.max(_.map(goldConfig,"value"))) {
       throw new "Company is not yet elligible to participate in incentives programme as the balance is too low"();
     }
@@ -124,7 +124,8 @@ const getCompanyDetails = async (req, res) => {
 
 const getGoldToBeGiven = (action, n, config) => {
   n = n.toString()
-
+  console.log("action : ", action + " n:" ,n )
+  console.log(config)
   let matchingListing =
     _.find(config, { action: action, frequency: "always" }) ||
     _.find(config, { action: action, frequency: "n", NValue: n }) ||
@@ -180,11 +181,13 @@ const addOrUpdateUser = async (req, goldConfig) => {
           let userBalance = user.balance;
           let existingIncentivesCount = user.incentiveCount;
           console.log("total existingIncentivesCount", existingIncentivesCount);
+          const map1 = new Map();
+          map1.set(newAction, 0);
 
-          let existingIncentivisedActions = user.incentivisedActions;
+          let existingIncentivisedActions = user.incentivisedActions || map1
           console.log("total existingIncentivisedActions", existingIncentivisedActions);
 
-          let incetiveCountForAction = existingIncentivisedActions.get(newAction) || 0
+          let incetiveCountForAction = existingIncentivisedActions[newAction] || 0
           console.log("total incetiveCountForAction", incetiveCountForAction);
 
 
@@ -209,7 +212,7 @@ const addOrUpdateUser = async (req, goldConfig) => {
             };
 
             CustomerSchema.findOneAndUpdate(
-              {semail: req.body.email },
+              {email: req.body.email },
               updates,
               { upsert: true }
             )
@@ -246,9 +249,85 @@ getTotalUserCount = async (req, res) => {
   return res.status(200).json({ success: true, data: userCount });
 };
 
+
+redeemGold = async (req, res) => {
+  console.log("Redeeming gold")
+  let findCriteria = {};
+  if (req.body.email) {
+    findCriteria.companyName = req.body.companyName;
+  }
+  let userElligibility = await IncentiveSchema.aggregate([
+    {
+      $match: {
+        email: req.body.email,
+        status: "COMPLETED"
+      },
+    },
+    {
+      $group: {
+        total: { $sum: "$amount" },
+        _id: "$companyName",
+      },
+    },
+    {
+      $match: {
+        _id: findCriteria.companyName,
+      },
+    },
+  ]).exec();
+
+  console.log(userElligibility);
+  let company = await CompanySchema.findOne(findCriteria);
+  console.log("FOund company details", company)
+  if (userElligibility && userElligibility[0] && userElligibility[0].total <= company.balance) {
+    console.log("Transferring , ", userElligibility[0].total + " from the company balance of "+ company.balance)
+    console.log("private key ---- "+company.pKey);
+    console.log("metamask ID kley ---- " + req.body.metamaskId)
+
+    TribeGoldAPIs.depositGold(
+      req.body,
+      Web3Utils.toWei(String(userElligibility[0].total), "ether"),
+      "REDEEM",
+      company
+    )
+      .then((success) => {
+        console.log("deposited", success);
+        updateUserDetails({email:req.body.email}, {
+          $inc : 
+          {
+            'balance' : 0 - (userElligibility[0].total),
+          }
+        });
+        console.log("reduced user balance", userElligibility[0].total);
+
+    
+        console.log("updating all incentives with ", company.tenantId + " email : " + req.body.email)
+        IncentiveSchema.updateMany(
+          {
+            tenantId:company.tenantId,
+            email:req.body.email
+    
+          },
+          { "status": "REDEEMED" }
+        )
+        console.log("updated redeem status");
+
+        return res.status(200).json({ success: true, data: "Redemption is success" });
+      })
+      .catch((err) => {
+        console.log("error", err);
+        return res.status(400).json({ success: false, data: err });
+      });
+
+  }else{
+    return res.status(400).json({ success: false, data: "Not enough balance" });
+  }
+
+};
+
 router.get("/getAllUsers", getAllUsers);
 router.post("/incentivise", incentivise);
 router.post("/getTotalUserCount", getTotalUserCount);
-
+router.post("/redeemGold", redeemGold);
 
 module.exports = router;

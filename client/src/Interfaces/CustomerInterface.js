@@ -22,11 +22,16 @@ export const incentivise = (request) =>  {
     return AxiosInstance.post("/customer/incentivise",request,config) 
 }
 
+export const redeemGold = (payload) =>  { 
+    return AxiosInstance.post("/redeemGold",payload) 
+}
+
 const CustomerInterface = {
     getAllUsers,
     getUser,
     getTotalUserCount,
-    incentivise
+    incentivise,
+    redeemGold,
 }
 
 export default CustomerInterface

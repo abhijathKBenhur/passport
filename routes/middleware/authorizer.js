@@ -28,9 +28,11 @@ const authorizer = (req, res, next) => {
           let key = decoded.key;
           let secret = decoded.secret;
           let tenantId = decoded.tenantId;
+          let userType = decoded.userType;
           req.key = key;
           req.secret = secret;
           req.tenantId = tenantId;
+          req.userType = userType
           console.log("Forwarding request")
           return next();
         } catch (err) {

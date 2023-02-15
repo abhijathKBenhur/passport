@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import { Button, Box, Grid, Container, Divider, Card } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,7 +18,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import IncentiveTable from "../../components/IncentiveTable";
 import { showToaster } from "../../commons/common.utils";
 import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
@@ -34,6 +34,7 @@ import WalletCard from "../Wallet/WalletCard";
 import { useSnackbar } from "react-simple-snackbar";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import Payment from "../../components/stripe/Payment";
+import { UserContext } from "../../contexts/UserContext";
 
 const drawerWidth = 260;
 const drawerWidthCollapsed = 71;
@@ -97,12 +98,11 @@ const mdTheme = createTheme();
 
 export default function Console() {
   const [open, setOpen] = React.useState(true);
-  const [company, setCompany] = React.useState({});
+  const { company, setCompany } = useContext(UserContext);
   const [companyStatus, setCompanyStatus] = React.useState();
   const [showPayment, setShowPayment] = React.useState(false);
   const [activeMenu, setActiveMenu] = React.useState("Dashboard");
   const history = useHistory();
-
 
   useEffect(() => {
     let liveToken = sessionStorage.getItem("PASSPORT_TOKEN");
@@ -134,7 +134,6 @@ export default function Console() {
       name: "Users",
       icon: <PeopleIcon />,
     },
-
     {
       name: "Configure",
       icon: <BarChartIcon />,
@@ -148,20 +147,35 @@ export default function Console() {
       icon: <ReceiptIcon />,
     },
   ];
+
+
+  const userSideBar = [
+    {
+      name: "Dashboard",
+      icon: <DashboardIcon />,
+    },
+    {
+      name: "Transactions",
+      icon: <ReceiptIcon />,
+    },
+    {
+      name: "Redeem",
+      icon: <LayersIcon />,
+    },
+  ];
+
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
   const getConsoleContent = () => {
     switch (activeMenu) {
-      case "Dashboard":
-        return <Dashboard></Dashboard>;
-        break;
       case "Users":
         return <Customers></Customers>;
         break;
       case "Dashboard":
-        return <Dashboard></Dashboard>;
+        return  <Dashboard></Dashboard>;
         break;
       case "Configure":
         return <Configure></Configure>;
@@ -172,6 +186,9 @@ export default function Console() {
       case "Transactions":
         return <Transaction></Transaction>;
         break;
+      case "Redeem":
+        return  <IncentiveTable></IncentiveTable> 
+        break;
     }
   };
 
@@ -179,70 +196,89 @@ export default function Console() {
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBar position="absolute" open={open}>
-          <Toolbar
-            sx={{
-              backgroundColor: "#F1F1F1",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              alignContent: "center",
-            }}
-          >
-            <Box className="left-actions">
-              {company.status == "VERIFIED" && <Button
-                color="error"
-                size="small"
-                variant="contained"
-                onClick={() => setShowPayment(true)}
-              >
-                Buy TRBG
-              </Button>}
-              {
-                <Payment open={showPayment} company={company}></Payment>
-              }
-            </Box>
-            <Box className="right-actions">
-              <Typography style={{ color: "red" }}>
-                {company?.companyName}
-              </Typography>
-            </Box>
-          </Toolbar>
-          <Toolbar
-            sx={{
-              p: "0 !important", // keep right padding when drawer closed
-            }}
-          >
-            <Box
-              component="main"
+        {
+          <AppBar position="absolute" open={open}>
+            <Toolbar
               sx={{
-                backgroundColor: (theme) => greyBackground,
-                flexGrow: 1,
-                overflow: "auto",
+                backgroundColor: "#F1F1F1",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                alignContent: "center",
               }}
             >
-              <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
-                <Grid container xs={12} md={12} lg={12} spacing={3}>
-                  <Grid item xs={12} md={4} lg={3}>
-                    <WalletCard type="balance" balance={company.balance} />
-                  </Grid>
-                  <Grid item xs={12} md={4} lg={3}>
-                    <WalletCard
-                      type="given"
-                      distributed={company.distributed}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4} lg={3}>
-                    <WalletCard type="rate" />
-                  </Grid>
-                  <Grid item xs={12} md={4} lg={3}>
-                    <WalletCard type="users" />
-                  </Grid>
-                </Grid>
-              </Container>
-            </Box>
-          </Toolbar>
-        </AppBar>
+              <Box className="left-actions">
+                {company.status == "VERIFIED" && (
+                  <Button
+                    color="error"
+                    size="small"
+                    variant="contained"
+                    onClick={() => setShowPayment(true)}
+                  >
+                    Buy TRBG
+                  </Button>
+                )}
+                {<Payment open={showPayment} company={company}></Payment>}
+              </Box>
+              <Box className="right-actions">
+                <Typography style={{ color: "red" }}>
+                  {company?.companyName || company?.email}
+                </Typography>
+              </Box>
+            </Toolbar>
+            <Toolbar
+              sx={{
+                p: "0 !important", // keep right padding when drawer closed
+              }}
+            >
+              <Box
+                component="main"
+                sx={{
+                  backgroundColor: (theme) => greyBackground,
+                  flexGrow: 1,
+                  overflow: "auto",
+                }}
+              >
+                <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
+                  {company.userType != "individual" ? (
+                    <Grid container xs={12} md={12} lg={12} spacing={3}>
+                      <Grid item xs={12} md={3}>
+                        <WalletCard
+                          entity={company.userType}
+                          type="balance"
+                          balance={company.balance}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <WalletCard
+                          entity={company.userType}
+                          type="given"
+                          distributed={company.distributed}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <WalletCard entity={company.userType} type="rate" />
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <WalletCard entity={company.userType} type="users" />
+                      </Grid>
+                    </Grid>
+                  ) : (
+                    <Grid container xs={12} md={12} lg={12} spacing={3}>
+                      <Grid item xs={12} md={12}>
+                        <WalletCard
+                          entity={company.userType}
+                          type="balance"
+                          balance={company.balance}
+                        />
+                      </Grid>
+                    </Grid>
+                  )}
+                </Container>
+              </Box>
+            </Toolbar>
+          </AppBar>
+        }
         <Drawer variant="permanent" open={open} sx={{}}>
           <Toolbar
             sx={{
@@ -277,7 +313,7 @@ export default function Console() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            <React.Fragment>
+            {company.userType != "individual" ? <React.Fragment>
               {sideBar.map((item) => {
                 return (
                   <ListItemButton
@@ -312,6 +348,43 @@ export default function Console() {
                 );
               })}
             </React.Fragment>
+          :  
+           <React.Fragment>
+            {userSideBar.map((item) => {
+                return (
+                  <ListItemButton
+                    style={{
+                      cursor:
+                        companyStatus == "VERIFIED" ? "pointer" : "no-drop",
+                    }}
+                    onClick={() => {
+                      if (companyStatus == "VERIFIED") {
+                        setActiveMenu(item.name);
+                      } else {
+                        showToaster("Not allowed");
+                      }
+                    }}
+                  >
+                    <ListItemIcon
+                      style={{
+                        color:
+                          item.name == activeMenu ? highlightGreen : greyText,
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.name}
+                      style={{
+                        color:
+                          item.name == activeMenu ? highlightGreen : greyText,
+                      }}
+                    />
+                  </ListItemButton>
+                );
+              })}
+            </React.Fragment>
+          }
           </List>
           <ListItemButton
             style={{
@@ -320,6 +393,7 @@ export default function Console() {
               cursor: "pointer",
             }}
             onClick={() => {
+              sessionStorage.removeItem("PASSPORT_TOKEN")
               history.push("/login");
             }}
           >

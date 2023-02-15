@@ -9,15 +9,16 @@ const web3Instance = BlockchainUtils.web3Instance;
 const tribeGoldContract = BlockchainUtils.tribeGoldContract;
 const transactionObject = {};
 
-web3Instance.eth.getAccounts().then(result => {
-  transactionObject.from = result[0];
-})
+// web3Instance.eth.getAccounts().then(result => {
+//   transactionObject.from = result[0];
+// })
 
 getBalance = (account) =>{
   return tribeGoldContract.getBalance(account)
 }
 
 transferGold = (requestObject, ethValue) => {
+  console.log("requestObject")
   console.log(requestObject)
   let ethInWeiValue = Web3Utils.toWei(ethValue.toString(), "ether")
   console.log("INITIATING GOLD DEPOSITS TO " + requestObject.metamaskId, " ::: " , ethInWeiValue);

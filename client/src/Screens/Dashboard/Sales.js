@@ -97,7 +97,7 @@ const Sales = (props) => {
         //     Last 7 days
         //   </Button>
         // }
-        title="Users"
+        title="Distribution"
       />
       <Divider />
       <CardContent>
@@ -118,12 +118,7 @@ const Sales = (props) => {
           p: 2,
         }}
       >
-        <Button
-          color="primary"
-          endIcon={<ArrowRightIcon fontSize="small" />}
-          size="small">
-          Overview
-        </Button>
+      
       </Box>
     </Card>
   );

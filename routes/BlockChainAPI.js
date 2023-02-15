@@ -12,12 +12,15 @@ const getBalance = (req, res) => {
 };
 
 const depositGold = (req, res) => {
+  console.log(" depositGold api")
   transferGold(
     req.body,
     parseInt(req.body.goldToDeposit)
   ).then(success =>{
+    console.log(success)
     return res.status(200).json({ success: true, data: success });
   }).catch(err =>{
+    console.log(err)
     return res.status(404).json({ success: false, data: err });
   })
 };

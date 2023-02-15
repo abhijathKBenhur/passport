@@ -1,4 +1,5 @@
 import * as React from "react";
+import {useEffect} from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,8 +13,14 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useHistory } from "react-router-dom";
 import AuthInterface from "../../Interfaces/AuthInterface";
-import Container from "@mui/material/Container";
+import ButtonGroup from '@mui/material/ButtonGroup';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useSnackbar } from "react-simple-snackbar";
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Grow from '@mui/material/Grow';
+import Popper from '@mui/material/Popper';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
 
 const theme = createTheme();
 
@@ -23,12 +30,64 @@ export default function Login() {
   const [mailSent, setMailSent] = React.useState(false);
   const [formData, setFormData] = React.useState({});
   const [openSnackbar, closeSnackbar] = useSnackbar();
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef(null);
+  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const options = [
+    {
+      text: 'I am an individual',
+      value: 'individual'
+    },
+    {
+      value: 'startup',
+      text:'I represent a startup'
+    }];
+
+  const handleClick = () => {
+    console.info(`You clicked ${options[selectedIndex]}`);
+  };
+
+  const handleMenuItemClick = (event, index) => {
+    setSelectedIndex(index);
+    setOpen(false);
+  };
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+
+  useEffect(() => {
+    checkForSession()
+  }, []);
+
+
+  const checkForSession = () =>{
+    let token = sessionStorage.getItem("PASSPORT_TOKEN");
+    AuthInterface.validate({ token })
+    .then((success) => {
+      history.push("/console");
+    })
+    .catch((err) => {
+    });
+  }
+
+
   const history = useHistory();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const submitData = Object.fromEntries(data);
+    submitData["userType"] = options[selectedIndex].value
     let validation = validate(submitData);
 
     if (signUp) {
@@ -97,7 +156,7 @@ export default function Login() {
       message =
         "Password should have atleast one numner and one special charecter";
     }
-    if (!submitData.companyName || submitData.companyName.length == 0) {
+    if ((!submitData.companyName || submitData.companyName.length == 0) && submitData.userType == "startup") {
       valid = false;
       message = "Please provide the company name";
     }
@@ -164,7 +223,7 @@ export default function Login() {
                 autoComplete="current-password"
                 disabled={mailSent}
               />
-              {signUp ? (
+              {signUp && options[selectedIndex].value == "startup" ? (
                 <TextField
                   margin="normal"
                   required
@@ -188,9 +247,14 @@ export default function Login() {
                   autoComplete="Verification Code"
                 />
               )}
-              <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-                <Button onClick={handleClick}>{options[selectedIndex]}</Button>
+              {
+              <div>
+                <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button" fullWidth>
+                <Button onClick={handleClick} sx={{pl:2, justifyContent:"flex-start"}}>
+                  <span align="left">{options[selectedIndex].text}</span>
+                </Button>
                 <Button
+                  style={{maxWidth:"80px"}}
                   size="small"
                   aria-controls={open ? 'split-button-menu' : undefined}
                   aria-expanded={open ? 'true' : undefined}
@@ -201,6 +265,45 @@ export default function Login() {
                   <ArrowDropDownIcon />
                 </Button>
               </ButtonGroup>
+              <Popper
+              fullWidth
+        sx={{
+          zIndex: 1,
+        }}
+        open={open}
+        anchorEl={anchorRef.current}
+        role={undefined}
+        transition
+        disablePortal
+      >
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin:
+                placement === 'bottom' ? 'center top' : 'center bottom',
+            }}
+          >
+            <Paper fullWidth>
+              <ClickAwayListener onClickAway={handleClose}>
+                <MenuList fullWidth id="split-button-menu" autoFocusItem>
+                  {options.map((option, index) => (
+                    <MenuItem
+                      fullWidth
+                      key={option}
+                      disabled={index === 2}
+                      selected={index === selectedIndex}
+                      onClick={(event) => handleMenuItemClick(event, index)}
+                    >
+                      {option.text}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper></div>}
 
               <Button
                 type="submit"
@@ -218,7 +321,7 @@ export default function Login() {
                 {signUp ? (mailSent ? "Register" : "Verify") : "Login"}
               </Button>
               <Grid container>
-                <Grid item>
+                <Grid item style={{cursor:"pointer"}}>
                   {signUp ? (
                     <Link
                       onClick={() => {

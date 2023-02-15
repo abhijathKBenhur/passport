@@ -122,6 +122,7 @@ getTokenForDummy = async (req, res) => {
           tenantId: company.tenantId,
           key: company.key,
           secret: company.secret,
+          userType: "startup"
         },
         process.env.TWEETER_KOO
       );
