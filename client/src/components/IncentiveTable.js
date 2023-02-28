@@ -14,12 +14,18 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TableSortLabel,
-  Tooltip,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
 } from "@mui/material";
 
 const IncentiveTable = (props) => {
   const [rows, setRows] = useState([]);
+  const [showRedeem, setShowRedeem] = useState(false);
+  const [redeemOrder, setRedeemOrder] = useState();
   const {company} = useContext(UserContext)
   
 
@@ -33,6 +39,11 @@ const IncentiveTable = (props) => {
       })
       .catch((err) => {});
   }, []);
+
+  const handleClose = (order) =>{
+    setShowRedeem(false)
+    setRedeemOrder()
+  }
 
   const redeemFromCompany = (row) =>{
     CustomerInterface.redeemGold({...company,companyName:row._id} ).then(success =>{
@@ -70,7 +81,7 @@ const IncentiveTable = (props) => {
                 <TableCell>{order.total}</TableCell>
                 <TableCell>
                   <Button>  {
-              order.status == "COMPLETED" ? <Button disabled={order.total == 0} onClick={() =>{ redeemFromCompany(order) }}>Redeem </Button> :
+              order.status == "COMPLETED" ? <Button disabled={order.total == 0} onClick={() =>{ setShowRedeem(order) }}>Redeem </Button> :
               "Redeemed"
               }</Button>
                 </TableCell>
@@ -79,7 +90,30 @@ const IncentiveTable = (props) => {
           </TableBody>
         </Table>
       </Box>
-   
+      <Dialog open={showRedeem} onClose={handleClose}>
+        <DialogTitle>Redeem</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tribe gold will be shared to this wallet address. Please make sure you have the access to the adress before redeeming.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Wallet address"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={() => {
+              redeemFromCompany(redeemOrder);
+              setShowRedeem(true)
+            }}> Redeem </Button>
+        </DialogActions>
+      </Dialog>
   </Card>
   );
 };

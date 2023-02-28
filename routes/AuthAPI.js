@@ -122,8 +122,9 @@ register = async (req, res) => {
   let updates = {
     status: "REGISTERED",
   };
-  console.log("testing register", newEntity);
-  if(req.body == "startup"){
+  
+  if(_.get(req,"body.userType") == "corporate"){
+    console.log("testing corporate", req.body);
     CompanySchema.findOneAndUpdate(
       { tenantId: newEntity.tenantId, email: newEntity.email,distributed:0 },
       updates,
@@ -135,7 +136,7 @@ register = async (req, res) => {
           tenantId: registeredCompany.tenantId,
           key: registeredCompany.key,
           secret: registeredCompany.secret,
-          userType: "startup"
+          userType: "corporate"
         };
         console.log("Encrypting" , data)
         var token = jwt.sign(data, process.env.TWEETER_KOO);
@@ -158,7 +159,7 @@ register = async (req, res) => {
     updates = {
       status: "VERIFIED",
     };
-    console.log("newEntity",newEntity)
+    console.log("user newEntity",newEntity)
     CustomerSchema.findOneAndUpdate(
       { email: newEntity.email },
       updates
@@ -195,7 +196,8 @@ login = async (req, res) => {
   let findCriteria = {};
   findCriteria.email = req.body.email;
   console.log("criteria", findCriteria);
-  if(req.body.userType == "startup"){
+  if(req.body.userType == "corporate"){
+    console.log("corporate login");
     await CompanySchema.findOne(findCriteria, (err, company) => {
       console.log("company found", company);
       if (err) {
@@ -216,7 +218,7 @@ login = async (req, res) => {
             tenantId: company.tenantId,
             key: company.key,
             secret: company.secret,
-            userType: "startup"
+            userType: "corporate"
           },
           process.env.TWEETER_KOO
         );
@@ -274,8 +276,8 @@ validate = async (req, res) => {
     secret: decrypted.secret,
     tenantId: decrypted.tenantId,
   };
-  if(decrypted.userType == "startup"){
-    console.log("STARTUP VALIDATE API CALLING", decrypted)
+  if(decrypted.userType == "corporate"){
+    console.log("corporate VALIDATE API CALLING", decrypted)
     await CompanySchema.findOne(findCriteria, (err, company) => {
       console.log(company);
       if (err) {
@@ -310,8 +312,11 @@ validate = async (req, res) => {
         return res.status(404).json({ success: false, data: [] });
       }
       console.log("Decrypting password", customer.password)
-      let decrypted = AES.decrypt(customer.password, process.env.TWEETER_KOO).toString(CryptoJS.enc.Utf8)
-      console.log("Decryped password", decrypted)
+      let decryptedPass = AES.decrypt(customer.password, process.env.TWEETER_KOO).toString(CryptoJS.enc.Utf8)
+      if(decrypted.password != decryptedPass){
+        return res.status(404).json({ success: false, data: [] });
+      }
+      console.log("Decryped password", decryptedPass)
       return res.status(200).json({ success: true, company: customer, token });
     }).catch((err) => {
       console.log("Catching error ",err);

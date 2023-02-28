@@ -11,7 +11,9 @@ const Customer = new Schema(
     tenantId:{ type: String },
     status:{ type: String },
     password:{ type: String },
-    userType:{ type: String, default:"individual" }
+    userType:{ type: String, default:"corporate" },
+    referredBy:{ type: String},
+    referalCode:{ type: String}
   },
   { timestamps: true }
 );

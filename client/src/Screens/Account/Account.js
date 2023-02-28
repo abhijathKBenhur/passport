@@ -210,7 +210,6 @@ const Configure = (props) => {
                     label="Ideatribe Hash"
                     name="billethash"
                     onChange={handleChange}
-                    required
                     value={values.billethash || ''}
                     variant="outlined"
                   />
@@ -218,7 +217,7 @@ const Configure = (props) => {
               </Grid>
             </CardContent>
             <Divider />
-            {company.status == "PENDING" &&<Box
+            {company.status == "REGISTERED" &&<Box
                 sx={{
                   display: "flex",
                   justifyContent: "flex-end",

@@ -208,7 +208,7 @@ export default function Console() {
               }}
             >
               <Box className="left-actions">
-                {company.status == "VERIFIED" && (
+                {company.status == "VERIFIED" && company.userType == "corporate" && (
                   <Button
                     color="error"
                     size="small"
@@ -218,6 +218,18 @@ export default function Console() {
                     Buy TRBG
                   </Button>
                 )}
+                {company.userType != "corporate" && 
+                  <Button
+                  color="error"
+                  size="small"
+                  variant="contained"
+                  onClick={() => {
+                    setActiveMenu("Redeem");
+                  }}
+                >
+                  REDEEM TRBG
+                </Button>
+                }
                 {<Payment open={showPayment} company={company}></Payment>}
               </Box>
               <Box className="right-actions">
@@ -240,7 +252,7 @@ export default function Console() {
                 }}
               >
                 <Container maxWidth="" sx={{ mt: 4, mb: 4 }}>
-                  {company.userType != "individual" ? (
+                  {company.userType == "corporate" ? (
                     <Grid container xs={12} md={12} lg={12} spacing={3}>
                       <Grid item xs={12} md={3}>
                         <WalletCard
@@ -292,7 +304,7 @@ export default function Console() {
           >
             {open ? (
               <Box>
-                IDEATRIBE | PASSPORT
+                IDEATRIBE
                 <IconButton onClick={toggleDrawer} color="info">
                   <ChevronLeftIcon />
                 </IconButton>
@@ -313,7 +325,7 @@ export default function Console() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {company.userType != "individual" ? <React.Fragment>
+            {company.userType == "corporate" ? <React.Fragment>
               {sideBar.map((item) => {
                 return (
                   <ListItemButton

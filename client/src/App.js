@@ -1,4 +1,4 @@
-import Login from "./Screens/Login/Login";
+import Login from "./Screens/Login/Home";
 import Console from "./Screens/Console/Console";
 import _ from "lodash";
 import React, { useState } from "react";
@@ -18,6 +18,8 @@ import {
 } from "react-router-dom";
 import Dummy from "./Screens/Dummy/Dummy";
 import Entries from "./Screens/Entries/Entries";
+import Home from "./Screens/Login/Home";
+import LoginForm from "./Screens/Login/LoginForm"
 
 
 const App = (props) => {
@@ -31,14 +33,16 @@ const App = (props) => {
           <div className="app-content">
             <SnackbarProvider>
               <Switch>
-                <Route path="/login" render={(props) => <Login />} />
+                {/* <Route path="/login" render={(props) => <Login />} /> */}
+                <Route path="/login" component={LoginForm} />
                 <Route path="/console" component={Console} />
                 <Route path="/dummy" component={Dummy} />
                 <Route path="/entries" component={Entries} />
+                <Route path="/home" component={Home} />
                 <Route
                   exact
                   path="/"
-                  render={() => <Redirect from="/" to="/console" />}
+                  render={() => <Redirect from="/" to="/home" />}
                 />
               </Switch>
             </SnackbarProvider>

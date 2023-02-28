@@ -16,7 +16,9 @@ const Company = new Schema(
     details: { type: Map },
     contractAddress: { type: String },
     pKey: { type: String },
-    userType:{ type: String, default:"startup" }
+    userType:{ type: String, default:"corporate" },
+    referredBy:{ type: String},
+    referalCode:{ type: String},
   },
   { timestamps: true }
 );

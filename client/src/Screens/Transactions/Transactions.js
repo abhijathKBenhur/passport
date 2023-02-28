@@ -113,8 +113,10 @@ const Transactions = (props) => {
               <TableCell>Action</TableCell>
               <TableCell>Amount</TableCell>
               <TableCell>
-                {_.get(company,"userType") == "individual" ? "Company": "Customer"}
+                {_.get(company,"userType") != "corporate" ? "Company": "Customer"}
               </TableCell>
+              <TableCell>Date</TableCell>
+
             </TableRow>
           </TableHead>
           <TableBody>
@@ -124,7 +126,10 @@ const Transactions = (props) => {
               (<TableRow hover key={index} >
                 <TableCell>{order.action}</TableCell>
                 <TableCell>{order.amount}</TableCell>
-                <TableCell>{_.get(company,"userType") != "individual" ? order.email: order.companyName}</TableCell>
+                <TableCell>{_.get(company,"userType") == "corporate" ? order.email: order.companyName}</TableCell>
+                <TableCell>{new Date(order.createdAt).toDateString()}</TableCell>
+                
+                
               </TableRow>)
             ))}
           </TableBody>
