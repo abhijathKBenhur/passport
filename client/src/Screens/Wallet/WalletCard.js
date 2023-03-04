@@ -59,7 +59,7 @@ const WalletCard = (props) => {
         return (props.balance || 0) / 1000000000000000000 + " TRBG";
         break;
       case "given":
-        return props.distributed + " TRBG";
+        return  (props.distributed || 0) / 1000000000000000000 + " TRBG";
         break;
       case "rate":
         return "0.1$";

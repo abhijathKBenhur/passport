@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const _ = require("lodash");
 const mongoose = require("mongoose");
+const { transferGold } = require("./BlockchainAPIs/TribeGoldAPIs");
 
 incentivise = async (req, res) => {
   const incentiveObject = req.body;
@@ -40,7 +41,7 @@ incentivise = async (req, res) => {
 
     let updatedCompany = await updateCompanyDetails(req, {
       distributed: updatedDistribution,
-      $inc : {'balance' : 0 - (goldDistributed * 1000000000000000000)}
+      $inc : {'balance' : 0 - (goldDistributed )}
     });
     let addedTransaction = await addTransaction({
       amount: goldDistributed,
@@ -132,7 +133,7 @@ const getGoldToBeGiven = (action, n, config) => {
     (n == 1 && _.find(config, { action: action, frequency: "once" }));
   
   console.log("matchingListing", matchingListing)
-  return parseFloat(_.get(matchingListing, "value")) || 0;
+  return (parseFloat(_.get(matchingListing, "value"))* 1000000000000000000) || 0;
 };
 
 const addOrUpdateUser = async (req, goldConfig) => {
@@ -162,20 +163,22 @@ const addOrUpdateUser = async (req, goldConfig) => {
           reject("Add user err", err);
         }
         if (!user || user == null) {
-          console.log("creating customer", newUser);
-          if (goldToGive == 0) {
-            console.log("No gold incentivised, skipping user creation");
-          }
-          console.log("creating customer", newUser);
-          newUser
-            .save()
-            .then((success) => {
-              console.log("Add user success");
-              resolve(goldToGive);
-            })
-            .catch((error) => {
-              reject("Add user error" + error);
-            });
+          reject("No gold incentivised, user not found");
+
+          // if (goldToGive == 0) {
+          //   console.log("No gold incentivised, skipping user creation");
+          //   reject("No gold incentivised, user not found");
+          // }
+          // console.log("creating customer", newUser);
+          // newUser
+          //   .save()
+          //   .then((success) => {
+          //     console.log("Add user success");
+          //     resolve(goldToGive);
+          //   })
+          //   .catch((error) => {
+          //     reject("Add user error" + error);
+          //   });
         } else {
           console.log("Found user, updating", user);
           let userBalance = user.balance;
@@ -204,7 +207,7 @@ const addOrUpdateUser = async (req, goldConfig) => {
             console.log("No gold incentivised for existing user");
           } 
             let newGoldBalance =
-              parseFloat(userBalance) + parseFloat(goldToGive);
+              parseFloat(userBalance) +  parseFloat(goldToGive)
             let updates = {
               balance: newGoldBalance,
               incentiveCount: parseInt(existingIncentivesCount) + 1,
@@ -282,11 +285,10 @@ redeemGold = async (req, res) => {
   if (userElligibility && userElligibility[0] && userElligibility[0].total <= company.balance) {
     console.log("Transferring , ", userElligibility[0].total + " from the company balance of "+ company.balance)
     console.log("private key ---- "+company.pKey);
-    console.log("metamask ID kley ---- " + req.body.metamaskId)
 
-    TribeGoldAPIs.depositGold(
+    transferGold(
       req.body,
-      Web3Utils.toWei(String(userElligibility[0].total), "ether"),
+      userElligibility[0].total / 1000000000000000000,
       "REDEEM",
       company
     )

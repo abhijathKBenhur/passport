@@ -17,7 +17,11 @@ getAllTransactions = async (req, res) => {
             return res.status(404).json({ success: true, data: [] });
           }
           console.log("returning");
-          return res.status(200).json({ success: true, data: transactions });
+          return res.status(200).json({ success: true, data: transactions.map(item =>{
+            let transformedAmount =  (item.amount && item.amount > 0)  ? item.amount / 1000000000000000000 : item.amount
+            item.amount = transformedAmount
+            return item
+         })});
         }
       ).catch((err) => {
         return res.status(400).json({ success: false, data: err });

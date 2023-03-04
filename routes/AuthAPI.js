@@ -299,7 +299,6 @@ validate = async (req, res) => {
     console.log("INDIVIDUAL VALIDATE API CALLING", decrypted)
     findCriteria = {
       email: decrypted.email,
-      password: decrypted.password,
     };
     await CustomerSchema.findOne(findCriteria, (err, customer) => {
       console.log("customer found", customer);

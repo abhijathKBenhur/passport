@@ -24,10 +24,18 @@ import {
 
 const IncentiveTable = (props) => {
   const [rows, setRows] = useState([]);
+  const [values, setValues] = useState([]);
   const [showRedeem, setShowRedeem] = useState(false);
   const [redeemOrder, setRedeemOrder] = useState();
   const {company} = useContext(UserContext)
-  
+
+  const handleChange = (event) => {
+    setValues({
+      ...values,
+      [event.target.name]: event.target.value,
+    });
+    console.log(values);
+  };
 
   useEffect(() => {
     TransactionsInterface.getGroupedEarnings({
@@ -45,8 +53,8 @@ const IncentiveTable = (props) => {
     setRedeemOrder()
   }
 
-  const redeemFromCompany = (row) =>{
-    CustomerInterface.redeemGold({...company,companyName:row._id} ).then(success =>{
+  const redeemFromCompany = () =>{
+    CustomerInterface.redeemGold({...company,companyName:redeemOrder._id, metamaskId: values.address} ).then(success =>{
       window.location.reload();
     }).catch(err =>{
       const alertPropertyError = {
@@ -78,10 +86,12 @@ const IncentiveTable = (props) => {
               
               (<TableRow hover  >
                 <TableCell>{order._id}</TableCell>
-                <TableCell>{order.total}</TableCell>
+                <TableCell>{order.total/1000000000000000000}</TableCell>
                 <TableCell>
                   <Button>  {
-              order.status == "COMPLETED" ? <Button disabled={order.total == 0} onClick={() =>{ setShowRedeem(order) }}>Redeem </Button> :
+              order.status == "COMPLETED" ? <Button disabled={order.total == 0} onClick={() =>{ 
+                setShowRedeem(true);
+                setRedeemOrder(order) }}>Redeem </Button> :
               "Redeemed"
               }</Button>
                 </TableCell>
@@ -99,9 +109,11 @@ const IncentiveTable = (props) => {
           <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="address"
+            name="address"
             label="Wallet address"
             type="text"
+            onChange={handleChange}
             fullWidth
             variant="standard"
           />
@@ -110,7 +122,7 @@ const IncentiveTable = (props) => {
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={() => {
               redeemFromCompany(redeemOrder);
-              setShowRedeem(true)
+              setShowRedeem(false)
             }}> Redeem </Button>
         </DialogActions>
       </Dialog>

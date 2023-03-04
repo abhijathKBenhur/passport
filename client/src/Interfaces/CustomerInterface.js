@@ -23,7 +23,7 @@ export const incentivise = (request) =>  {
 }
 
 export const redeemGold = (payload) =>  { 
-    return AxiosInstance.post("/redeemGold",payload) 
+    return AxiosInstance.post("/customer/redeemGold",payload) 
 }
 
 const CustomerInterface = {
