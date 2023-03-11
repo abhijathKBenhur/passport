@@ -28,7 +28,7 @@ app.use(
   cors({
     origin: function (origin, callback) {
       // console.log("API requested from " + origin);
-      if (!origin || ( origin.indexOf("localhost") > -1|| origin.indexOf("passport") > -1)) {
+      if (!origin || ( origin.indexOf("localhost") > -1|| origin.indexOf("ideatribe") > -1)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));

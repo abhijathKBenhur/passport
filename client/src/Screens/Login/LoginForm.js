@@ -40,6 +40,9 @@
       }, []);
 
       const checkForSession = () => {
+        if(_.isUndefined(_.get(props.history,"location.state.type"))){
+          history.push("/home");
+        }
         let token = sessionStorage.getItem("PASSPORT_TOKEN");
         AuthInterface.validate({ token })
           .then((success) => {

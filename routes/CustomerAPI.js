@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const _ = require("lodash");
 const mongoose = require("mongoose");
-const { transferGold } = require("./BlockchainAPIs/TribeGoldAPIs");
+const { buyGold } = require("./BlockchainAPIs/TribeGoldAPIs");
 
 incentivise = async (req, res) => {
   const incentiveObject = req.body;
@@ -259,6 +259,7 @@ redeemGold = async (req, res) => {
   if (req.body.email) {
     findCriteria.companyName = req.body.companyName;
   }
+
   let userElligibility = await IncentiveSchema.aggregate([
     {
       $match: {
@@ -281,12 +282,12 @@ redeemGold = async (req, res) => {
 
   console.log(userElligibility);
   let company = await CompanySchema.findOne(findCriteria);
-  console.log("FOund company details", company)
-  if (userElligibility && userElligibility[0] && userElligibility[0].total <= company.balance) {
+  console.log("Found company details", company)
+  if (userElligibility && userElligibility[0] && userElligibility[0].total <= company.balance  && userElligibility[0].total <= req.body.balance) {
     console.log("Transferring , ", userElligibility[0].total + " from the company balance of "+ company.balance)
     console.log("private key ---- "+company.pKey);
 
-    transferGold(
+    buyGold(
       req.body,
       userElligibility[0].total / 1000000000000000000,
       "REDEEM",
@@ -294,24 +295,32 @@ redeemGold = async (req, res) => {
     )
       .then((success) => {
         console.log("deposited", success);
-        updateUserDetails({email:req.body.email}, {
-          $inc : 
+        CustomerSchema.findOneAndUpdate(
+          {email: req.body.email },
           {
-            'balance' : 0 - (userElligibility[0].total),
-          }
-        });
-        console.log("reduced user balance", userElligibility[0].total);
-
-    
-        console.log("updating all incentives with ", company.tenantId + " email : " + req.body.email)
-        IncentiveSchema.updateMany(
-          {
-            tenantId:company.tenantId,
-            email:req.body.email
-    
+            $inc : 
+            {
+              'balance' : 0 - (userElligibility[0].total),
+            }
           },
-          { "status": "REDEEMED" }
+          { upsert: true }
         )
+          .then((user, b) => {
+            IncentiveSchema.updateMany(
+              {
+                tenantId:company.tenantId,
+                email:req.body.email
+        
+              },
+              { "status": "REDEEMED" }
+            )
+          })
+          .catch((error) => {
+            console.log("ERRORING OUT")
+          });
+
+        console.log("reduced user balance", userElligibility[0].total);
+        console.log("updating all incentives with ", company.tenantId + " email : " + req.body.email)
         console.log("updated redeem status");
 
         return res.status(200).json({ success: true, data: "Redemption is success" });

@@ -10,6 +10,7 @@ const tribeGoldContract = BlockchainUtils.tribeGoldContract;
 const transactionObject = {};
 
 web3Instance.eth.getAccounts().then(result => {
+  console.log("ETH INSTANCE", result)
   transactionObject.from = result[0];
 })
 
@@ -17,20 +18,31 @@ getBalance = (account) =>{
   return tribeGoldContract.getBalance(account)
 }
 
-transferGold = (requestObject, ethValue) => {
+
+
+buyGold = (requestObject, ethValue, action, fromCompany) => {
   console.log("requestObject")
   console.log(requestObject)
   let ethInWeiValue = Web3Utils.toWei(ethValue.toString(), "ether")
   console.log("INITIATING GOLD DEPOSITS TO " + requestObject.metamaskId, " ::: " , ethInWeiValue);
+  if(action == "REDEEM"){
+    web3Instance.eth.personal.importRawKey(fromCompany.pKey, process.env.TWEETER_KOO)
+    web3Instance.eth.accounts.wallet.add({address: fromCompany.contractAddress, privateKey: fromCompany.pKey})
+    web3Instance.eth.personal.unlockAccount(fromCompany.contractAddress,process.env.TWEETER_KOO, 600)
+    transactionObject.from = fromCompany.contractAddress
+    transactionObject.gasLimit = 50000
+    // web3Instance.eth.accounts.wallet.remove('<public-key>')
+  }
+  console.log("Transaction object : " ,transactionObject)
   const promise = new Promise((resolve, reject) => {
     tribeGoldContract.methods
       .transfer(requestObject.metamaskId, ethInWeiValue)
-      .send(transactionObject)
+      .send(transactionObject) 
       .on("transactionHash", function (hash) {
         console.log("Started transaction ")
         new TransactionSchema({
           amount: ethInWeiValue,
-          action: "PURCHASE",
+          action: action,
           type:"USER_INCENTIVE",
           status:"PENDING",
           hash:hash,
@@ -45,20 +57,21 @@ transferGold = (requestObject, ethValue) => {
           { hash: receipt.transactionHash },
           { status: "COMPLETED" }
         ).then(success =>{
-          console.log("Completed transaction with satus ")
+          console.log("Completed transaction with status ")
         }).catch(err =>{
           console.log("Failed transaction with satus ")
         })
-        CompanySchema.findOneAndUpdate(
-          { email: requestObject.email, tenantId: requestObject.tenantId },
-          { $inc : {'balance' : ethInWeiValue}},
-          { upsert: true }
-        ).then(success =>{
-          console.log("Completed balance ")
-        }).catch(err =>{
-          console.log("Failed balance update ")
-        })
-        console.log("Completed updations ")
+        if(action != "REDEEM"){
+          CompanySchema.findOneAndUpdate(
+            { email: requestObject.email, tenantId: requestObject.tenantId },
+            { $inc : {'balance' : ethInWeiValue}},
+            { upsert: true }
+          ).then(success =>{
+            console.log("Completed balance ")
+          }).catch(err =>{
+            console.log("Failed balance update ")
+          })
+        }
         resolve(receipt.transactionHash);
       })
       .once("error", function (error) {
@@ -67,7 +80,7 @@ transferGold = (requestObject, ethValue) => {
           { hash: transactionHash },
           { status: "FAILED" }
         );
-        console.log("Deposit feiled to new user in TBGApi");
+        console.log("Deposit failed to new user in TBGApi");
         console.log("error ", error);
         web3Instance.eth
           .getTransaction(transactionHash)
@@ -91,6 +104,6 @@ transferGold = (requestObject, ethValue) => {
 };
 
 module.exports = {
-  transferGold,
+  buyGold,
   getBalance,
 };

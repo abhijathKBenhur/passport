@@ -269,6 +269,7 @@ login = async (req, res) => {
 
 validate = async (req, res) => {
   let token = req.body.token;
+  try{
   let decrypted = jwt.verify(token, process.env.TWEETER_KOO);
 
   let findCriteria = {
@@ -312,17 +313,20 @@ validate = async (req, res) => {
       }
       console.log("Decrypting password", customer.password)
       let decryptedPass = AES.decrypt(customer.password, process.env.TWEETER_KOO).toString(CryptoJS.enc.Utf8)
-      if(decrypted.password != decryptedPass){
-        return res.status(404).json({ success: false, data: [] });
-      }
       console.log("Decryped password", decryptedPass)
+
+      // if(decrypted.password != decryptedPass){
+      //   return res.status(404).json({ success: false, data: [] });
+      // }
       return res.status(200).json({ success: true, company: customer, token });
     }).catch((err) => {
       console.log("Catching error ",err);
       return res.status(400).json({ success: false, data: err });
     });
   }
-
+  }catch(err){
+    return res.status(400).json({ success: false, data: err });
+  }
   
 };
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
-const { transferGold } = require("./BlockchainAPIs/TribeGoldAPIs");
+const { buyGold } = require("./BlockchainAPIs/TribeGoldAPIs");
 
 const getBalance = (req, res) => {
   tribeGoldContract.getBalance(req.body.account).then(success =>{
@@ -13,9 +13,9 @@ const getBalance = (req, res) => {
 
 const depositGold = (req, res) => {
   console.log(" depositGold api")
-  transferGold(
+  buyGold(
     req.body,
-    parseInt(req.body.goldToDeposit)
+    parseInt(req.body.goldToDeposit),"PURCHASE"
   ).then(success =>{
     console.log(success)
     return res.status(200).json({ success: true, data: success });
