@@ -104,7 +104,7 @@ const IncentiveTable = (props) => {
         <DialogTitle>Redeem</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Tribe gold will be shared to this wallet address. Please make sure you have the access to the adress before redeeming.
+            Tribe gold will be shared to this wallet address. Please make sure you have the access to the address before redeeming.
           </DialogContentText>
           <TextField
             autoFocus

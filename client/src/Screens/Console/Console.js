@@ -11,18 +11,24 @@ import IconButton from "@mui/material/IconButton";
 import { useHistory } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import IncentiveTable from "../../components/IncentiveTable";
 import { showToaster } from "../../commons/common.utils";
 import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import LogoutIcon from "@mui/icons-material/Logout";
+import InfoIcon from "@mui/icons-material/Info";
+import ArticleIcon from "@mui/icons-material/Article";
+import SecurityIcon from "@mui/icons-material/Security";
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import HelpIcon from '@mui/icons-material/Help';
+import logoImage from "../../logo.png"
+
+
 import LayersIcon from "@mui/icons-material/Layers";
 import Dashboard from "../Dashboard/Dashboard";
 import Customers from "../Customers/Customers";
@@ -148,7 +154,6 @@ export default function Console() {
     },
   ];
 
-
   const userSideBar = [
     {
       name: "Dashboard",
@@ -164,7 +169,6 @@ export default function Console() {
     },
   ];
 
-
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -175,7 +179,7 @@ export default function Console() {
         return <Customers></Customers>;
         break;
       case "Dashboard":
-        return  <Dashboard></Dashboard>;
+        return <Dashboard></Dashboard>;
         break;
       case "Configure":
         return <Configure></Configure>;
@@ -187,7 +191,7 @@ export default function Console() {
         return <Transaction></Transaction>;
         break;
       case "Redeem":
-        return  <IncentiveTable></IncentiveTable> 
+        return <IncentiveTable></IncentiveTable>;
         break;
     }
   };
@@ -208,28 +212,29 @@ export default function Console() {
               }}
             >
               <Box className="left-actions">
-                {company.status == "VERIFIED" && company.userType == "corporate" && (
+                {company.status == "VERIFIED" &&
+                  company.userType == "corporate" && (
+                    <Button
+                      color="error"
+                      size="small"
+                      variant="contained"
+                      onClick={() => setShowPayment(true)}
+                    >
+                      Buy TRBG
+                    </Button>
+                  )}
+                {company.userType != "corporate" && (
                   <Button
                     color="error"
                     size="small"
                     variant="contained"
-                    onClick={() => setShowPayment(true)}
+                    onClick={() => {
+                      setActiveMenu("Redeem");
+                    }}
                   >
-                    Buy TRBG
+                    REDEEM TRBG
                   </Button>
                 )}
-                {company.userType != "corporate" && 
-                  <Button
-                  color="error"
-                  size="small"
-                  variant="contained"
-                  onClick={() => {
-                    setActiveMenu("Redeem");
-                  }}
-                >
-                  REDEEM TRBG
-                </Button>
-                }
                 {<Payment open={showPayment} company={company}></Payment>}
               </Box>
               <Box className="right-actions">
@@ -303,11 +308,9 @@ export default function Console() {
             }}
           >
             {open ? (
-              <Box>
+              <Box style={{display:"flex", alignItems:"center"}}>
+                <img height="30px" weight="30px" src={logoImage}></img> 
                 IDEATRIBE
-                <IconButton onClick={toggleDrawer} color="info">
-                  <ChevronLeftIcon />
-                </IconButton>
               </Box>
             ) : (
               <IconButton
@@ -325,88 +328,85 @@ export default function Console() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {company.userType == "corporate" ? <React.Fragment>
-              {sideBar.map((item) => {
-                return (
-                  <ListItemButton
-                    style={{
-                      cursor:
-                        companyStatus == "VERIFIED" ? "pointer" : "no-drop",
-                    }}
-                    onClick={() => {
-                      if (companyStatus == "VERIFIED") {
-                        setActiveMenu(item.name);
-                      } else {
-                        showToaster("Not allowed");
-                      }
-                    }}
-                  >
-                    <ListItemIcon
+            {company.userType == "corporate" ? (
+              <React.Fragment>
+                {sideBar.map((item) => {
+                  return (
+                    <ListItemButton
                       style={{
-                        color:
-                          item.name == activeMenu ? highlightGreen : greyText,
+                        cursor:
+                          companyStatus == "VERIFIED" ? "pointer" : "no-drop",
+                      }}
+                      onClick={() => {
+                        if (companyStatus == "VERIFIED") {
+                          setActiveMenu(item.name);
+                        } else {
+                          showToaster("Not allowed");
+                        }
                       }}
                     >
-                      {item.icon}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={item.name}
+                      <ListItemIcon
+                        style={{
+                          color:
+                            item.name == activeMenu ? highlightGreen : greyText,
+                        }}
+                      >
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={item.name}
+                        style={{
+                          color:
+                            item.name == activeMenu ? highlightGreen : greyText,
+                        }}
+                      />
+                    </ListItemButton>
+                  );
+                })}
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                {userSideBar.map((item) => {
+                  return (
+                    <ListItemButton
                       style={{
-                        color:
-                          item.name == activeMenu ? highlightGreen : greyText,
+                        cursor:
+                          companyStatus == "VERIFIED" ? "pointer" : "no-drop",
                       }}
-                    />
-                  </ListItemButton>
-                );
-              })}
-            </React.Fragment>
-          :  
-           <React.Fragment>
-            {userSideBar.map((item) => {
-                return (
-                  <ListItemButton
-                    style={{
-                      cursor:
-                        companyStatus == "VERIFIED" ? "pointer" : "no-drop",
-                    }}
-                    onClick={() => {
-                      if (companyStatus == "VERIFIED") {
-                        setActiveMenu(item.name);
-                      } else {
-                        showToaster("Not allowed");
-                      }
-                    }}
-                  >
-                    <ListItemIcon
-                      style={{
-                        color:
-                          item.name == activeMenu ? highlightGreen : greyText,
+                      onClick={() => {
+                        if (companyStatus == "VERIFIED") {
+                          setActiveMenu(item.name);
+                        } else {
+                          showToaster("Not allowed");
+                        }
                       }}
                     >
-                      {item.icon}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={item.name}
-                      style={{
-                        color:
-                          item.name == activeMenu ? highlightGreen : greyText,
-                      }}
-                    />
-                  </ListItemButton>
-                );
-              })}
-            </React.Fragment>
-          }
+                      <ListItemIcon
+                        style={{
+                          color:
+                            item.name == activeMenu ? highlightGreen : greyText,
+                        }}
+                      >
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={item.name}
+                        style={{
+                          color:
+                            item.name == activeMenu ? highlightGreen : greyText,
+                        }}
+                      />
+                    </ListItemButton>
+                  );
+                })}
+              </React.Fragment>
+            )}
           </List>
           <ListItemButton
             style={{
               position: "fixed",
-              bottom: "0",
+              bottom: "200px",
               cursor: "pointer",
-            }}
-            onClick={() => {
-              sessionStorage.removeItem("PASSPORT_TOKEN")
-              history.push("/login");
             }}
           >
             <ListItemIcon
@@ -414,7 +414,142 @@ export default function Console() {
                 color: greyText,
               }}
             >
-              <LogoutIcon></LogoutIcon>
+              <HelpIcon
+                onClick={() => {
+                  sessionStorage.removeItem("PASSPORT_TOKEN");
+                  history.push("/login");
+                }}
+              ></HelpIcon>
+            </ListItemIcon>
+            <ListItemText
+              primary="How to use"
+              style={{
+                color: greyText,
+              }}
+            />
+          </ListItemButton>
+          <ListItemButton
+            style={{
+              position: "fixed",
+              bottom: "160px",
+              cursor: "pointer",
+            }}
+          >
+            <ListItemIcon
+              style={{
+                color: greyText,
+              }}
+            >
+              <AccountBalanceIcon
+                onClick={() => {
+                  sessionStorage.removeItem("PASSPORT_TOKEN");
+                  history.push("/login");
+                }}
+              ></AccountBalanceIcon>
+            </ListItemIcon>
+            <ListItemText
+              primary="Tokenomics"
+              style={{
+                color: greyText,
+              }}
+            />
+          </ListItemButton>
+          <ListItemButton
+            style={{
+              position: "fixed",
+              bottom: "120px",
+              cursor: "pointer",
+            }}
+          >
+            <ListItemIcon
+              style={{
+                color: greyText,
+              }}
+            >
+              <ArticleIcon
+                onClick={() => {
+                  sessionStorage.removeItem("PASSPORT_TOKEN");
+                  history.push("/login");
+                }}
+              ></ArticleIcon>
+            </ListItemIcon>
+            <ListItemText
+              primary="Terms &  Conditions"
+              style={{
+                color: greyText,
+              }}
+            />
+          </ListItemButton>
+          <ListItemButton
+            style={{
+              position: "fixed",
+              bottom: "80px",
+              cursor: "pointer",
+            }}
+          >
+            <ListItemIcon
+              style={{
+                color: greyText,
+              }}
+            >
+              <SecurityIcon
+                onClick={() => {
+                  sessionStorage.removeItem("PASSPORT_TOKEN");
+                  history.push("/login");
+                }}
+              ></SecurityIcon>
+            </ListItemIcon>
+            <ListItemText
+              primary="Privacy"
+              style={{
+                color: greyText,
+              }}
+            />
+          </ListItemButton>
+          <ListItemButton
+            style={{
+              position: "fixed",
+              bottom: "40px",
+              cursor: "pointer",
+            }}
+          >
+            <ListItemIcon
+              style={{
+                color: greyText,
+              }}
+            >
+              <InfoIcon
+                onClick={() => {
+                  sessionStorage.removeItem("PASSPORT_TOKEN");
+                  history.push("/login");
+                }}
+              ></InfoIcon>
+            </ListItemIcon>
+            <ListItemText
+              primary="About us"
+              style={{
+                color: greyText,
+              }}
+            />
+          </ListItemButton>
+          <ListItemButton
+            style={{
+              position: "fixed",
+              bottom: "0",
+              cursor: "pointer",
+            }}
+          >
+            <ListItemIcon
+              style={{
+                color: greyText,
+              }}
+            >
+              <LogoutIcon
+                onClick={() => {
+                  sessionStorage.removeItem("PASSPORT_TOKEN");
+                  history.push("/login");
+                }}
+              ></LogoutIcon>
             </ListItemIcon>
             <ListItemText
               primary="Logout"

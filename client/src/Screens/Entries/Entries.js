@@ -66,7 +66,6 @@ export default function Entries() {
       <TextField
          onChange={(e) => {
           setPassword(e.target.value)
-          
         }}
         margin="normal"
         style={{width:"100%"}}

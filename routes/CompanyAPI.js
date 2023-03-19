@@ -21,7 +21,7 @@ updateDetails = async (req, res) => {
   )
     .then((user, b) => {
       if(updates.status == "SUBMITTED"){
-        sendMail(user.email, "Passport - Submitted for verification", "Your application has been submitted for verification. We will review it soon and revert you on the status.")
+        sendMail(user.email, "Submitted for verification", "Your application to IdeaTribe has been submitted for verification. We will review it and respond shortly.")
       }
       console.log("details updated", user, b);
       return res.status(201).json({
@@ -153,7 +153,7 @@ verifyCompany = async (req, res) => {
     { upsert: true, new: true }
   )
     .then((user, b) => {
-      sendMail(user.email, "Application verified", "Your application has been verified. We welcome you to join the passport family.")
+      sendMail(user.email, "Application verified", "Your application to IdeaTribe has been verified! Welcome to the Tribe!")
       console.log("details updated", user, b);
       return res.status(201).json({
         success: true,

@@ -153,11 +153,11 @@ const Configure = (props) => {
         <CardHeader
           subheader="Configure the distribution of TRBG"
           title="Configure"
-          action={
-            <Button color="secondary" variant="outlined" onClick={() => {}}>
-              Deposit
-            </Button>
-          }
+          // action={
+          //   <Button color="secondary" variant="outlined" onClick={() => {}}>
+          //     Deposit
+          //   </Button>
+          // }
         ></CardHeader>
 
         <Divider />

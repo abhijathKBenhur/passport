@@ -62,7 +62,7 @@ const Configure = (props) => {
             setValues(details)
             setEditMode(false)
             openSnackbar(
-              "Company details has been submitted for verification. Please wait while you hear from us on the approval status.",
+              "Your application to IdeaTribe has been submitted for verification. We will review it and respond shortly.",
               5000
             );
           }
@@ -207,7 +207,7 @@ const Configure = (props) => {
                     error={errorMap.billethash}
                     helperText={ errorMap.billethash ? "This field is mandatory" : "" }
                     fullWidth
-                    label="Ideatribe Hash"
+                    label="Referral code"
                     name="billethash"
                     onChange={handleChange}
                     value={values.billethash || ''}

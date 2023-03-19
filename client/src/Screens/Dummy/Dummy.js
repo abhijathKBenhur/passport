@@ -38,7 +38,11 @@ export default function Dummy() {
         companyName:values.companyName
       }
     ).then(result =>{
-      openSnackbar("TRBG will be deposited soon with the wallet.", 10000);
+      if(!result.success){
+        openSnackbar("Deposit failed Please check the balance.", 10000);
+      }else{
+        openSnackbar("TRBG will be deposited soon with the wallet.", 10000);
+      }
       setDisableButtons(true)
       CustomerInterface.incentivise({
         action:newAction,

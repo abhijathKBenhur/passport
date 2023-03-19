@@ -6,7 +6,9 @@ import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import LoginCard from "../../components/HomeCard";
 import { Grid, Toolbar, Box, Modal } from "@mui/material";
+import logoImage from "../../logo.png"
 import LoginForm from "./LoginForm";
+import HelpIcon from '@mui/icons-material/Help';
 
 const theme = createTheme();
 
@@ -33,9 +35,12 @@ export default function Home() {
     >
       <AppBar position="static" color="primary">
         <Toolbar>
+            <img height="40px" weight="40px"
+            src={logoImage}></img>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            ideaTribe
+            IdeaTribe
           </Typography>
+          <HelpIcon></HelpIcon> 
         </Toolbar>
       </AppBar>
       <Grid

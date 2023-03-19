@@ -10,7 +10,12 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Typography, TextField } from "@mui/material";
+import {
+  Typography,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
 import PaymentInterface from "../../Interfaces/PaymentInterface";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
@@ -46,38 +51,41 @@ function Payment(props) {
   const [secret, setSecret] = useState(undefined);
   const [step, setStep] = useState("INPUT");
   const [inputError, setInputError] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [stripeContext, setStripeContext] = useState(undefined);
 
   const [numberOfGold, setNumberOfGold] = useState(100);
   const [centsValue, setCentsValue] = useState(10000);
-  const [minGold, setMinGold] = useState(1000)
-  const [conversion, setConversion] = useState(0.1)
+  const [minGold, setMinGold] = useState(1000);
+  const [conversion, setConversion] = useState(0.1);
 
   useEffect(() => {
     PaymentInterface.getClientKey()
       .then((success) => {
         let stripeKey = success?.data?.data;
         setStripeContext(loadStripe(stripeKey));
-        setMinGold(success?.data?.min)
-        setNumberOfGold((success?.data?.min) || 1000)
-        setConversion((success?.data?.conversion) || 0.1 )
-        setCentsValue((+(success?.data?.min) * (+(success?.data?.conversion) || 0.1) * 100) || 10000)
+        setMinGold(success?.data?.min);
+        setNumberOfGold(success?.data?.min || 1000);
+        setConversion(success?.data?.conversion || 0.1);
+        setCentsValue(
+          +success?.data?.min * (+success?.data?.conversion || 0.1) * 100 ||
+            10000
+        );
       })
       .catch((err) => {
         console.log("Could not get stripe key", err);
       });
   }, []);
 
-
   useEffect(() => {
-   setOpen(props.open)
+    setOpen(props.open);
   }, [props.open]);
-  
+
   const handleChange = (event, index) => {
-    if(event.target.value < minGold){
-      setInputError(true)
-    }else{
-      setInputError(false)
+    if (event.target.value < minGold) {
+      setInputError(true);
+    } else {
+      setInputError(false);
     }
     setNumberOfGold(event.target.value);
     setCentsValue(event.target.value * conversion * 100);
@@ -88,7 +96,7 @@ function Payment(props) {
   };
 
   const gotoStep1 = () => {
-    if(!inputError){
+    if (!inputError) {
       setStep("CARD");
       PaymentInterface.getClientSecret({ value: parseInt(centsValue) }).then(
         (success) => {
@@ -101,10 +109,10 @@ function Payment(props) {
 
   const payResponse = (value) => {
     if (value.success) {
-      console.log("Stripe recorded success message, success to ", props)
+      console.log("Stripe recorded success message, success to ", props);
       PaymentInterface.depositGold({
-        email:props.company.email,
-        tenantId:props.company.tenantId,
+        email: props.company.email,
+        tenantId: props.company.tenantId,
         metamaskId: props.company.contractAddress,
         goldToDeposit: numberOfGold,
       })
@@ -112,11 +120,11 @@ function Payment(props) {
           setStep("SUCCESS");
         })
         .catch((err) => {
-          console.error(err)
+          console.error(err);
           setStep("FAILURE");
         });
     } else {
-      console.log("Stripe recorded failure message")
+      console.log("Stripe recorded failure message");
       setStep("FAILURE");
     }
 
@@ -166,15 +174,16 @@ function Payment(props) {
       case "SUCCESS":
         return (
           <>
-            <div style={{display:"flex", justifyContent:"center"}}>
-              <DoneAllIcon fontSize="large" color="green"/>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <DoneAllIcon fontSize="large" color="green" />
             </div>
             <Typography
               gutterBottom
               style={{ marginTop: "30px", marginBottom: "30px" }}
             >
               Congratulations! Your payment of ${centsValue / 100} has been
-              received and your account will be credited with {numberOfGold}{" "} TRBG shortly.
+              received and your account will be credited with {numberOfGold}{" "}
+              TRBG shortly.
             </Typography>
           </>
         );
@@ -182,16 +191,16 @@ function Payment(props) {
       case "FAILURE":
         return (
           <>
-           <div style={{display:"flex", justifyContent:"center"}}>
-              <AssignmentLateIcon fontSize="large" color="green"/>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <AssignmentLateIcon fontSize="large" color="green" />
             </div>
             <Typography
               gutterBottom
               style={{ marginTop: "30px", marginBottom: "30px" }}
             >
-              Transaction failure! This transaction of ${centsValue / 100} was failed,
-              please check the payment information provided. Please react out to
-              us for any queries!
+              Transaction failure! This transaction of ${centsValue / 100} was
+              failed, please check the payment information provided. Please
+              react out to us for any queries!
             </Typography>
           </>
         );
@@ -216,7 +225,9 @@ function Payment(props) {
             <Typography gutterBottom style={{ marginTop: "30px" }}>
               <TextField
                 error={inputError}
-                helperText={inputError?"Minimum purchase should be 10,000 TRBG" : ""}
+                helperText={
+                  inputError ? "Minimum purchase should be 10,000 TRBG" : ""
+                }
                 fullWidth
                 label="No of TRBG to purchase"
                 name="TRBG"
@@ -237,7 +248,6 @@ function Payment(props) {
         );
       default:
       case "SUCCESS":
-        
         break;
     }
   };
@@ -247,6 +257,7 @@ function Payment(props) {
       case "INPUT":
         return (
           <Button
+            disabled={!acceptTerms}
             autoFocus
             onClick={() => {
               gotoStep1();
@@ -264,7 +275,7 @@ function Payment(props) {
               window.location.reload();
             }}
           >
-            Reload
+            Ok
           </Button>
         );
         break;
@@ -293,12 +304,10 @@ function Payment(props) {
       <>
         <BootstrapDialogTitle
           id="customized-dialog-title"
-          style={{display:"flex",alignItems:"center"}}
+          style={{ display: "flex", alignItems: "center" }}
           onClose={handleClose}
         >
           {getDialogTitle()}
-          
-
         </BootstrapDialogTitle>
 
         <DialogContent dividers>
@@ -306,7 +315,41 @@ function Payment(props) {
           {getDialogueCenterContent()}
         </DialogContent>
 
-          <DialogActions>{getDialogueFooter()}</DialogActions>
+        <DialogActions>
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <div style={{marginLeft:"20px"
+            }}>
+            <FormControlLabel style={{marginRight:0}}
+              control={
+                <Checkbox
+                  checked={acceptTerms}
+                  onChange={() => {
+                    setAcceptTerms(!acceptTerms);
+                  }}
+                  name="accept"
+                />
+              }
+            />
+              <span>I accept the </span>
+              <span
+                style={{ textDecoration: "underline", color: "#2FB881",cursor:"pointer" }}
+                onCLick={() => {
+                  window.open("www.google.com");
+                }}
+              >
+                {" "}
+                terms of purchase{" "}
+              </span>
+            </div>
+            {getDialogueFooter()}
+          </div>
+        </DialogActions>
       </>
     </Dialog>
   );
