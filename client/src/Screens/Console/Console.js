@@ -543,12 +543,13 @@ export default function Console() {
               style={{
                 color: greyText,
               }}
+              onClick={() => {
+                sessionStorage.removeItem("PASSPORT_TOKEN");
+                history.push("/login");
+              }}
             >
               <LogoutIcon
-                onClick={() => {
-                  sessionStorage.removeItem("PASSPORT_TOKEN");
-                  history.push("/login");
-                }}
+               
               ></LogoutIcon>
             </ListItemIcon>
             <ListItemText

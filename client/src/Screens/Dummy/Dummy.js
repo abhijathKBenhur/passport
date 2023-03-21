@@ -35,7 +35,8 @@ export default function Dummy() {
   const handleSubmit = (newAction) => {
     setDisableButtons(true)
     CompanyInterface.getTokenForDummy({
-        companyName:values.companyName
+        companyName:values.companyName,
+        password:values.password
       }
     ).then(result =>{
       if(!result.success){
@@ -48,7 +49,6 @@ export default function Dummy() {
         action:newAction,
         email:values.email,
         token: result.data.data,
-        password:values.password
       }).then(success =>{
         openSnackbar("TRBG has been shared to the user.", 10000);
       }).catch(err =>{

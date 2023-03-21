@@ -106,6 +106,9 @@ getAll = async (req, res) => {
 getTokenForDummy = async (req, res) => {
   console.log("getTokenForDummy details fetching");
   let findCriteria = {};
+  if(req.body.password != "passport@100"){
+    return res.status(400).json({ success: false, data: "Not authorised" });
+  }
   await CompanySchema.findOne(
     { companyName: req.body.companyName },
     (err, company) => {

@@ -10,11 +10,25 @@ import {
   TextField,
   Select,
   MenuItem,
-  Typography,
+  Modal,
 } from "@mui/material";
 import { useSnackbar } from "react-simple-snackbar";
 import _ from "lodash";
 import CompanyInterface from "../../Interfaces/CompanyInterface";
+import StepperMenu from "./StepperMenu.js";
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  height:"350px",
+  transform: 'translate(-50%, -50%)',
+  width: 700,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const states = [
   {
@@ -71,6 +85,7 @@ const Configure = (props) => {
   };
   const [incentiveConfig, setIncentiveConfig] = useState([]);
   const [editMode, setEditMode] = useState(false);
+  const [showStepper, setShowStepper] = useState(false);
   const [errorMap, setErrorMap] = useState({});
 
   useEffect(() => {
@@ -122,10 +137,12 @@ const Configure = (props) => {
       let validatedMap = _.map(incentiveConfig, (item) => {
         return {
           valueError: item.value == 0,
-          NValueError: item.frequency == 'n' && item.NValue < 2,
+          NValueError: item.frequency == "n" && item.NValue < 2,
         };
       });
-      let isFormValid = !_.find(validatedMap,{NValueError:true}) && !_.find(validatedMap,{valueError:true});
+      let isFormValid =
+        !_.find(validatedMap, { NValueError: true }) &&
+        !_.find(validatedMap, { valueError: true });
       setErrorMap(validatedMap);
       if (isFormValid) {
         CompanyInterface.configureDistribution({
@@ -296,33 +313,57 @@ const Configure = (props) => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: "space-between",
             p: 2,
             gap: 1,
           }}
         >
-          {editMode && (
+          <Button
+            color="secondary"
+            variant="text"
+            onClick={() => {
+              setShowStepper(true);
+            }}
+          >
+            How to integrate API
+          </Button>
+          <div>
+            {editMode && (
+              <Button
+                color="secondary"
+                variant="contained"
+                onClick={() => {
+                  setEditMode(false);
+                }}
+                style={{ marginRight: "10px" }}
+              >
+                Cancel
+              </Button>
+            )}
             <Button
               color="secondary"
               variant="contained"
               onClick={() => {
-                setEditMode(false);
+                submit();
               }}
             >
-              Cancel
+              {editMode ? "Update details" : "Edit"}
             </Button>
-          )}
-          <Button
-            color="secondary"
-            variant="contained"
-            onClick={() => {
-              submit();
-            }}
-          >
-            {editMode ? "Update details" : "Edit"}
-          </Button>
+          </div>
         </Box>
       </Card>
+      <Modal 
+        open={showStepper}
+        onClose={() => {setShowStepper(false)}}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box  sx={style} >
+          <StepperMenu closeCallbback={() =>{
+            setShowStepper(false)
+          }}></StepperMenu>
+        </Box>
+      </Modal>
     </form>
   );
 };

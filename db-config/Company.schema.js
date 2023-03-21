@@ -19,6 +19,7 @@ const Company = new Schema(
     userType:{ type: String, default:"corporate" },
     referredBy:{ type: String},
     referalCode:{ type: String},
+    billethash:{ type: String},
   },
   { timestamps: true }
 );

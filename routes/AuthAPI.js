@@ -90,7 +90,7 @@ const sendOTP = (mailId, OTP, res) => {
   const mailOptions = {
     from: ourMailId,
     to: mailId,
-    subject: "Welcome to IdeaTribe|Passport",
+    subject: "Welcome to IdeaTribe",
     html: `<h2><b>Hello friend,</b></h2> 
     <h3>Thank you for registering with IdeaTribe.</h3>
     <br/>
