@@ -1,15 +1,22 @@
 import { Box, Container, Grid, Toolbar } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Chart, ArcElement } from "chart.js";
 import LatestOrders from "../Transactions/LatestOrders";
 import Sales from "./Sales";
 import GoldByAction from "./GoldByAction";
 import TransactionInterface from "../../Interfaces/TransactionInterface";
+import {UserContext} from "../../contexts/UserContext"
 
 const Dashboard = (props) => {
   const [transactions, setTransactions] = useState([]);
+  const {company} = useContext(UserContext)
+
+
+
+
   useEffect(() => {
-      TransactionInterface.getAllTransactions()
+    if(company)
+      TransactionInterface.getAllTransactions(company)
         .then((success) => {
           let transactions = success?.data?.data;
           let transactionsMaps = [];
@@ -25,7 +32,7 @@ const Dashboard = (props) => {
           setTransactions(transactionsMaps);
         })
         .catch((err) => {});
-  }, []);
+  }, [company]);
 
   return (
     <Grid container spacing={3}>

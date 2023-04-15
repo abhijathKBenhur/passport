@@ -22,6 +22,16 @@ const WalletCard = (props) => {
       return "CORPORATE"
     }
   }
+
+  const getDescription = () =>{
+    if(props.type == "user"){
+      return "Check your TRBG balance, find sweet deals and redeem your tokens for money! Users earn TribeGold [TRBG] for their engagement with apps. By checking your balance regularly, you can take advantage of exclusive deals and promotions. Plus, redeeming your tokens for cash is quick and easy."
+    }else{
+      return "Buy TRBG, configure campaigns and analyze your token distribution strategies! TribeGold [TRBG] is a versatile token that helps you run custom marketing campaigns to engage customers and drive sales. Use analytics tools to track the success of your strategies and optimize your token distribution to maximize ROI."
+    }
+  }
+
+
   return (
     <Card variant="outlined">  
       <CardContent>
@@ -41,7 +51,7 @@ const WalletCard = (props) => {
         >
           {/* <ArrowDownwardIcon color="error" /> */}
           <Typography variant="body2" color="text.secondary">
-          In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.
+          {getDescription()}
           </Typography>
         </Box>
       </CardContent>

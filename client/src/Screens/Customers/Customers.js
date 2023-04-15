@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import PropTypes from "prop-types";
 import { format } from "date-fns";
@@ -29,23 +29,37 @@ import Search from "@mui/icons-material/Search";
 import Upload from "@mui/icons-material/Upload";
 import Download from "@mui/icons-material/Download";
 import CustomerInterface from "../../Interfaces/CustomerInterface";
+import {UserContext} from "../../contexts/UserContext"
+import _ from "lodash";
+import TransactionInterface from "../../Interfaces/TransactionInterface";
 
 export const Customers = ({ ...rest }) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [customerList, setCustomerList] = useState([]);
+  const {company} = useContext(UserContext)
 
   useEffect(() => {
-    CustomerInterface.getAllUsers()
+    TransactionInterface.getAllTransactions(company)
+    .then((success) => {
+      let transactionArray = success?.data?.data;
+
+      let mailGroups = _.mapValues(_.groupBy(transactionArray, 'email'),
+                        clist => clist.map(transaction => _.omit(transaction, 'email')));
+      let emailList = Object.keys(mailGroups)
+      CustomerInterface.getAllUsers(company)
       .then((success) => {
         let customers = success?.data?.data || [];
         try {
-          setCustomerList(customers);
+          setCustomerList(_.filter(customers,user =>{
+            return emailList.indexOf(user.email) > -1
+          }));
         } catch (err) {
           console.log("Could not fetch company details");
         }
       })
       .catch((err) => {});
+    })
   }, []);
 
   const handleLimitChange = (event) => {

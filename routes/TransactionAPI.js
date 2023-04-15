@@ -4,11 +4,18 @@ const router = express.Router();
 const _ = require("lodash");
 
 getAllTransactions = async (req, res) => {
+  console.log("req from :::::" + req.body.userType)
+  let payload = {
+    action: { $ne: "PURCHASE" }
+  }
+  if(req.body.userType != "individual"){
+    payload.companyName = req.body.companyName
+  }else{
+    payload.email = req.body.email
+  }
     await IncentiveSchema.find(
-        { 
-          action: { $ne: "PURCHASE" } 
-         },
-        // { tenantId: req.tenantId },
+      payload,
+       // { tenantId: req.tenantId },
         (err, transactions) => {
           if (err) {
             return res.status(400).json({ success: false, error: err });
@@ -16,7 +23,7 @@ getAllTransactions = async (req, res) => {
           if (!transactions) {
             return res.status(404).json({ success: true, data: [] });
           }
-          console.log("returning");
+          console.log("returning", transactions);
           return res.status(200).json({ success: true, data: transactions.map(item =>{
             let transformedAmount =  (item.amount && item.amount > 0)  ? item.amount / 1000000000000000000 : item.amount
             item.amount = transformedAmount
@@ -76,7 +83,7 @@ getIncentivesList = async (req, res) => {
   });
 };
 
-router.get("/getAllTransactions", getAllTransactions);
+router.post("/getAllTransactions", getAllTransactions);
 router.post("/getGroupedEarnings", getGroupedEarnings);
 router.get("/getIncentivesList", getIncentivesList);
 

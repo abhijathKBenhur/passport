@@ -38,7 +38,7 @@ export default function Home() {
             <img height="40px" weight="40px"
             src={logoImage}></img>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            IdeaTribe
+          IdeaTribe
           </Typography>
           <HelpIcon></HelpIcon> 
         </Toolbar>

@@ -416,8 +416,6 @@ export default function Console() {
             >
               <HelpIcon
                 onClick={() => {
-                  sessionStorage.removeItem("PASSPORT_TOKEN");
-                  history.push("/login");
                 }}
               ></HelpIcon>
             </ListItemIcon>
@@ -442,8 +440,6 @@ export default function Console() {
             >
               <AccountBalanceIcon
                 onClick={() => {
-                  sessionStorage.removeItem("PASSPORT_TOKEN");
-                  history.push("/login");
                 }}
               ></AccountBalanceIcon>
             </ListItemIcon>
@@ -468,8 +464,6 @@ export default function Console() {
             >
               <ArticleIcon
                 onClick={() => {
-                  sessionStorage.removeItem("PASSPORT_TOKEN");
-                  history.push("/login");
                 }}
               ></ArticleIcon>
             </ListItemIcon>
@@ -494,8 +488,6 @@ export default function Console() {
             >
               <SecurityIcon
                 onClick={() => {
-                  sessionStorage.removeItem("PASSPORT_TOKEN");
-                  history.push("/login");
                 }}
               ></SecurityIcon>
             </ListItemIcon>
@@ -520,8 +512,6 @@ export default function Console() {
             >
               <InfoIcon
                 onClick={() => {
-                  sessionStorage.removeItem("PASSPORT_TOKEN");
-                  history.push("/login");
                 }}
               ></InfoIcon>
             </ListItemIcon>
@@ -538,15 +528,16 @@ export default function Console() {
               bottom: "0",
               cursor: "pointer",
             }}
+            onClick={() => {
+              sessionStorage.removeItem("PASSPORT_TOKEN");
+              history.push("/login");
+            }}
           >
             <ListItemIcon
               style={{
                 color: greyText,
               }}
-              onClick={() => {
-                sessionStorage.removeItem("PASSPORT_TOKEN");
-                history.push("/login");
-              }}
+             
             >
               <LogoutIcon
                

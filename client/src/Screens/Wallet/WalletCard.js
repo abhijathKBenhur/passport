@@ -13,6 +13,7 @@ import SellIcon from "@mui/icons-material/Sell";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CustomerInterface from "../../Interfaces/CustomerInterface";
 import {UserContext} from "../../contexts/UserContext"
+import TransactionInterface from "../../Interfaces/TransactionInterface";
 
 const WalletCard = (props) => {
   const [goldBalance, setGoldBalance] = useState(0);
@@ -22,16 +23,19 @@ const WalletCard = (props) => {
   const {company} = useContext(UserContext)
 
   useEffect(() => {
-    if(props?.type == "users"){
-      CustomerInterface.getTotalUserCount()
+    if(props?.type != "users"){
+      TransactionInterface.getAllTransactions(company)
       .then((success) => {
-        let count = success?.data?.data;
-        setTotalUsers(count);
+        let transactionArray = success?.data?.data;
+
+        let mailGroups = _.mapValues(_.groupBy(transactionArray, 'email'),
+                          clist => clist.map(transaction => _.omit(transaction, 'email')));
+        let emailList = Object.keys(mailGroups)
+        setTotalUsers(emailList.length);
       })
       .catch((err) => {});
     }
     console.log("UserContext  ", company)
-   
   }, []);
 
   const getTopText = (props) => {
@@ -43,7 +47,7 @@ const WalletCard = (props) => {
         return "DISTRIBUTED";
         break;
       case "rate":
-        return "Conversion";
+        return "ONE TRBG is";
         break;
       case "users":
         return "Total users";
@@ -54,6 +58,7 @@ const WalletCard = (props) => {
   };
 
   const getMainTitle = (props) => {
+    console.log("Requetsing from ", props.type)
     switch (props?.type) {
       case "balance":
         return (props.balance || 0) / 1000000000000000000 + " TRBG";
@@ -65,7 +70,7 @@ const WalletCard = (props) => {
         return "0.2USDC";
         break;
       case "users":
-        return totalUsers;
+        return totalUsers
         break;
       default:
         return "DEFAULT";

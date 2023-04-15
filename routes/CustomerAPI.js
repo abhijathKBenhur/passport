@@ -227,7 +227,7 @@ const addOrUpdateUser = async (req, goldConfig) => {
 };
 
 getAllUsers = async (req, res) => {
-  await CustomerSchema.find({ tenantId: req.tenantId }, (err, users) => {
+  await CustomerSchema.find({}, (err, users) => {
     if (err) {
       return res.status(400).json({ success: false, error: err });
     }

@@ -64,6 +64,9 @@ const Sales = (props) => {
           fontColor: theme.palette.text.secondary,
           beginAtZero: true,
           min: 0,
+          stepSize:1,
+          precision:1
+
         },
         gridLines: {
           borderDash: [2],
@@ -97,7 +100,7 @@ const Sales = (props) => {
         //     Last 7 days
         //   </Button>
         // }
-        title="User count"
+        title="User actions"
       />
       <Divider />
       <CardContent>

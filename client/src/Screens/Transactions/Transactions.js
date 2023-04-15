@@ -90,7 +90,7 @@ const Transactions = (props) => {
   const {company} = useContext(UserContext)
   useEffect(() => {
     
-    TransactionInterface.getAllTransactions()
+    TransactionInterface.getAllTransactions(company)
       .then((success) => {
         let transactions = success?.data?.data;
         try {

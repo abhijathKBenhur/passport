@@ -153,21 +153,20 @@ function Payment(props) {
       case "INPUT":
         return (
           <Typography gutterBottom>
-            Please buy TRBG with your credit card. Price of each TRBG token is
-            US ${conversion}. You can buy upto 100,000 tokens at this price.
+            Please buy TRBG with your credit card. 50% of the amount you spend will be invested in the TRBG: USDC liquidity pool for at least 1 year. Yiled from the pool will be credited to you. TRBG tokens for the liquidity pool will be at market price. TRBG token issued to you for distribution to users is US $0.1. You can buy upto 100,000 tokens for distribution from IdeaTribe. If you have exhausted this cache of TRBG tokens, you can buy more from Uniswap.
           </Typography>
         );
         break;
       case "CARD":
         return (
           <>
-            {getDialogueTopContent("INPUT")}
+            
             <Typography
               gutterBottom
               style={{ marginTop: "30px", marginBottom: "30px" }}
             >
-              You are about to pay ${centsValue / 100} Dollars towards purchase
-              of {numberOfGold} TRBG
+              50% of the amount will be invested in the TRBG:USDC liquidity pool on your behalf for at least 1 year. With the remainder, you will get {numberOfGold} TRBG tokens at 0.1 USD.
+              You are about to pay ${centsValue / 100} Dollars towards the purchase
             </Typography>
           </>
         );
