@@ -23,7 +23,7 @@ const WalletCard = (props) => {
   const {company} = useContext(UserContext)
 
   useEffect(() => {
-    if(props?.type != "users"){
+    if(props?.type == "users" && company != 0){
       TransactionInterface.getAllTransactions(company)
       .then((success) => {
         let transactionArray = success?.data?.data;
